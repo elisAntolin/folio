@@ -147,10 +147,6 @@ O Folio é um projeto acadêmico, e seus objetivos incluem:
 
 O Folio está **em desenvolvimento**. Neste momento, o repositório reúne a documentação e o planejamento do projeto. As instruções de instalação e execução serão adicionadas ao README quando houver uma versão que possa ser executada.
 
-## Autoria 
-
-Projeto acadêmico desenvolvido por ELis Antoli, como parte de POO - Fatec Rubens Lara.
-
 ## Autoria
 
-Projeto acadêmico desenvolvido por **[seu nome]**, como parte de **[nome da disciplina / instituição]**.
+Projeto acadêmico desenvolvido por **ELis Antolin**, como parte de **POO - Fatec Rubens Lara**.
