@@ -149,4 +149,4 @@ O Folio está **em desenvolvimento**. Neste momento, o repositório reúne a doc
 
 ## Autoria
 
-Projeto acadêmico desenvolvido por **ELis Antolin**, como parte de **POO - Fatec Rubens Lara**.
+Projeto acadêmico desenvolvido por **Elis Antolin**, como parte de **POO - Fatec Rubens Lara**.
