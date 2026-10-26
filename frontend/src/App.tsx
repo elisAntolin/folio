@@ -1,9 +1,22 @@
 import Header from "./components/Header/Header";
+import SearchBar from "./components/SearchFilterBar/SearchFilterBar";
+import PagesToolbar from "./components/PagesToolbar/PagesToolbar";
+import PageList from "./components/PageList/PageList";
 
 function App() {
   return (
     <div>
       <Header></Header>
+      <main>
+        <section className="search-section">
+          <SearchBar />
+        </section>
+
+        <section className="pages-section">
+          <PagesToolbar />
+          <PageList />
+        </section>
+      </main>
     </div>
 
     /* <section id="center">

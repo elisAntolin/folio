@@ -1,7 +1,7 @@
 :root {
   --text: #6b6375;
   --text-h: #08060d;
-  --bg: #e3e7f4;
+  --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
@@ -64,6 +64,19 @@
 
 body {
   margin: 0;
+}
+main {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 32px;
+  box-sizing: border-box;
+  padding: 24px 24px 32px;
+}
+.search-section,
+.pages-section {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto 16px;
 }
 
 h1,

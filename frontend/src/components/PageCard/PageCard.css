@@ -1,0 +1,80 @@
+.page-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+}
+
+.page-card-cover {
+  position: relative;
+  height: 160px;
+}
+
+.page-card-cover > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.page-card-badge {
+  position: absolute;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  background: #ffffff;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.page-card-category {
+  left: 10px;
+}
+
+.page-card-recent {
+  right: 10px;
+}
+
+.page-card-badge img {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.page-card h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.page-card p {
+  margin: 8px 0 6px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.page-card-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.page-card-title-bar button {
+  all: unset;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.page-card-menu-button img {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.page-card-body {
+  padding: 6px 12px;
+}
