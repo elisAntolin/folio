@@ -1,9 +1,13 @@
+import { useState } from "react";
 import Header from "./components/Header/Header";
 import SearchBar from "./components/SearchFilterBar/SearchFilterBar";
 import PagesToolbar from "./components/PagesToolbar/PagesToolbar";
-import PageList from "./components/PageList/PageList";
+import PageListCard from "./components/PageListCard/PageListCard";
+import PageListItem from "./components/PageListItem/PageListItem";
 
 function App() {
+  const [mode, setMode] = useState<"grid" | "list">("grid");
+
   return (
     <div>
       <Header></Header>
@@ -13,8 +17,8 @@ function App() {
         </section>
 
         <section className="pages-section">
-          <PagesToolbar />
-          <PageList />
+          <PagesToolbar mode={mode} changeMode={setMode} />
+          {mode === "grid" ? <PageListCard /> : <PageListItem />}
         </section>
       </main>
     </div>

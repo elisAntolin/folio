@@ -1,6 +1,6 @@
 import PageCard from "../PageCard/PageCard";
 
-import "./PageList.css";
+import "./PageListCard.css";
 
 type CardProps = {
   name: string;

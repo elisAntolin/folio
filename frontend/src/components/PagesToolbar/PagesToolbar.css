@@ -2,6 +2,11 @@
   all: unset;
   box-sizing: border-box;
   cursor: pointer;
+  font-size: 14px;
+  gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pages-toolbar-actions {
@@ -11,10 +16,21 @@
   flex-shrink: 0;
 }
 
+.pages-tool-bar .new-page {
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  height: 30px;
+  padding: 10px;
+  font: 600 14px / 1.4 var(--sans);
+  color: #4b5563;
+}
+
 .pages-tool-bar .new-page img {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  transform: translateY(1px);
 }
 
 .pages-tool-bar {
