@@ -1,4 +1,7 @@
+import { Link } from "react-router";
+
 import "./PageCard.css";
+
 import capa from "../../assets/capa.jpg";
 import pontosVertical from "../../assets/pontos-vertical.svg";
 import relogio from "../../assets/relogio.svg";
@@ -8,7 +11,9 @@ function PageCard() {
   return (
     <div className="page-card">
       <div className="page-card-cover">
-        <img src={capa} alt="Capa da página" />
+        <Link to="/pages/1" className="page-card-cover-link">
+          <img src={capa} alt="Capa da página" />
+        </Link>
         <span className="page-card-badge page-card-category">
           <img src={estudo} alt="Categoria" />
           Estudos

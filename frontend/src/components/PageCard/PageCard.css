@@ -10,7 +10,12 @@
   height: 160px;
 }
 
-.page-card-cover > img {
+.page-card-cover-link {
+  display: block;
+  height: 100%;
+}
+
+.page-card-cover-link > img {
   display: block;
   width: 100%;
   height: 100%;
