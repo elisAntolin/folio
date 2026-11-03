@@ -6,7 +6,6 @@
   background-color: #ffffff;
   overflow: visible;
   border: 1px solid #e4e4e7;
-  border-radius: 12px;
 }
 
 .page-document-cover {
@@ -15,7 +14,6 @@
   height: 300px;
   flex-shrink: 0;
   overflow: hidden;
-  border-radius: 12px 12px 0 0;
 }
 
 .page-document-cover > img {

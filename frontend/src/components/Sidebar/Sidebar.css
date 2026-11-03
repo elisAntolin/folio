@@ -12,7 +12,7 @@ aside {
 
 ul {
   list-style: none;
-  padding: 0px 0px 10px 10px;
+  padding: 0px 0px 10px 20px;
 }
 
 .sidebar-list {
@@ -27,11 +27,6 @@ h2 {
 
 .page-name {
   font: 600 14px / 1.4 var(--sans);
-}
-
-.sidebar-link > img {
-  width: 24px;
-  height: 24px;
 }
 
 li > a {
@@ -63,4 +58,9 @@ hr {
   background-color: #e2e8f0;
   margin-bottom: 16px;
   margin-top: 16px;
+}
+
+.subpages-actions {
+  width: 15px;
+  height: 15px;
 }

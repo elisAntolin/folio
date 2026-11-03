@@ -2,6 +2,7 @@ import "./Sidebar.css";
 
 import casa from "../../assets/casa.svg";
 import pagina from "../../assets/pagina.svg";
+import pontosVertical from "../../assets/pontos-vertical.svg";
 
 import SearchBar from "../../components/SearchFilterBar/SearchFilterBar";
 import AddPageButton from "../AddPageButton/AddPageButton";
@@ -46,7 +47,10 @@ function Sidebar() {
         <nav className="sidebar-navigation" aria-label="Subpáginas">
           <ul className="sidebar-list">
             <li key={page.id}>
-              <Link to={`/pages/${page.id}`} className="sidebar-link sidebar-link-home">
+              <Link
+                to={`/pages/${page.id}`}
+                className="sidebar-link sidebar-link-home"
+              >
                 <img src={page.icon} alt="" />
                 <span className="page-name">{page.name}</span>
               </Link>
@@ -56,6 +60,7 @@ function Sidebar() {
                     <Link to={`/pages/${subpage.id}`} className="sidebar-link">
                       <img src={subpage.icon} alt="" />
                       <span className="subpages-name">{subpage.name}</span>
+                      <img className="subpages-actions" src={pontosVertical} alt="" />
                     </Link>
                   </li>
                 ))}
