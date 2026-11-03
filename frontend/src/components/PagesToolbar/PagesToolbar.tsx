@@ -1,6 +1,7 @@
 import "./PagesToolbar.css";
 
-import mais from "../../assets/mais.svg";
+import AddPageButton from "../AddPageButton/AddPageButton";
+
 import filtro from "../../assets/filtro.svg";
 import favorito from "../../assets/favorito.svg";
 import grid from "../../assets/grade.svg";
@@ -17,10 +18,7 @@ function PagesToolbar({ mode, changeMode }: PagesToolbarProps) {
       <h1>Suas Páginas</h1>
 
       <div className="pages-toolbar-actions">
-        <button className="new-page">
-          <img src={mais} alt="Nova Páginas" />
-          <span>Nova Página</span>
-        </button>
+        <AddPageButton></AddPageButton>
 
         <span className="header-divider">|</span>
 

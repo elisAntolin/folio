@@ -10,7 +10,7 @@
 }
 
 .page-document-cover {
-  position: relative; /* referência para o botão */
+  position: relative;
   width: 100%;
   height: 300px;
   flex-shrink: 0;
