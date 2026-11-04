@@ -5,7 +5,7 @@ import sino from "../../assets/sino.svg";
 
 function Header() {
   const name = "Elis Cardoso";
-  const photoUrl = undefined; // Usuário sem foto
+  const photoUrl = undefined;
 
   return (
     <header>

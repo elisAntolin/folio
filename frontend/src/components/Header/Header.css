@@ -2,8 +2,10 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  border-bottom: 1px solid #e2e8f0;
+  min-height: 56px;
+  padding: var(--space-2) var(--space-4);
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--border-control);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -14,7 +16,7 @@ header {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .header-actions button {
@@ -30,7 +32,7 @@ header {
 
 .header-actions .header-user {
   font: 600 14px/1.4 var(--sans);
-  color: #4b5563;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 

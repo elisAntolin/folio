@@ -1,0 +1,23 @@
+.share {
+  box-sizing: border-box;
+  min-height: var(--control-height);
+  border: 1px solid var(--border-control);
+  background-color: #ffffff;
+  box-shadow: var(--control-shadow);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font: 600 14px / 1.4 var(--sans);
+  color: #4b5563;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.share img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transform: translateY(1px);
+}

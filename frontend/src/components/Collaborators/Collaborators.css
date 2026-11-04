@@ -1,0 +1,9 @@
+.users-avatars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.users-avatars > * + * {
+  margin-left: -8px;
+}

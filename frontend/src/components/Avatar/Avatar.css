@@ -7,8 +7,9 @@
   justify-content: center;
   align-items: center;
 
-  background-color: #E2D8FF;
-  color: #6B3FA0;
+  background-color: #e2d8ff;
+  border: 1px solid #ffffff;
+  color: #6b3fa0;
   font-size: 16px;
   font-weight: 600;
 }
