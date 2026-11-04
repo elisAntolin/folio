@@ -3,6 +3,23 @@
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
+  --border-control: #e2e8f0;
+  --surface-muted: #f4f5f7;
+  --surface-subtle: #e9e9eb;
+  --text-muted: #64748b;
+  --text-secondary: #4b5563;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --control-height: 40px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --control-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
@@ -68,15 +85,14 @@ body {
 main {
   width: 100%;
   margin: 0 auto;
-  padding: 0 32px;
-  box-sizing: border-box;
   padding: 24px 24px 32px;
+  box-sizing: border-box;
 }
 .search-section,
 .pages-section {
   width: 100%;
   max-width: 1060px;
-  margin: 0 auto 16px;
+  margin: 0 auto var(--space-4);
 }
 
 h1,
@@ -119,6 +135,6 @@ code,
 code {
   font-size: 15px;
   line-height: 135%;
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   background: var(--code-bg);
 }

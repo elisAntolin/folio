@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: calc(100vh - 64px);
+  height: auto;
+  min-height: calc(100vh - 56px);
   background-color: #ffffff;
   overflow: visible;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .page-document-cover {
@@ -25,21 +27,21 @@
 
 .page-document-edit-image {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: var(--space-3);
+  right: var(--space-3);
   z-index: 2;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 28px;
-  height: 28px;
-  padding: 6px;
+  width: 32px;
+  height: 32px;
+  padding: var(--space-2);
 
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-md);
   cursor: pointer;
 }
 
@@ -49,15 +51,34 @@
 }
 
 .page-document-body {
-  flex: 1;
+  display: block;
+  flex: none;
+  align-self: stretch;
+  width: 100%;
+  height: auto;
   min-height: 500px;
-  padding: 32px 64px;
+  margin: 0;
+  padding: var(--space-8) var(--space-8);
   box-sizing: border-box;
   background-color: #ffffff;
+  overflow: visible;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+@media (max-width: 1024px) {
+  .page-document-cover {
+    height: 240px;
+  }
+
+  .page-document-body {
+    min-height: 400px;
+    padding: var(--space-6) var(--space-4);
+  }
 }
 
 .page-document-body[contenteditable="true"] {
   outline: none;
+  white-space: pre-wrap;
   overflow-wrap: break-word;
   word-break: normal;
 }

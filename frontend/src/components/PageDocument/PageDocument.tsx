@@ -17,7 +17,13 @@ function PageDocument() {
         </button>
       </div>
 
-      <div className="page-document-body"></div>
+      <div
+        className="page-document-body"
+        contentEditable
+        role="textbox"
+        aria-label="Conteúdo do documento"
+        suppressContentEditableWarning
+      />
     </div>
   );
 }

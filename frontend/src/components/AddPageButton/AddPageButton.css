@@ -1,16 +1,17 @@
 .new-page {
-  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+  min-height: var(--control-height);
+  border: 1px solid var(--border-control);
   background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  border-radius: 6px;
-  height: 30px;
-  padding: 10px;
+  box-shadow: var(--control-shadow);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
   font: 600 14px / 1.4 var(--sans);
   color: #4b5563;
 
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   flex-shrink: 0;
 }
 

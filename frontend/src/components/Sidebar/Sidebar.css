@@ -1,7 +1,10 @@
 aside {
-  background: #f4f5f7;
-  padding: 24px;
-  max-width: 240px;
+  width: 280px;
+  max-width: 300px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: var(--space-6);
+  background: var(--surface-muted);
 }
 
 .sidebar-pages-header {
@@ -12,7 +15,7 @@ aside {
 
 ul {
   list-style: none;
-  padding: 0px 0px 10px 20px;
+  padding: 0 0 var(--space-2) var(--space-5);
 }
 
 .sidebar-list {
@@ -32,7 +35,7 @@ h2 {
 li > a {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 
   text-decoration: none;
   color: inherit;
@@ -43,21 +46,20 @@ li > a {
 }
 
 .sidebar-list-item > a {
-  padding-top: 10px;
+  padding-top: var(--space-3);
 }
 
 .sidebar-link-home {
-  background-color: #e9e9eb;
-  padding: 5px;
-  border-radius: 6px;
+  background-color: var(--surface-subtle);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
 }
 
 hr {
   border: none;
   height: 1px;
-  background-color: #e2e8f0;
-  margin-bottom: 16px;
-  margin-top: 16px;
+  background-color: var(--border-control);
+  margin: var(--space-4) 0;
 }
 
 .subpages-actions {
