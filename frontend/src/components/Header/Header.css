@@ -19,15 +19,9 @@ header {
   gap: var(--space-3);
 }
 
-.header-actions button {
+.header-actions button:where(:not(.notification-trigger)) {
   all: unset;
   cursor: pointer;
-}
-
-.header-bell img {
-  width: 24px;
-  height: 24px;
-  display: block;
 }
 
 .header-actions .header-user {

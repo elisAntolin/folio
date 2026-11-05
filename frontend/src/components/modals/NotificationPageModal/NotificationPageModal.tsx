@@ -53,10 +53,11 @@ function Notifications({
     <Popover.Root>
       <Popover.Trigger asChild>
         <button
+          type="button"
           className="notification-trigger"
           aria-label="Abrir notificações"
         >
-          <img src={sino} alt="Notificações" />
+          <img src={sino} alt="" />
 
           {notifications.length > 0 && (
             <span className="notification-badge">{notifications.length}</span>
@@ -74,6 +75,7 @@ function Notifications({
           <div className="notification-header">
             <Popover.Close asChild>
               <button
+                type="button"
                 className="notification-close"
                 aria-label="Fechar notificações"
               >
