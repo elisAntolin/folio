@@ -24,8 +24,7 @@
   box-shadow: var(--control-shadow);
 }
 
-.search-bar img,
-.filtro-categoria img {
+.search-bar img {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
@@ -43,7 +42,7 @@
   color: #334155;
 }
 
-.filtro-categoria {
+/* .filtro-categoria {
   all: unset;
   box-sizing: border-box;
   cursor: pointer;
@@ -59,4 +58,4 @@
   border: 1px solid var(--border-control);
   border-radius: var(--radius-md);
   box-shadow: var(--control-shadow);
-}
+} */

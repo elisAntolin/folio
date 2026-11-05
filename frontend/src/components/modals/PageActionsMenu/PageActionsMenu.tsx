@@ -8,6 +8,8 @@ import DeletePageModal from "../DeletePageModal/DeletePageModal";
 import SharePageModal from "../SharePageModal/SharePageModal";
 
 import lixeira from "../../../assets/lixeira.svg";
+import estrela from "../../../assets/estrela.svg";
+import estrela_preenchida from "../../../assets/estrela-preenchida.svg";
 import editar from "../../../assets/editar-quadrado.svg";
 import compartilhar from "../../../assets/compartilhar-seta.svg";
 import pontosVertical from "../../../assets/pontos-vertical.svg";
@@ -33,6 +35,12 @@ function PageActionsMenu({
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleFavorite = () => {
+    setIsFavorite((prev) => !prev);
+  };
+
   return (
     <>
       <DropdownMenu.Root>
@@ -51,6 +59,14 @@ function PageActionsMenu({
             align="end"
             sideOffset={8}
           >
+            <DropdownMenu.Item
+              className="page-actions-item"
+              onSelect={handleFavorite}
+            >
+              <img src={isFavorite ? estrela_preenchida : estrela} alt="" />
+              <span>{isFavorite ? "Remover dos favoritos" : "Favoritar"}</span>
+            </DropdownMenu.Item>
+
             <DropdownMenu.Item
               className="page-actions-item"
               onSelect={() => setIsEditOpen(true)}

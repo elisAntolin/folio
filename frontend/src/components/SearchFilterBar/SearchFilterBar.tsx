@@ -1,13 +1,22 @@
 import lupa from "../../assets/lupa.svg";
-import filtro_categoria from "../../assets/filtro-categoria.svg";
+import FilterCategories from "../modals/FilterCategories/FilterCategories";
 
 import "./SearchFilterBar.css";
 
 function SearchBar() {
+  const categories: string[] = [
+    "Trabalho",
+    "Estudos",
+    "Pessoal",
+    "Projetos",
+    "Favoritos",
+  ];
+
   return (
     <div className="search-filter-bar">
       <div className="search-bar">
         <img src={lupa} alt="" aria-hidden="true" />
+
         <input
           type="text"
           placeholder="Pesquisar páginas..."
@@ -15,9 +24,12 @@ function SearchBar() {
         />
       </div>
 
-      <button className="filtro-categoria">
-        <img src={filtro_categoria} alt="" aria-hidden="true" />
-      </button>
+      <FilterCategories
+        categories={categories}
+        onFilterChange={(selectedCategories: string[]) => {
+          console.log("Categorias selecionadas:", selectedCategories);
+        }}
+      />
     </div>
   );
 }
