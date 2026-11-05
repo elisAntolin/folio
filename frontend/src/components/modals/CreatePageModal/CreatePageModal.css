@@ -1,0 +1,189 @@
+.create-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+}
+
+.create-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: min(100% - 32px, 420px);
+  padding: 24px 20px 18px;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15);
+  z-index: 1001;
+  outline: none;
+}
+
+/* Cabeçalho */
+
+.create-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.create-title {
+  margin: 0;
+  color: #273449;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.create-close {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.create-description {
+  margin-bottom: 18px;
+  color: #718096;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Campos */
+
+.create-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.create-label {
+  color: #526176;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.create-input,
+.create-select {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  box-sizing: border-box;
+
+  border: 1px solid #dbe2ec;
+  border-radius: 7px;
+  background: #ffffff;
+
+  color: #475569;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.create-input::placeholder {
+  color: #a0aec0;
+}
+
+.create-input:focus,
+.create-select:focus {
+  border-color: #269dcc;
+  box-shadow: 0 0 0 2px rgba(38, 157, 204, 0.1);
+}
+
+/* Select */
+
+.create-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.create-select-content {
+  min-width: var(--radix-select-trigger-width);
+  padding: 4px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.12);
+  z-index: 1100;
+}
+
+.create-select-item {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 9px;
+
+  border-radius: 5px;
+  color: #475569;
+  font-size: 12px;
+
+  outline: none;
+  cursor: pointer;
+}
+
+.create-select-item[data-highlighted] {
+  background: #eff8ff;
+  color: #0284c7;
+}
+
+/* Rodapé */
+
+.create-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.create-cancel,
+.create-submit {
+  height: 34px;
+  padding: 0 15px;
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.create-cancel {
+  background: transparent;
+  color: #64748b;
+}
+
+.create-cancel:hover {
+  background: #f8fafc;
+}
+
+.create-submit {
+  background: #159dcc;
+  color: #ffffff;
+}
+
+.create-submit:hover:not(:disabled) {
+  background: #118bb7;
+}
+
+.create-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

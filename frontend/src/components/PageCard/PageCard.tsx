@@ -1,13 +1,17 @@
 import { Link } from "react-router";
+import { useState } from "react";
 
 import "./PageCard.css";
 
+import PageActionsMenu from "../modals/PageActionsMenu/PageActionsMenu";
+
 import capa from "../../assets/capa.jpg";
-import pontosVertical from "../../assets/pontos-vertical.svg";
 import relogio from "../../assets/relogio.svg";
 import estudo from "../../assets/categoria-estudo.svg";
 
 function PageCard() {
+  const [pageTitle, setPageTitle] = useState("🤖 Back-end");
+
   return (
     <div className="page-card">
       <div className="page-card-cover">
@@ -29,9 +33,12 @@ function PageCard() {
         <div className="page-card-title-bar">
           <h2>🤖 Back-end</h2>
 
-          <button className="page-card-menu-button" aria-label="Mais opções">
-            <img src={pontosVertical} alt="" />
-          </button>
+          <PageActionsMenu
+            currentTitle={pageTitle}
+            onEdit={(newTitle) => setPageTitle(newTitle)}
+            onShare={() => console.log("Compartilhar")}
+            onDelete={() => console.log("Excluir")}
+          />
         </div>
 
         <p>57m atrás</p>
