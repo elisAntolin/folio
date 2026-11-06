@@ -3,7 +3,11 @@ import FilterCategories from "../modals/FilterCategories/FilterCategories";
 
 import "./SearchFilterBar.css";
 
-function SearchFilterBar() {
+interface SearchFilterBarProps {
+  showFilter?: boolean;
+}
+
+function SearchFilterBar({ showFilter = true }: SearchFilterBarProps) {
   const categories: string[] = [
     "Trabalho",
     "Estudos",
@@ -24,12 +28,14 @@ function SearchFilterBar() {
         />
       </div>
 
-      <FilterCategories
-        categories={categories}
-        onFilterChange={(selectedCategories: string[]) => {
-          console.log("Categorias selecionadas:", selectedCategories);
-        }}
-      />
+      {showFilter && (
+        <FilterCategories
+          categories={categories}
+          onFilterChange={(selectedCategories: string[]) => {
+            console.log("Categorias selecionadas:", selectedCategories);
+          }}
+        />
+      )}
     </div>
   );
 }

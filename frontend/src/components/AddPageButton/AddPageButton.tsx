@@ -6,16 +6,20 @@ import CreatePageModal from "../modals/CreatePageModal/CreatePageModal";
 
 interface AddPageButtonProps {
   onCreate: (title: string, category: string) => void;
+  label?: string;
 }
 
-function AddPageButton({ onCreate }: AddPageButtonProps) {
+function AddPageButton({
+  onCreate,
+  label = "Nova Página",
+}: AddPageButtonProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   return (
     <>
       <button className="new-page" onClick={() => setIsCreateOpen(true)}>
         <img src={plusIcon} alt="" />
-        <span>Nova Página</span>
+        <span>{label}</span>
       </button>
 
       <CreatePageModal

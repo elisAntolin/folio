@@ -4,8 +4,14 @@ import "./SortFilter.css";
 
 import filterIcon from "../../../assets/filtro.svg";
 
-function SortFilter() {
-  const [sortBy, setSortBy] = useState("alphabetical");
+export type SortOption = "alphabetical" | "recent" | "creation";
+
+interface SortFilterProps {
+  onSortChange?: (sortBy: SortOption) => void;
+}
+
+function SortFilter({ onSortChange }: SortFilterProps) {
+  const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
 
   const options = [
     { value: "alphabetical", label: "A–Z" },
@@ -36,7 +42,22 @@ function SortFilter() {
             Classificar por
           </DropdownMenu.Label>
 
-          <DropdownMenu.RadioGroup value={sortBy} onValueChange={setSortBy}>
+          <DropdownMenu.RadioGroup
+            value={sortBy}
+            onValueChange={(value) => {
+              if (
+                value !== "alphabetical" &&
+                value !== "recent" &&
+                value !== "creation"
+              ) {
+                return;
+              }
+
+              const nextSortBy: SortOption = value;
+              setSortBy(nextSortBy);
+              onSortChange?.(nextSortBy);
+            }}
+          >
             {options.map((option) => (
               <DropdownMenu.RadioItem
                 key={option.value}
