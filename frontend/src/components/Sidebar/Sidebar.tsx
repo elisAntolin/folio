@@ -73,10 +73,16 @@ function Sidebar() {
     });
   }
 
-  function handleEditSubpage(id: string, newTitle: string) {
+  function handleEditSubpage(
+    id: string,
+    newTitle: string,
+    newCategory: string,
+  ) {
     setSubpages((currentSubpages) =>
       currentSubpages.map((subpage) =>
-        subpage.id === id ? { ...subpage, name: newTitle } : subpage,
+        subpage.id === id
+          ? { ...subpage, name: newTitle, category: newCategory }
+          : subpage,
       ),
     );
   }
@@ -121,9 +127,14 @@ function Sidebar() {
                     <PageActionsMenu
                       currentTitle={subpage.name}
                       publicLink={`/pages/${subpage.id}`}
-                      onEdit={(newTitle) =>
-                        handleEditSubpage(subpage.id, newTitle)
+                      onEdit={(newTitle, newCategory) =>
+                        handleEditSubpage(
+                          subpage.id,
+                          newTitle,
+                          newCategory,
+                        )
                       }
+                      currentCategory={subpage.category ?? "Desenvolvimento"}
                       onShare={(email, permission) =>
                         console.log(
                           "Compartilhar subpágina:",

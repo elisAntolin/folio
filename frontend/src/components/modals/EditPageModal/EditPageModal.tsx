@@ -3,21 +3,25 @@ import { Dialog } from "radix-ui";
 import "./EditPageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
 import editIcon from "../../../assets/editar-quadrado.svg";
+import CategorySelect from "../CategorySelect/CategorySelect";
 
 interface EditPageModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentTitle: string;
-  onSave: (newTitle: string) => void;
+  currentCategory: string;
+  onSave: (newTitle: string, newCategory: string) => void;
 }
 
 function EditPageModal({
   open,
   onOpenChange,
   currentTitle,
+  currentCategory,
   onSave,
 }: EditPageModalProps) {
   const [title, setTitle] = useState(currentTitle);
+  const [category, setCategory] = useState(currentCategory);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,7 +30,7 @@ function EditPageModal({
 
     if (!newTitle) return;
 
-    onSave(newTitle);
+    onSave(newTitle, category);
     onOpenChange(false);
   }
 
@@ -68,9 +72,15 @@ function EditPageModal({
               maxLength={60}
             />
 
-            <label htmlFor="page-title" className="edit-label">
-              Nova Categoria
-            </label>
+            <label className="edit-label">Nova Categoria</label>
+
+            <CategorySelect
+              value={category}
+              onChange={setCategory}
+              triggerClassName="edit-select"
+              contentClassName="edit-select-content"
+              itemClassName="edit-select-item"
+            />
 
             <div className="edit-footer">
               <Dialog.Close asChild>

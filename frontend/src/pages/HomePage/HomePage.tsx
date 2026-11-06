@@ -33,10 +33,16 @@ function HomePage() {
     setPages((currentPages) => [...currentPages, newPage]);
   }
 
-  function handleEditPage(id: string, newTitle: string) {
+  function handleEditPage(
+    id: string,
+    newTitle: string,
+    newCategory: string,
+  ) {
     setPages((currentPages) =>
       currentPages.map((page) =>
-        page.id === id ? { ...page, title: newTitle } : page,
+        page.id === id
+          ? { ...page, title: newTitle, category: newCategory }
+          : page,
       ),
     );
   }

@@ -16,8 +16,9 @@ import verticalDotsIcon from "../../../assets/pontos-vertical.svg";
 
 interface PageActionsMenuProps {
   currentTitle: string;
+  currentCategory: string;
   publicLink: string;
-  onEdit: (newTitle: string) => void;
+  onEdit: (newTitle: string, newCategory: string) => void;
   onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
@@ -25,6 +26,7 @@ interface PageActionsMenuProps {
 
 function PageActionsMenu({
   currentTitle,
+  currentCategory,
   publicLink,
   onEdit,
   onShare,
@@ -100,9 +102,11 @@ function PageActionsMenu({
       </DropdownMenu.Root>
 
       <EditPageModal
+        key={`${currentTitle}-${currentCategory}-${isEditOpen}`}
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
         currentTitle={currentTitle}
+        currentCategory={currentCategory}
         onSave={onEdit}
       />
 

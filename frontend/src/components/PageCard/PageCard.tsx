@@ -12,7 +12,7 @@ interface PageCardProps {
   id: string;
   title: string;
   category: string;
-  onEdit: (newTitle: string) => void;
+  onEdit: (newTitle: string, newCategory: string) => void;
   onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
@@ -51,6 +51,7 @@ function PageCard({
 
           <PageActionsMenu
             currentTitle={title}
+            currentCategory={category}
             publicLink={`/pages/${id}`}
             onEdit={onEdit}
             onShare={onShare}

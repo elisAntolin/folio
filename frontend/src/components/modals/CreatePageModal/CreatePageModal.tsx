@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Dialog, Select } from "radix-ui";
+import { Dialog } from "radix-ui";
 import "./CreatePageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
-import chevronDownIcon from "../../../assets/chevron-baixo.svg";
 import pageIcon from "../../../assets/pagina.svg";
+import CategorySelect from "../CategorySelect/CategorySelect";
 
 interface CreatePageModalProps {
   open: boolean;
@@ -87,55 +87,13 @@ function CreatePageModal({
             <div className="create-field">
               <label className="create-label">Categoria da Página</label>
 
-              <Select.Root value={category} onValueChange={setCategory}>
-                <Select.Trigger
-                  className="create-select"
-                  aria-label="Categoria da Página"
-                >
-                  <Select.Value />
-                  <Select.Icon>
-                    <img src={chevronDownIcon} alt="" aria-hidden="true" />
-                  </Select.Icon>
-                </Select.Trigger>
-
-                <Select.Portal>
-                  <Select.Content
-                    className="create-select-content"
-                    position="popper"
-                    sideOffset={5}
-                  >
-                    <Select.Viewport>
-                      <Select.Item
-                        className="create-select-item"
-                        value="Desenvolvimento"
-                      >
-                        <Select.ItemText>Desenvolvimento</Select.ItemText>
-                      </Select.Item>
-
-                      <Select.Item
-                        className="create-select-item"
-                        value="Estudos"
-                      >
-                        <Select.ItemText>Estudos</Select.ItemText>
-                      </Select.Item>
-
-                      <Select.Item
-                        className="create-select-item"
-                        value="Trabalho"
-                      >
-                        <Select.ItemText>Trabalho</Select.ItemText>
-                      </Select.Item>
-
-                      <Select.Item
-                        className="create-select-item"
-                        value="Pessoal"
-                      >
-                        <Select.ItemText>Pessoal</Select.ItemText>
-                      </Select.Item>
-                    </Select.Viewport>
-                  </Select.Content>
-                </Select.Portal>
-              </Select.Root>
+              <CategorySelect
+                value={category}
+                onChange={setCategory}
+                triggerClassName="create-select"
+                contentClassName="create-select-content"
+                itemClassName="create-select-item"
+              />
             </div>
 
             <div className="create-footer">
