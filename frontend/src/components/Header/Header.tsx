@@ -1,9 +1,10 @@
-import Avatar from "../Avatar/Avatar";
+// import Avatar from "../Avatar/Avatar";
 import "./Header.css";
 import logo from "/folio.svg";
 // import sino from "../../assets/sino.svg";
 
 import Notifications from "../modals/NotificationPageModal/NotificationPageModal";
+import UserMenu from "../modals/UserMenu/UserMenu";
 
 function Header() {
   const name = "Elis Cardoso";
@@ -22,7 +23,13 @@ function Header() {
 
         <button className="header-user">eliscardoso@gmail.com</button>
 
-        <Avatar name={name} photoUrl={photoUrl} />
+        {/* <Avatar name={name} photoUrl={photoUrl} /> */}
+        <UserMenu
+          name={name}
+          photoUrl={photoUrl}
+          onSettingsClick={() => console.log("Configurações")}
+          onLogout={() => console.log("Sair")}
+        />
       </div>
     </header>
   );

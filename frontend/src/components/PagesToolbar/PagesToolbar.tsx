@@ -1,8 +1,9 @@
 import "./PagesToolbar.css";
 
 import AddPageButton from "../AddPageButton/AddPageButton";
+import SortFilter from "../modals/SortFilter/SortFilter";
 
-import filtro from "../../assets/filtro.svg";
+// import filtro from "../../assets/filtro.svg";
 import favorito from "../../assets/favorito.svg";
 import grid from "../../assets/grade.svg";
 import list from "../../assets/lista.svg";
@@ -22,9 +23,10 @@ function PagesToolbar({ mode, changeMode }: PagesToolbarProps) {
 
         <span className="header-divider">|</span>
 
-        <button>
+        {/* <button>
           <img src={filtro} alt="Filtro" />
-        </button>
+        </button> */}
+        <SortFilter></SortFilter>
         <button>
           <img src={favorito} alt="Favoritos" />
         </button>
