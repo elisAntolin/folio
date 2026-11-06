@@ -3,15 +3,15 @@ import "./Sidebar.css";
 
 import homeIcon from "../../assets/casa.svg";
 import pageIcon from "../../assets/pagina.svg";
+import plusIcon from "../../assets/mais.svg";
 
 import SearchFilterBar from "../../components/SearchFilterBar/SearchFilterBar";
-import AddPageButton from "../AddPageButton/AddPageButton";
 import PageActionsMenu from "../modals/PageActionsMenu/PageActionsMenu";
 import SortFilter, {
   type SortOption,
 } from "../modals/SortFilter/SortFilter";
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const page = {
   id: "1",
@@ -43,6 +43,7 @@ const initialSubpages: Subpage[] = [
 ];
 
 function Sidebar() {
+  const navigate = useNavigate();
   const [subpages, setSubpages] = useState(initialSubpages);
   const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
 
@@ -58,17 +59,18 @@ function Sidebar() {
     return firstSubpage.createdAt - secondSubpage.createdAt;
   });
 
-  function handleCreateSubpage(title: string, category: string) {
-    setSubpages((currentSubpages) => [
-      ...currentSubpages,
-      {
-        id: String(currentSubpages.length + 2),
-        name: title,
-        icon: pageIcon,
-        createdAt: Date.now(),
-        category,
-      },
-    ]);
+  function handleCreateSubpage() {
+    const newSubpage = {
+      id: String(Date.now()),
+      name: "Nova subpágina",
+      icon: pageIcon,
+      createdAt: Date.now(),
+    };
+
+    setSubpages((currentSubpages) => [...currentSubpages, newSubpage]);
+    navigate(`/pages/${newSubpage.id}`, {
+      state: { isNewPage: true },
+    });
   }
 
   function handleEditSubpage(id: string, newTitle: string) {
@@ -147,10 +149,14 @@ function Sidebar() {
         </nav>
 
         <div className="sidebar-create-button">
-          <AddPageButton
-            label="Criar nova página"
-            onCreate={handleCreateSubpage}
-          />
+          <button
+            type="button"
+            className="new-page"
+            onClick={handleCreateSubpage}
+          >
+            <img src={plusIcon} alt="" />
+            <span>Criar subpágina</span>
+          </button>
         </div>
       </section>
     </aside>

@@ -1,0 +1,235 @@
+.cover-gallery-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+}
+
+.cover-gallery-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 620px;
+  max-width: var(--modal-max-width);
+  max-height: calc(100vh - 32px);
+  padding: var(--modal-padding);
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--modal-radius);
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15);
+  z-index: 1001;
+  outline: none;
+}
+
+.cover-gallery-header,
+.cover-gallery-heading,
+.cover-gallery-footer {
+  display: flex;
+  align-items: center;
+}
+
+.cover-gallery-header,
+.cover-gallery-footer {
+  justify-content: space-between;
+}
+
+.cover-gallery-heading {
+  gap: var(--space-2);
+}
+
+.cover-gallery-heading > img {
+  width: 20px;
+  height: 20px;
+}
+
+.cover-gallery-title {
+  margin: 0;
+  color: #273449;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cover-gallery-close {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cover-gallery-close img {
+  width: 16px;
+  height: 16px;
+}
+
+.cover-gallery-tabs {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-5);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cover-gallery-tab {
+  padding: 0 var(--space-2) var(--space-2);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #64748b;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cover-gallery-tab.active {
+  border-bottom-color: #159dcc;
+  color: #159dcc;
+  font-weight: 600;
+}
+
+.cover-gallery-body {
+  min-height: 190px;
+  padding: var(--space-5) 0;
+}
+
+.cover-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.cover-gallery-option {
+  height: 110px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background: #f1f5f9;
+  cursor: pointer;
+}
+
+.cover-gallery-option.selected,
+.cover-gallery-option:hover {
+  border-color: #159dcc;
+}
+
+.cover-gallery-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover-gallery-upload,
+.cover-gallery-url {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cover-gallery-file-input {
+  display: none;
+}
+
+.cover-gallery-upload-button,
+.cover-gallery-apply {
+  align-self: flex-start;
+  height: var(--field-height);
+  padding: 0 var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  background: #159dcc;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cover-gallery-upload p,
+.cover-gallery-url p {
+  margin: 0;
+  color: #718096;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.cover-gallery-url label {
+  color: #526176;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cover-gallery-url input {
+  width: 100%;
+  height: var(--field-height);
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+  border: 1px solid #dbe2ec;
+  border-radius: var(--radius-md);
+  color: #475569;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.cover-gallery-url input:focus {
+  border-color: #269dcc;
+  box-shadow: 0 0 0 2px rgba(38, 157, 204, 0.1);
+}
+
+.cover-gallery-error {
+  margin: var(--space-3) 0 0;
+  color: #dc5252;
+  font-size: 13px;
+}
+
+.cover-gallery-footer {
+  padding-top: var(--space-4);
+  border-top: 1px solid #e5e7eb;
+}
+
+.cover-gallery-remove,
+.cover-gallery-done {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--field-height);
+  padding: 0 var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cover-gallery-remove {
+  color: #dc5252;
+}
+
+.cover-gallery-remove img {
+  width: 16px;
+  height: 16px;
+}
+
+.cover-gallery-done {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+@media (max-width: 640px) {
+  .cover-gallery-modal {
+    padding: var(--space-4);
+  }
+
+  .cover-gallery-tabs {
+    overflow-x: auto;
+  }
+
+  .cover-gallery-tab {
+    flex-shrink: 0;
+  }
+}
