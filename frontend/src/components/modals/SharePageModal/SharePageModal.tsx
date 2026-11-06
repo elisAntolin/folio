@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { Dialog, Select } from "radix-ui";
 import "./SharePageModal.css";
+import fechar from "../../../assets/fechar.svg";
+import chevronBaixo from "../../../assets/chevron-baixo.svg";
 
 interface SharePageModalProps {
   open: boolean;
@@ -69,7 +71,7 @@ function SharePageModal({
             </div>
 
             <Dialog.Close className="share-close" aria-label="Fechar">
-              ×
+              <img src={fechar} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>
 
@@ -109,7 +111,9 @@ function SharePageModal({
               >
                 <Select.Trigger className="share-select">
                   <Select.Value />
-                  <Select.Icon>⌄</Select.Icon>
+                  <Select.Icon>
+                    <img src={chevronBaixo} alt="" aria-hidden="true" />
+                  </Select.Icon>
                 </Select.Trigger>
 
                 <Select.Portal>
@@ -177,7 +181,9 @@ function SharePageModal({
               >
                 <Select.Trigger className="share-select">
                   <Select.Value />
-                  <Select.Icon>⌄</Select.Icon>
+                  <Select.Icon>
+                    <img src={chevronBaixo} alt="" aria-hidden="true" />
+                  </Select.Icon>
                 </Select.Trigger>
 
                 <Select.Portal>

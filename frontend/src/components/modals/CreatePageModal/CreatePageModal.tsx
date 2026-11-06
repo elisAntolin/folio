@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Dialog, Select } from "radix-ui";
 import "./CreatePageModal.css";
+import fechar from "../../../assets/fechar.svg";
+import chevronBaixo from "../../../assets/chevron-baixo.svg";
 
 interface CreatePageModalProps {
   open: boolean;
@@ -51,7 +53,7 @@ function CreatePageModal({
             </Dialog.Title>
 
             <Dialog.Close className="create-close" aria-label="Fechar">
-              ×
+              <img src={fechar} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>
 
@@ -87,7 +89,9 @@ function CreatePageModal({
                   aria-label="Categoria da Página"
                 >
                   <Select.Value />
-                  <Select.Icon>⌄</Select.Icon>
+                  <Select.Icon>
+                    <img src={chevronBaixo} alt="" aria-hidden="true" />
+                  </Select.Icon>
                 </Select.Trigger>
 
                 <Select.Portal>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog } from "radix-ui";
 import "./EditPageModal.css";
+import fechar from "../../../assets/fechar.svg";
 
 interface EditPageModalProps {
   open: boolean;
@@ -37,7 +38,9 @@ function EditPageModal({
           <div className="edit-header">
             <Dialog.Title className="edit-title">Editar Página</Dialog.Title>
 
-            <Dialog.Close className="edit-close">×</Dialog.Close>
+            <Dialog.Close className="edit-close" aria-label="Fechar">
+              <img src={fechar} alt="" aria-hidden="true" />
+            </Dialog.Close>
           </div>
 
           <Dialog.Description className="edit-description">
