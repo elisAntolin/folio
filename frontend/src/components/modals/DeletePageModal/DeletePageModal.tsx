@@ -1,6 +1,7 @@
 import { Dialog } from "radix-ui";
 import "./DeletePageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
+import trashIcon from "../../../assets/lixeira.svg";
 
 interface DeletePageModalProps {
   open: boolean;
@@ -27,7 +28,12 @@ function DeletePageModal({
 
         <Dialog.Content className="edit-modal">
           <div className="edit-header">
-            <Dialog.Title className="edit-title">Excluir Página</Dialog.Title>
+            <div className="edit-heading">
+              <img src={trashIcon} alt="" aria-hidden="true" />
+              <Dialog.Title className="edit-title">
+                Excluir Página
+              </Dialog.Title>
+            </div>
 
             <Dialog.Close className="edit-close" aria-label="Fechar">
               <img src={closeIcon} alt="" aria-hidden="true" />

@@ -4,6 +4,7 @@ import { Dialog, Select } from "radix-ui";
 import "./SharePageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
 import chevronDownIcon from "../../../assets/chevron-baixo.svg";
+import shareIcon from "../../../assets/compartilhar-seta.svg";
 
 interface SharePageModalProps {
   open: boolean;
@@ -60,10 +61,13 @@ function SharePageModal({
         <Dialog.Content className="share-modal">
 
           <div className="share-header">
-            <div>
-              <Dialog.Title className="share-title">
-                Compartilhar Página
-              </Dialog.Title>
+            <div className="share-heading">
+              <div className="share-title-row">
+                <img src={shareIcon} alt="" aria-hidden="true" />
+                <Dialog.Title className="share-title">
+                  Compartilhar Página
+                </Dialog.Title>
+              </div>
 
               <Dialog.Description className="share-description">
                 Defina as permissões de acesso para "{pageTitle}".

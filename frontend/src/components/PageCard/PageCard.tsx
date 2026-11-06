@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { useState } from "react";
 
 import "./PageCard.css";
 
@@ -9,18 +8,35 @@ import capa from "../../assets/capa.jpg";
 import clockIcon from "../../assets/relogio.svg";
 import studyIcon from "../../assets/categoria-estudo.svg";
 
-function PageCard() {
-  const [pageTitle, setPageTitle] = useState("🤖 Back-end");
+interface PageCardProps {
+  id: string;
+  title: string;
+  category: string;
+  onEdit: (newTitle: string) => void;
+  onShare: (email: string, permission: string) => void;
+  onDelete: () => void;
+  onLinkPermissionChange: (permission: string) => void;
+}
+
+function PageCard({
+  id,
+  title,
+  category,
+  onEdit,
+  onShare,
+  onDelete,
+  onLinkPermissionChange,
+}: PageCardProps) {
 
   return (
     <div className="page-card">
       <div className="page-card-cover">
-        <Link to="/pages/1" className="page-card-cover-link">
+        <Link to={`/pages/${id}`} className="page-card-cover-link">
           <img src={capa} alt="Capa da página" />
         </Link>
         <span className="page-card-badge page-card-category">
           <img src={studyIcon} alt="Categoria" />
-          Estudos
+          {category}
         </span>
 
         <span className="page-card-badge page-card-recent">
@@ -31,13 +47,15 @@ function PageCard() {
 
       <div className="page-card-body">
         <div className="page-card-title-bar">
-          <h2>🤖 Back-end</h2>
+          <h2>{title}</h2>
 
           <PageActionsMenu
-            currentTitle={pageTitle}
-            onEdit={(newTitle) => setPageTitle(newTitle)}
-            onShare={() => console.log("Compartilhar")}
-            onDelete={() => console.log("Excluir")}
+            currentTitle={title}
+            publicLink={`/pages/${id}`}
+            onEdit={onEdit}
+            onShare={onShare}
+            onDelete={onDelete}
+            onLinkPermissionChange={onLinkPermissionChange}
           />
         </div>
 

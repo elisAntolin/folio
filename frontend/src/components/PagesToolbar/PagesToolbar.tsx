@@ -10,15 +10,16 @@ import listIcon from "../../assets/lista.svg";
 interface PagesToolbarProps {
   mode: "grid" | "list";
   changeMode: (mode: "grid" | "list") => void;
+  onCreate: (title: string, category: string) => void;
 }
 
-function PagesToolbar({ mode, changeMode }: PagesToolbarProps) {
+function PagesToolbar({ mode, changeMode, onCreate }: PagesToolbarProps) {
   return (
     <div className="pages-tool-bar">
       <h1>Suas Páginas</h1>
 
       <div className="pages-toolbar-actions">
-        <AddPageButton></AddPageButton>
+        <AddPageButton onCreate={onCreate} />
 
         <span className="header-divider">|</span>
 

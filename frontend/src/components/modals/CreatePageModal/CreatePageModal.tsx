@@ -3,6 +3,7 @@ import { Dialog, Select } from "radix-ui";
 import "./CreatePageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
 import chevronDownIcon from "../../../assets/chevron-baixo.svg";
+import pageIcon from "../../../assets/pagina.svg";
 
 interface CreatePageModalProps {
   open: boolean;
@@ -48,9 +49,12 @@ function CreatePageModal({
 
         <Dialog.Content className="create-modal">
           <div className="create-header">
-            <Dialog.Title className="create-title">
-              Criar Nova Página
-            </Dialog.Title>
+            <div className="create-heading">
+              <img src={pageIcon} alt="" aria-hidden="true" />
+              <Dialog.Title className="create-title">
+                Criar Nova Página
+              </Dialog.Title>
+            </div>
 
             <Dialog.Close className="create-close" aria-label="Fechar">
               <img src={closeIcon} alt="" aria-hidden="true" />

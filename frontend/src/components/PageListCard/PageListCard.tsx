@@ -1,22 +1,48 @@
+import "./PageListCard.css";
 import PageCard from "../PageCard/PageCard";
 
-import "./PageListCard.css";
-
-interface PageListCardProps {
-  name: string;
+export interface HomePageItem {
+  id: string;
+  title: string;
   category: string;
-  time: string;
+  sharedEmails: string[];
+  sharedPermission: string;
+  linkPermission: string;
 }
 
-function PageListCard({ name, category, time }: PageListCardProps) {
+interface PageListCardProps {
+  pages: HomePageItem[];
+  onEdit: (id: string, newTitle: string) => void;
+  onShare: (id: string, email: string, permission: string) => void;
+  onDelete: (id: string) => void;
+  onLinkPermissionChange: (id: string, permission: string) => void;
+}
+
+function PageListCard({
+  pages,
+  onEdit,
+  onShare,
+  onDelete,
+  onLinkPermissionChange,
+}: PageListCardProps) {
   return (
     <div className="page-list">
-      <PageCard />
-      <PageCard />
-      <PageCard />
-      <PageCard />
-      <PageCard />
-      <PageCard />
+      {pages.map((page) => (
+        <PageCard
+          key={page.id}
+          id={page.id}
+          title={page.title}
+          category={page.category}
+          onEdit={(newTitle) => onEdit(page.id, newTitle)}
+          onShare={(email, permission) =>
+            onShare(page.id, email, permission)
+          }
+          onDelete={() => onDelete(page.id)}
+          onLinkPermissionChange={(permission) =>
+            onLinkPermissionChange(page.id, permission)
+          }
+        />
+      ))}
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { useState } from "react";
 
 import "./PageItem.css";
 
@@ -9,24 +8,41 @@ import studyIcon from "../../assets/categoria-estudo.svg";
 
 import PageActionsMenu from "../modals/PageActionsMenu/PageActionsMenu";
 
-function PageItem() {
-  const [pageTitle, setPageTitle] = useState("🤖 Back-end");
+interface PageItemProps {
+  id: string;
+  title: string;
+  category: string;
+  onEdit: (newTitle: string) => void;
+  onShare: (email: string, permission: string) => void;
+  onDelete: () => void;
+  onLinkPermissionChange: (permission: string) => void;
+}
+
+function PageItem({
+  id,
+  title,
+  category,
+  onEdit,
+  onShare,
+  onDelete,
+  onLinkPermissionChange,
+}: PageItemProps) {
 
   return (
     <div className="page-item">
       <div className="page-item-cover">
-        <Link to="/pages/1" className="page-item-cover-link">
+        <Link to={`/pages/${id}`} className="page-item-cover-link">
           <img src={capa} alt="Capa da página" />
         </Link>
       </div>
 
       <div className="page-item-body">
         <div className="page-item-title-bar">
-          <h2>{pageTitle}</h2>
+          <h2>{title}</h2>
 
           <span className="page-item-badge page-item-category">
             <img src={studyIcon} alt="" />
-            Estudos
+            {category}
           </span>
 
           <span className="page-item-badge page-item-recent">
@@ -35,10 +51,12 @@ function PageItem() {
           </span>
 
           <PageActionsMenu
-            currentTitle={pageTitle}
-            onEdit={(newTitle) => setPageTitle(newTitle)}
-            onShare={() => console.log("Compartilhar")}
-            onDelete={() => console.log("Excluir")}
+            currentTitle={title}
+            publicLink={`/pages/${id}`}
+            onEdit={onEdit}
+            onShare={onShare}
+            onDelete={onDelete}
+            onLinkPermissionChange={onLinkPermissionChange}
           />
         </div>
 
