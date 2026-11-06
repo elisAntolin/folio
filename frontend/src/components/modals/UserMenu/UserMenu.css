@@ -1,5 +1,3 @@
-/* BOTÃO DO USUÁRIO */
-
 .user-menu-trigger {
   display: flex;
   align-items: center;
@@ -12,8 +10,6 @@
 
   cursor: pointer;
 }
-
-/* CONTAINER DO MENU */
 
 .user-menu-content {
   min-width: 180px;
@@ -29,8 +25,6 @@
 
   animation: user-menu-appear 0.15s ease-out;
 }
-
-/* OPÇÕES */
 
 .user-menu-item {
   display: flex;
@@ -61,16 +55,12 @@
   object-fit: contain;
 }
 
-/* DIVISOR */
-
 .user-menu-separator {
   height: 1px;
   margin: var(--space-1) 0;
 
   background: #e4e4e7;
 }
-
-/* SAIR */
 
 .user-menu-logout {
   color: #e05270;
@@ -96,8 +86,6 @@
 
   cursor: pointer;
 }
-
-/* ANIMAÇÃO */
 
 @keyframes user-menu-appear {
   from {

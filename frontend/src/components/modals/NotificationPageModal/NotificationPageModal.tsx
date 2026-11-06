@@ -1,19 +1,19 @@
 import { Popover } from "radix-ui";
 import "./NotificationPageModal.css";
-import sino from "../../../assets/sino.svg";
+import bellIcon from "../../../assets/sino.svg";
 
-interface Notification {
+interface NotificationItem {
   id: string;
   code: string;
   message: string;
   date: string;
 }
 
-interface NotificationsProps {
-  notifications?: Notification[];
+interface NotificationPageModalProps {
+  notifications?: NotificationItem[];
 }
 
-const defaultNotifications: Notification[] = [
+const defaultNotifications: NotificationItem[] = [
   {
     id: "1",
     code: "WA-0023",
@@ -46,9 +46,9 @@ const defaultNotifications: Notification[] = [
   },
 ];
 
-function Notifications({
+function NotificationPageModal({
   notifications = defaultNotifications,
-}: NotificationsProps) {
+}: NotificationPageModalProps) {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
@@ -57,7 +57,7 @@ function Notifications({
           className="notification-trigger"
           aria-label="Abrir notificações"
         >
-          <img src={sino} alt="" />
+          <img src={bellIcon} alt="" />
 
           {notifications.length > 0 && (
             <span className="notification-badge">{notifications.length}</span>
@@ -133,4 +133,4 @@ function Notifications({
   );
 }
 
-export default Notifications;
+export default NotificationPageModal;

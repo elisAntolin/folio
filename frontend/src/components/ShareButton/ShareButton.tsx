@@ -3,14 +3,14 @@ import { useState } from "react";
 import "./ShareButton.css";
 
 import SharePageModal from "../modals/SharePageModal/SharePageModal";
-import compartilhar from "../../assets/compartilhar-seta.svg";
+import shareIcon from "../../assets/compartilhar-seta.svg";
 
-type ShareButtonProps = {
+interface ShareButtonProps {
   pageTitle: string;
   publicLink: string;
   onInvite: (email: string) => void;
   onLinkPermissionChange: (permission: string) => void;
-};
+}
 
 function ShareButton({
   pageTitle,
@@ -23,7 +23,7 @@ function ShareButton({
   return (
     <>
       <button className="share" onClick={() => setIsShareOpen(true)}>
-        <img src={compartilhar} alt="" />
+        <img src={shareIcon} alt="" />
         <span>Compartilhar</span>
       </button>
 

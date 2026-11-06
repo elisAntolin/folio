@@ -4,12 +4,12 @@ import { useState } from "react";
 import "./PageItem.css";
 
 import capa from "../../assets/capa.jpg";
-import relogio from "../../assets/relogio.svg";
-import estudo from "../../assets/categoria-estudo.svg";
+import clockIcon from "../../assets/relogio.svg";
+import studyIcon from "../../assets/categoria-estudo.svg";
 
 import PageActionsMenu from "../modals/PageActionsMenu/PageActionsMenu";
 
-function PageList() {
+function PageItem() {
   const [pageTitle, setPageTitle] = useState("🤖 Back-end");
 
   return (
@@ -25,12 +25,12 @@ function PageList() {
           <h2>{pageTitle}</h2>
 
           <span className="page-item-badge page-item-category">
-            <img src={estudo} alt="" />
+            <img src={studyIcon} alt="" />
             Estudos
           </span>
 
           <span className="page-item-badge page-item-recent">
-            <img src={relogio} alt="" />
+            <img src={clockIcon} alt="" />
             Recente
           </span>
 
@@ -50,4 +50,4 @@ function PageList() {
   );
 }
 
-export default PageList;
+export default PageItem;

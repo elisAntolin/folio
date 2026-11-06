@@ -26,7 +26,7 @@
   outline: none;
 }
 
-/* Cabeçalho */
+
 
 .create-header {
   display: flex;
@@ -67,7 +67,7 @@
   line-height: 20px;
 }
 
-/* Campos */
+
 
 .create-field {
   display: flex;
@@ -109,7 +109,7 @@
   box-shadow: 0 0 0 2px rgba(38, 157, 204, 0.1);
 }
 
-/* Select */
+
 
 .create-select {
   display: flex;
@@ -149,7 +149,7 @@
   color: #0284c7;
 }
 
-/* Rodapé */
+
 
 .create-footer {
   display: flex;

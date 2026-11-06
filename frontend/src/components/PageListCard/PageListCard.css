@@ -1,6 +1,6 @@
 .page-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /*ver o ajuste dinamico*/
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
   margin-top: var(--space-6);
 }

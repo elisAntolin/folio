@@ -2,13 +2,13 @@ import PageCard from "../PageCard/PageCard";
 
 import "./PageListCard.css";
 
-type CardProps = {
+interface PageListCardProps {
   name: string;
   category: string;
   time: string;
-};
+}
 
-function PageList({ name, category, time }: CardProps) {
+function PageListCard({ name, category, time }: PageListCardProps) {
   return (
     <div className="page-list">
       <PageCard />
@@ -21,4 +21,4 @@ function PageList({ name, category, time }: CardProps) {
   );
 }
 
-export default PageList;
+export default PageListCard;

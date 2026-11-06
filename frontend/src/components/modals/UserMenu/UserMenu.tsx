@@ -1,8 +1,8 @@
 import { DropdownMenu } from "radix-ui";
 import "./UserMenu.css";
 
-import configuracoes from "../../../assets/configuracoes.svg";
-import sair from "../../../assets/sair.svg";
+import settingsIcon from "../../../assets/configuracoes.svg";
+import logoutIcon from "../../../assets/sair.svg";
 
 import Avatar from "../../Avatar/Avatar";
 
@@ -13,7 +13,7 @@ interface UserMenuProps {
   onLogout?: () => void;
 }
 
-export default function UserMenu({
+function UserMenu({
   name,
   photoUrl,
   onSettingsClick,
@@ -39,7 +39,7 @@ export default function UserMenu({
             className="user-menu-item"
             onSelect={onSettingsClick}
           >
-            <img src={configuracoes} alt="" aria-hidden="true" />
+            <img src={settingsIcon} alt="" aria-hidden="true" />
             <span>Configurações</span>
           </DropdownMenu.Item>
 
@@ -49,7 +49,7 @@ export default function UserMenu({
             className="user-menu-item user-menu-logout"
             onSelect={onLogout}
           >
-            <img src={sair} alt="" aria-hidden="true" />
+            <img src={logoutIcon} alt="" aria-hidden="true" />
             <span>Sair</span>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
@@ -57,3 +57,5 @@ export default function UserMenu({
     </DropdownMenu.Root>
   );
 }
+
+export default UserMenu;

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import Header from "../../components/Header/Header";
-import SearchBar from "../../components/SearchFilterBar/SearchFilterBar";
+import SearchFilterBar from "../../components/SearchFilterBar/SearchFilterBar";
 import PagesToolbar from "../../components/PagesToolbar/PagesToolbar";
 import PageListCard from "../../components/PageListCard/PageListCard";
 import PageListItem from "../../components/PageListItem/PageListItem";
 
-function App() {
+function HomePage() {
   const [mode, setMode] = useState<"grid" | "list">("grid");
 
   return (
@@ -13,7 +13,7 @@ function App() {
       <Header></Header>
       <main>
         <section className="search-section">
-          <SearchBar />
+          <SearchFilterBar />
         </section>
 
         <section className="pages-section">
@@ -25,4 +25,4 @@ function App() {
   );
 }
 
-export default App;
+export default HomePage;

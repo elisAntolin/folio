@@ -7,12 +7,12 @@ import EditPageModal from "../EditPageModal/EditPageModal";
 import DeletePageModal from "../DeletePageModal/DeletePageModal";
 import SharePageModal from "../SharePageModal/SharePageModal";
 
-import lixeira from "../../../assets/lixeira.svg";
-import estrela from "../../../assets/estrela.svg";
-import estrela_preenchida from "../../../assets/estrela-preenchida.svg";
-import editar from "../../../assets/editar-quadrado.svg";
-import compartilhar from "../../../assets/compartilhar-seta.svg";
-import pontosVertical from "../../../assets/pontos-vertical.svg";
+import trashIcon from "../../../assets/lixeira.svg";
+import starIcon from "../../../assets/estrela.svg";
+import filledStarIcon from "../../../assets/estrela-preenchida.svg";
+import editIcon from "../../../assets/editar-quadrado.svg";
+import shareIcon from "../../../assets/compartilhar-seta.svg";
+import verticalDotsIcon from "../../../assets/pontos-vertical.svg";
 
 interface PageActionsMenuProps {
   currentTitle: string;
@@ -49,7 +49,7 @@ function PageActionsMenu({
             className="page-actions-trigger"
             aria-label="Opções da página"
           >
-            <img src={pontosVertical} alt="" />
+            <img src={verticalDotsIcon} alt="" />
           </button>
         </DropdownMenu.Trigger>
 
@@ -63,7 +63,10 @@ function PageActionsMenu({
               className="page-actions-item"
               onSelect={handleFavorite}
             >
-              <img src={isFavorite ? estrela_preenchida : estrela} alt="" />
+              <img
+                src={isFavorite ? filledStarIcon : starIcon}
+                alt=""
+              />
               <span>{isFavorite ? "Remover dos favoritos" : "Favoritar"}</span>
             </DropdownMenu.Item>
 
@@ -71,7 +74,7 @@ function PageActionsMenu({
               className="page-actions-item"
               onSelect={() => setIsEditOpen(true)}
             >
-              <img src={editar} alt="" />
+              <img src={editIcon} alt="" />
               <span>Editar</span>
             </DropdownMenu.Item>
 
@@ -79,7 +82,7 @@ function PageActionsMenu({
               className="page-actions-item"
               onSelect={() => setIsShareOpen(true)}
             >
-              <img src={compartilhar} alt="" />
+              <img src={shareIcon} alt="" />
               <span>Compartilhar</span>
             </DropdownMenu.Item>
 
@@ -89,7 +92,7 @@ function PageActionsMenu({
               className="page-actions-item delete"
               onSelect={() => setIsDeleteOpen(true)}
             >
-              <img src={lixeira} alt="" />
+              <img src={trashIcon} alt="" />
               <span>Excluir</span>
             </DropdownMenu.Item>
           </DropdownMenu.Content>

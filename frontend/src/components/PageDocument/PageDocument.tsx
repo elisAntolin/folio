@@ -1,7 +1,7 @@
 import "./PageDocument.css";
 
 import capa from "../../assets/capa.jpg";
-import editar_imagem from "../../assets/editar-imagem.svg";
+import editImageIcon from "../../assets/editar-imagem.svg";
 
 function PageDocument() {
   return (
@@ -13,7 +13,7 @@ function PageDocument() {
           className="page-document-edit-image"
           title="Alterar imagem da capa"
         >
-          <img src={editar_imagem} alt="" />
+          <img src={editImageIcon} alt="" />
         </button>
       </div>
 

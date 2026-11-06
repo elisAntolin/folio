@@ -1,10 +1,10 @@
 import "./Avatar.css";
 
-type AvatarProps = {
+interface AvatarProps {
   name: string;
   photoUrl?: string;
   size?: number;
-};
+}
 
 function Avatar({ name, photoUrl }: AvatarProps) {
   const initial = name?.trim().charAt(0).toUpperCase() || "?";

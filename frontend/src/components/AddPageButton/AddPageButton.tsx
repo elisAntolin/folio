@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./AddPageButton.css";
 
-import mais from "../../assets/mais.svg";
+import plusIcon from "../../assets/mais.svg";
 import CreatePageModal from "../modals/CreatePageModal/CreatePageModal";
 
 interface AddPageButtonProps {
@@ -14,7 +14,7 @@ function AddPageButton({ onCreate }: AddPageButtonProps) {
   return (
     <>
       <button className="new-page" onClick={() => setIsCreateOpen(true)}>
-        <img src={mais} alt="" />
+        <img src={plusIcon} alt="" />
         <span>Nova Página</span>
       </button>
 

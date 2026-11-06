@@ -87,6 +87,15 @@
 .sort-checkbox svg {
   width: 12px;
   height: 12px;
+  display: block;
+}
+
+.sort-checkbox [data-radix-menu-item-indicator] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .sort-item[data-state="checked"] .sort-checkbox {

@@ -1,10 +1,10 @@
 import "./Sidebar.css";
 
-import casa from "../../assets/casa.svg";
-import pagina from "../../assets/pagina.svg";
-import pontosVertical from "../../assets/pontos-vertical.svg";
+import homeIcon from "../../assets/casa.svg";
+import pageIcon from "../../assets/pagina.svg";
+import verticalDotsIcon from "../../assets/pontos-vertical.svg";
 
-import SearchBar from "../../components/SearchFilterBar/SearchFilterBar";
+import SearchFilterBar from "../../components/SearchFilterBar/SearchFilterBar";
 import AddPageButton from "../AddPageButton/AddPageButton";
 
 import { Link } from "react-router";
@@ -12,19 +12,19 @@ import { Link } from "react-router";
 const page = {
   id: "1",
   name: "Visão Geral",
-  icon: casa,
+  icon: homeIcon,
 };
 
 const subpages = [
   {
     id: "2",
     name: "Subpágina 1",
-    icon: pagina,
+    icon: pageIcon,
   },
   {
     id: "3",
     name: "Subpágina 2",
-    icon: pagina,
+    icon: pageIcon,
   },
 ];
 
@@ -32,7 +32,7 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-search">
-        <SearchBar />
+        <SearchFilterBar />
       </div>
 
       <hr className="sidebar-divider" />
@@ -60,7 +60,7 @@ function Sidebar() {
                     <Link to={`/pages/${subpage.id}`} className="sidebar-link">
                       <img src={subpage.icon} alt="" />
                       <span className="subpages-name">{subpage.name}</span>
-                      <img className="subpages-actions" src={pontosVertical} alt="" />
+                      <img className="subpages-actions" src={verticalDotsIcon} alt="" />
                     </Link>
                   </li>
                 ))}

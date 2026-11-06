@@ -2,7 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import "./SortFilter.css";
 
-import filtro from "../../../assets/filtro.svg";
+import filterIcon from "../../../assets/filtro.svg";
 
 function SortFilter() {
   const [sortBy, setSortBy] = useState("alphabetical");
@@ -21,7 +21,7 @@ function SortFilter() {
           className="sort-trigger"
           aria-label="Abrir opções de classificação"
         >
-          <img src={filtro} alt="" />
+          <img src={filterIcon} alt="" />
         </button>
       </DropdownMenu.Trigger>
 
@@ -52,6 +52,7 @@ function SortFilter() {
                       strokeWidth="3"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      aria-hidden="true"
                     >
                       <polyline points="5 12 10 17 20 7" />
                     </svg>

@@ -6,8 +6,8 @@ import "./PageCard.css";
 import PageActionsMenu from "../modals/PageActionsMenu/PageActionsMenu";
 
 import capa from "../../assets/capa.jpg";
-import relogio from "../../assets/relogio.svg";
-import estudo from "../../assets/categoria-estudo.svg";
+import clockIcon from "../../assets/relogio.svg";
+import studyIcon from "../../assets/categoria-estudo.svg";
 
 function PageCard() {
   const [pageTitle, setPageTitle] = useState("🤖 Back-end");
@@ -19,12 +19,12 @@ function PageCard() {
           <img src={capa} alt="Capa da página" />
         </Link>
         <span className="page-card-badge page-card-category">
-          <img src={estudo} alt="Categoria" />
+          <img src={studyIcon} alt="Categoria" />
           Estudos
         </span>
 
         <span className="page-card-badge page-card-recent">
-          <img src={relogio} alt="Recente" />
+          <img src={clockIcon} alt="Recente" />
           Recente
         </span>
       </div>

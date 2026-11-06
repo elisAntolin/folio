@@ -208,13 +208,11 @@
   background: #aeb4bd;
 }
 
-/* Seta do Radix */
-
 .notification-arrow {
   fill: #ffffff;
 }
 
-/* Responsividade */
+
 
 @media (max-width: 480px) {
   .notification-panel {

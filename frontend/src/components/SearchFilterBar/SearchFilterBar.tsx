@@ -1,9 +1,9 @@
-import lupa from "../../assets/lupa.svg";
+import searchIcon from "../../assets/lupa.svg";
 import FilterCategories from "../modals/FilterCategories/FilterCategories";
 
 import "./SearchFilterBar.css";
 
-function SearchBar() {
+function SearchFilterBar() {
   const categories: string[] = [
     "Trabalho",
     "Estudos",
@@ -15,7 +15,7 @@ function SearchBar() {
   return (
     <div className="search-filter-bar">
       <div className="search-bar">
-        <img src={lupa} alt="" aria-hidden="true" />
+        <img src={searchIcon} alt="" aria-hidden="true" />
 
         <input
           type="text"
@@ -34,4 +34,4 @@ function SearchBar() {
   );
 }
 
-export default SearchBar;
+export default SearchFilterBar;

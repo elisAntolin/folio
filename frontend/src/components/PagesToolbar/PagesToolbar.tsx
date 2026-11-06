@@ -3,15 +3,14 @@ import "./PagesToolbar.css";
 import AddPageButton from "../AddPageButton/AddPageButton";
 import SortFilter from "../modals/SortFilter/SortFilter";
 
-// import filtro from "../../assets/filtro.svg";
-import favorito from "../../assets/favorito.svg";
-import grid from "../../assets/grade.svg";
-import list from "../../assets/lista.svg";
+import favoriteIcon from "../../assets/favorito.svg";
+import gridIcon from "../../assets/grade.svg";
+import listIcon from "../../assets/lista.svg";
 
-type PagesToolbarProps = {
+interface PagesToolbarProps {
   mode: "grid" | "list";
   changeMode: (mode: "grid" | "list") => void;
-};
+}
 
 function PagesToolbar({ mode, changeMode }: PagesToolbarProps) {
   return (
@@ -23,15 +22,15 @@ function PagesToolbar({ mode, changeMode }: PagesToolbarProps) {
 
         <span className="header-divider">|</span>
 
-        {/* <button>
-          <img src={filtro} alt="Filtro" />
-        </button> */}
         <SortFilter></SortFilter>
         <button>
-          <img src={favorito} alt="Favoritos" />
+          <img src={favoriteIcon} alt="Favoritos" />
         </button>
         <button onClick={() => changeMode(mode === "grid" ? "list" : "grid")}>
-          <img src={mode === "grid" ? list : grid} alt="Tipo de disposição" />
+          <img
+            src={mode === "grid" ? listIcon : gridIcon}
+            alt="Tipo de disposição"
+          />
         </button>
       </div>
     </div>
