@@ -22,6 +22,10 @@ function EditorPage() {
               <ShareButton
                 pageTitle="Página"
                 publicLink={`/pages/${id}`}
+                internal
+                onInvite={(email, permission) =>
+                  console.log("Convidar membro:", email, permission)
+                }
                 onLinkPermissionChange={() => undefined}
               />
             </div>

@@ -3,7 +3,7 @@ import { Dialog, Select } from "radix-ui";
 import "./SharePageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
 import chevronDownIcon from "../../../assets/chevron-baixo.svg";
-import shareIcon from "../../../assets/compartilhar-seta.svg";
+import linkIcon from "../../../assets/link.svg";
 
 interface SharePageModalProps {
   open: boolean;
@@ -54,7 +54,7 @@ function SharePageModal({
           <div className="share-header">
             <div className="share-heading">
               <div className="share-title-row">
-                <img src={shareIcon} alt="" aria-hidden="true" />
+                <img src={linkIcon} alt="" aria-hidden="true" />
                 <Dialog.Title className="share-title">
                   Compartilhar Página
                 </Dialog.Title>

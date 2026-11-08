@@ -6,6 +6,7 @@ import { DropdownMenu } from "radix-ui";
 import EditPageModal from "../EditPageModal/EditPageModal";
 import DeletePageModal from "../DeletePageModal/DeletePageModal";
 import SharePageModal from "../SharePageModal/SharePageModal";
+import InternalMemberModal from "../InternalMemberModal/InternalMemberModal";
 
 import trashIcon from "../../../assets/lixeira.svg";
 import starIcon from "../../../assets/estrela.svg";
@@ -14,6 +15,8 @@ import pinIcon from "../../../assets/fixar-diagonal-direita.svg";
 import filledPinIcon from "../../../assets/fixar-diagonal-direita-preenchido.svg";
 import editIcon from "../../../assets/editar-quadrado.svg";
 import shareIcon from "../../../assets/compartilhar-seta.svg";
+import linkIcon from "../../../assets/link.svg";
+import membersIcon from "../../../assets/membros.svg";
 import verticalDotsIcon from "../../../assets/pontos-vertical.svg";
 
 interface PageActionsMenuProps {
@@ -21,6 +24,7 @@ interface PageActionsMenuProps {
   currentCategory: string;
   publicLink: string;
   onEdit: (newTitle: string, newCategory: string) => void;
+  onShare?: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
   isSubpage?: boolean;
@@ -35,6 +39,7 @@ function PageActionsMenu({
   currentCategory,
   publicLink,
   onEdit,
+  onShare,
   onDelete,
   onLinkPermissionChange,
   isSubpage = false,
@@ -46,6 +51,7 @@ function PageActionsMenu({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isMemberOpen, setIsMemberOpen] = useState(false);
 
   const [internalIsFavorite, setInternalIsFavorite] = useState(false);
   const [internalIsPinned, setInternalIsPinned] = useState(false);
@@ -119,13 +125,43 @@ function PageActionsMenu({
               <span>Editar</span>
             </DropdownMenu.Item>
 
-            <DropdownMenu.Item
-              className="page-actions-item"
-              onSelect={() => setIsShareOpen(true)}
-            >
-              <img src={shareIcon} alt="" />
-              <span>Compartilhar</span>
-            </DropdownMenu.Item>
+            {isSubpage ? (
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger className="page-actions-item">
+                  <img src={shareIcon} alt="" />
+                  <span>Compartilhar</span>
+                </DropdownMenu.SubTrigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.SubContent
+                    className="page-actions-content"
+                    sideOffset={4}
+                  >
+                    <DropdownMenu.Item
+                      className="page-actions-item"
+                      onSelect={() => setIsShareOpen(true)}
+                    >
+                      <img src={linkIcon} alt="" aria-hidden="true" />
+                      Link da Página
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      className="page-actions-item"
+                      onSelect={() => setIsMemberOpen(true)}
+                    >
+                      <img src={membersIcon} alt="" aria-hidden="true" />
+                      Gerenciar Membro
+                    </DropdownMenu.Item>
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Sub>
+            ) : (
+              <DropdownMenu.Item
+                className="page-actions-item"
+                onSelect={() => setIsShareOpen(true)}
+              >
+                <img src={shareIcon} alt="" />
+                <span>Compartilhar</span>
+              </DropdownMenu.Item>
+            )}
 
             <DropdownMenu.Separator className="page-actions-separator" />
 
@@ -163,6 +199,15 @@ function PageActionsMenu({
         publicLink={publicLink}
         onLinkPermissionChange={onLinkPermissionChange}
       />
+
+      {isSubpage && (
+        <InternalMemberModal
+          open={isMemberOpen}
+          onOpenChange={setIsMemberOpen}
+          pageTitle={currentTitle}
+          onInvite={onShare ?? (() => undefined)}
+        />
+      )}
     </>
   );
 }
