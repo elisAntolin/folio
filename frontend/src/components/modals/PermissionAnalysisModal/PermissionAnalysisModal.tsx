@@ -4,6 +4,7 @@ import "./PermissionAnalysisModal.css";
 
 import closeIcon from "../../../assets/fechar.svg";
 import Avatar from "../../Avatar/Avatar";
+import inboxIcon from "../../../assets/caixa-de-entrada.svg";
 
 interface PermissionAnalysisModalProps {
   open: boolean;
@@ -17,11 +18,11 @@ interface PermissionAnalysisModalProps {
 
 function PermissionInboxIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M3 8h18v11H3z" />
-      <path d="m3 8 2-4h14l2 4" />
-      <path d="M8 13h8" />
-    </svg>
+    <img
+      src={inboxIcon}
+      alt="Inbox"
+      className="permission-analysis-inbox-icon"
+    />
   );
 }
 
@@ -72,6 +73,7 @@ function PermissionAnalysisModal({
           </div>
 
           <Dialog.Description className="permission-analysis-message">
+            <strong>Mensagem: </strong>
             {message}
           </Dialog.Description>
 
@@ -95,7 +97,7 @@ function PermissionAnalysisModal({
                 className="permission-analysis-grant"
                 onClick={() => handleDecision("granted")}
               >
-                Conceder permissão
+                Permitir
               </button>
             </div>
           )}

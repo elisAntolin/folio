@@ -23,6 +23,11 @@
   outline: none;
 }
 
+.permission-analysis-inbox-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .permission-analysis-header,
 .permission-analysis-heading,
 .permission-analysis-user,
@@ -44,7 +49,7 @@
   display: inline-flex;
   width: 20px;
   height: 20px;
-  color: #159dcc;
+  color: #64748b;
 }
 
 .permission-analysis-icon svg {
@@ -128,13 +133,14 @@
 }
 
 .permission-analysis-deny {
-  background: #fef2f2;
-  color: #dc2626;
+  background: transparent;
+  color: #64748b;
 }
 
 .permission-analysis-grant {
   background: #159dcc;
   color: #fff;
+  font-weight: 600;
 }
 
 .permission-analysis-result {
