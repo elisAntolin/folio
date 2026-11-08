@@ -8,6 +8,8 @@ interface PageListItemProps {
   onShare: (id: string, email: string, permission: string) => void;
   onDelete: (id: string) => void;
   onLinkPermissionChange: (id: string, permission: string) => void;
+  favoriteIds: string[];
+  onFavoriteChange: (id: string, isFavorite: boolean) => void;
 }
 
 function PageListItem({
@@ -16,6 +18,8 @@ function PageListItem({
   onShare,
   onDelete,
   onLinkPermissionChange,
+  favoriteIds,
+  onFavoriteChange,
 }: PageListItemProps) {
   return (
     <div className="page-list-item">
@@ -34,6 +38,10 @@ function PageListItem({
           onDelete={() => onDelete(page.id)}
           onLinkPermissionChange={(permission) =>
             onLinkPermissionChange(page.id, permission)
+          }
+          isFavorite={favoriteIds.includes(page.id)}
+          onFavoriteChange={(isFavorite) =>
+            onFavoriteChange(page.id, isFavorite)
           }
         />
       ))}

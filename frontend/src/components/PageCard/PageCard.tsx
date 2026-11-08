@@ -16,6 +16,8 @@ interface PageCardProps {
   onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
+  isFavorite: boolean;
+  onFavoriteChange: (isFavorite: boolean) => void;
 }
 
 function PageCard({
@@ -26,6 +28,8 @@ function PageCard({
   onShare,
   onDelete,
   onLinkPermissionChange,
+  isFavorite,
+  onFavoriteChange,
 }: PageCardProps) {
 
   return (
@@ -57,6 +61,8 @@ function PageCard({
             onShare={onShare}
             onDelete={onDelete}
             onLinkPermissionChange={onLinkPermissionChange}
+            isFavorite={isFavorite}
+            onFavoriteChange={onFavoriteChange}
           />
         </div>
 

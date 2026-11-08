@@ -9,6 +9,8 @@ import PageListItem from "../../components/PageListItem/PageListItem";
 
 function HomePage() {
   const [mode, setMode] = useState<"grid" | "list">("grid");
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "Desenvolvimento",
     "Trabalho",
@@ -86,6 +88,15 @@ function HomePage() {
     setPages((currentPages) =>
       currentPages.filter((page) => page.id !== id),
     );
+    setFavoriteIds((currentIds) => currentIds.filter((favoriteId) => favoriteId !== id));
+  }
+
+  function handleFavoriteChange(id: string, isFavorite: boolean) {
+    setFavoriteIds((currentIds) =>
+      isFavorite
+        ? [...new Set([...currentIds, id])]
+        : currentIds.filter((favoriteId) => favoriteId !== id),
+    );
   }
 
   function handleLinkPermissionChange(id: string, permission: string) {
@@ -96,7 +107,7 @@ function HomePage() {
     );
   }
 
-  const filteredPages =
+  const categoryFilteredPages =
     selectedCategories.length === 0
       ? pages
       : pages.filter((page) =>
@@ -104,6 +115,9 @@ function HomePage() {
             selectedCategories.includes(category),
           ),
         );
+  const filteredPages = showFavorites
+    ? categoryFilteredPages.filter((page) => favoriteIds.includes(page.id))
+    : categoryFilteredPages;
 
   return (
     <div>
@@ -118,6 +132,8 @@ function HomePage() {
             mode={mode}
             changeMode={setMode}
             onCreate={handleCreatePage}
+            showFavorites={showFavorites}
+            onFavoritesChange={setShowFavorites}
           />
           {mode === "grid" ? (
             <PageListCard
@@ -126,6 +142,8 @@ function HomePage() {
               onShare={handleSharePage}
               onDelete={handleDeletePage}
               onLinkPermissionChange={handleLinkPermissionChange}
+              favoriteIds={favoriteIds}
+              onFavoriteChange={handleFavoriteChange}
             />
           ) : (
             <PageListItem
@@ -134,6 +152,8 @@ function HomePage() {
               onShare={handleSharePage}
               onDelete={handleDeletePage}
               onLinkPermissionChange={handleLinkPermissionChange}
+              favoriteIds={favoriteIds}
+              onFavoriteChange={handleFavoriteChange}
             />
           )}
         </section>

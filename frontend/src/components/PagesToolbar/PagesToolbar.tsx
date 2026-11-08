@@ -11,9 +11,17 @@ interface PagesToolbarProps {
   mode: "grid" | "list";
   changeMode: (mode: "grid" | "list") => void;
   onCreate: (title: string, category: string) => void;
+  showFavorites: boolean;
+  onFavoritesChange: (showFavorites: boolean) => void;
 }
 
-function PagesToolbar({ mode, changeMode, onCreate }: PagesToolbarProps) {
+function PagesToolbar({
+  mode,
+  changeMode,
+  onCreate,
+  showFavorites,
+  onFavoritesChange,
+}: PagesToolbarProps) {
   return (
     <div className="pages-tool-bar">
       <h1>Suas Páginas</h1>
@@ -24,7 +32,12 @@ function PagesToolbar({ mode, changeMode, onCreate }: PagesToolbarProps) {
         <span className="header-divider">|</span>
 
         <SortFilter></SortFilter>
-        <button>
+        <button
+          type="button"
+          aria-pressed={showFavorites}
+          aria-label={showFavorites ? "Mostrar todas as páginas" : "Mostrar favoritos"}
+          onClick={() => onFavoritesChange(!showFavorites)}
+        >
           <img src={favoriteIcon} alt="Favoritos" />
         </button>
         <button onClick={() => changeMode(mode === "grid" ? "list" : "grid")}>

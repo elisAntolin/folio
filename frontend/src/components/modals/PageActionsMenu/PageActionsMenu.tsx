@@ -25,6 +25,8 @@ interface PageActionsMenuProps {
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
   isSubpage?: boolean;
+  isFavorite?: boolean;
+  onFavoriteChange?: (isFavorite: boolean) => void;
   isPinned?: boolean;
   onPinnedChange?: (isPinned: boolean) => void;
 }
@@ -38,6 +40,8 @@ function PageActionsMenu({
   onDelete,
   onLinkPermissionChange,
   isSubpage = false,
+  isFavorite: controlledIsFavorite,
+  onFavoriteChange,
   isPinned: controlledIsPinned,
   onPinnedChange,
 }: PageActionsMenuProps) {
@@ -45,12 +49,15 @@ function PageActionsMenu({
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [internalIsFavorite, setInternalIsFavorite] = useState(false);
   const [internalIsPinned, setInternalIsPinned] = useState(false);
   const isPinned = controlledIsPinned ?? internalIsPinned;
+  const isFavorite = controlledIsFavorite ?? internalIsFavorite;
 
   const handleFavorite = () => {
-    setIsFavorite((prev) => !prev);
+    const nextIsFavorite = !isFavorite;
+    setInternalIsFavorite(nextIsFavorite);
+    onFavoriteChange?.(nextIsFavorite);
   };
 
   const handlePin = () => {

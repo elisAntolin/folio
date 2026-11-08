@@ -16,6 +16,8 @@ interface PageItemProps {
   onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
+  isFavorite: boolean;
+  onFavoriteChange: (isFavorite: boolean) => void;
 }
 
 function PageItem({
@@ -26,6 +28,8 @@ function PageItem({
   onShare,
   onDelete,
   onLinkPermissionChange,
+  isFavorite,
+  onFavoriteChange,
 }: PageItemProps) {
 
   return (
@@ -58,6 +62,8 @@ function PageItem({
             onShare={onShare}
             onDelete={onDelete}
             onLinkPermissionChange={onLinkPermissionChange}
+            isFavorite={isFavorite}
+            onFavoriteChange={onFavoriteChange}
           />
         </div>
 
