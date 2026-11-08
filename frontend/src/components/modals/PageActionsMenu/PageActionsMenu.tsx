@@ -21,7 +21,6 @@ interface PageActionsMenuProps {
   currentCategory: string;
   publicLink: string;
   onEdit: (newTitle: string, newCategory: string) => void;
-  onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
   isSubpage?: boolean;
@@ -36,7 +35,6 @@ function PageActionsMenu({
   currentCategory,
   publicLink,
   onEdit,
-  onShare,
   onDelete,
   onLinkPermissionChange,
   isSubpage = false,
@@ -163,7 +161,6 @@ function PageActionsMenu({
         onOpenChange={setIsShareOpen}
         pageTitle={currentTitle}
         publicLink={publicLink}
-        onInvite={onShare}
         onLinkPermissionChange={onLinkPermissionChange}
       />
     </>

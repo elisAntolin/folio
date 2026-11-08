@@ -25,8 +25,6 @@ function HomePage() {
       title: "🤖 Back-end",
       category: "Estudos",
       categories: ["Estudos"],
-      sharedEmails: [],
-      sharedPermission: "visualizar",
       linkPermission: "restricted",
     })),
   );
@@ -37,8 +35,6 @@ function HomePage() {
       title,
       category,
       categories: [category],
-      sharedEmails: [],
-      sharedPermission: "visualizar",
       linkPermission: "restricted",
     };
 
@@ -60,24 +56,6 @@ function HomePage() {
               categories: Array.from(
                 new Set([...(page.categories ?? [page.category]), newCategory]),
               ),
-            }
-          : page,
-      ),
-    );
-  }
-
-  function handleSharePage(
-    id: string,
-    email: string,
-    permission: string,
-  ) {
-    setPages((currentPages) =>
-      currentPages.map((page) =>
-        page.id === id && !page.sharedEmails.includes(email)
-          ? {
-              ...page,
-              sharedEmails: [...page.sharedEmails, email],
-              sharedPermission: permission,
             }
           : page,
       ),
@@ -139,7 +117,6 @@ function HomePage() {
             <PageListCard
               pages={filteredPages}
               onEdit={handleEditPage}
-              onShare={handleSharePage}
               onDelete={handleDeletePage}
               onLinkPermissionChange={handleLinkPermissionChange}
               favoriteIds={favoriteIds}
@@ -149,7 +126,6 @@ function HomePage() {
             <PageListItem
               pages={filteredPages}
               onEdit={handleEditPage}
-              onShare={handleSharePage}
               onDelete={handleDeletePage}
               onLinkPermissionChange={handleLinkPermissionChange}
               favoriteIds={favoriteIds}

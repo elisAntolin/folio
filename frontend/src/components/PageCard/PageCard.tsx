@@ -13,7 +13,6 @@ interface PageCardProps {
   title: string;
   category: string;
   onEdit: (newTitle: string, newCategory: string) => void;
-  onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
   isFavorite: boolean;
@@ -25,7 +24,6 @@ function PageCard({
   title,
   category,
   onEdit,
-  onShare,
   onDelete,
   onLinkPermissionChange,
   isFavorite,
@@ -58,7 +56,6 @@ function PageCard({
             currentCategory={category}
             publicLink={`/pages/${id}`}
             onEdit={onEdit}
-            onShare={onShare}
             onDelete={onDelete}
             onLinkPermissionChange={onLinkPermissionChange}
             isFavorite={isFavorite}

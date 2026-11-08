@@ -5,7 +5,6 @@ import type { HomePageItem } from "../PageListCard/PageListCard";
 interface PageListItemProps {
   pages: HomePageItem[];
   onEdit: (id: string, newTitle: string, newCategory: string) => void;
-  onShare: (id: string, email: string, permission: string) => void;
   onDelete: (id: string) => void;
   onLinkPermissionChange: (id: string, permission: string) => void;
   favoriteIds: string[];
@@ -15,7 +14,6 @@ interface PageListItemProps {
 function PageListItem({
   pages,
   onEdit,
-  onShare,
   onDelete,
   onLinkPermissionChange,
   favoriteIds,
@@ -31,9 +29,6 @@ function PageListItem({
           category={page.category}
           onEdit={(newTitle, newCategory) =>
             onEdit(page.id, newTitle, newCategory)
-          }
-          onShare={(email, permission) =>
-            onShare(page.id, email, permission)
           }
           onDelete={() => onDelete(page.id)}
           onLinkPermissionChange={(permission) =>

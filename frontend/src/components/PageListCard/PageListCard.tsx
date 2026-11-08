@@ -6,15 +6,12 @@ export interface HomePageItem {
   title: string;
   category: string;
   categories?: string[];
-  sharedEmails: string[];
-  sharedPermission: string;
   linkPermission: string;
 }
 
 interface PageListCardProps {
   pages: HomePageItem[];
   onEdit: (id: string, newTitle: string, newCategory: string) => void;
-  onShare: (id: string, email: string, permission: string) => void;
   onDelete: (id: string) => void;
   onLinkPermissionChange: (id: string, permission: string) => void;
   favoriteIds: string[];
@@ -24,7 +21,6 @@ interface PageListCardProps {
 function PageListCard({
   pages,
   onEdit,
-  onShare,
   onDelete,
   onLinkPermissionChange,
   favoriteIds,
@@ -40,9 +36,6 @@ function PageListCard({
           category={page.category}
           onEdit={(newTitle, newCategory) =>
             onEdit(page.id, newTitle, newCategory)
-          }
-          onShare={(email, permission) =>
-            onShare(page.id, email, permission)
           }
           onDelete={() => onDelete(page.id)}
           onLinkPermissionChange={(permission) =>

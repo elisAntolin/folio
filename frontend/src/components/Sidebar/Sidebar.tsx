@@ -187,14 +187,6 @@ function Sidebar() {
                         )
                       }
                       currentCategory={subpage.category ?? "Desenvolvimento"}
-                      onShare={(email, permission) =>
-                        console.log(
-                          "Compartilhar subpágina:",
-                          subpage.id,
-                          email,
-                          permission,
-                        )
-                      }
                       onDelete={() => handleDeleteSubpage(subpage.id)}
                       isSubpage
                       isPinned={pinnedSubpageIds.includes(subpage.id)}

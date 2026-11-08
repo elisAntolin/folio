@@ -22,7 +22,6 @@ function EditorPage() {
               <ShareButton
                 pageTitle="Página"
                 publicLink={`/pages/${id}`}
-                onInvite={() => undefined}
                 onLinkPermissionChange={() => undefined}
               />
             </div>

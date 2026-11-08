@@ -8,14 +8,12 @@ import shareIcon from "../../assets/compartilhar-seta.svg";
 interface ShareButtonProps {
   pageTitle: string;
   publicLink: string;
-  onInvite: (email: string) => void;
   onLinkPermissionChange: (permission: string) => void;
 }
 
 function ShareButton({
   pageTitle,
   publicLink,
-  onInvite,
   onLinkPermissionChange,
 }: ShareButtonProps) {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -32,7 +30,6 @@ function ShareButton({
         onOpenChange={setIsShareOpen}
         pageTitle={pageTitle}
         publicLink={publicLink}
-        onInvite={onInvite}
         onLinkPermissionChange={onLinkPermissionChange}
       />
     </>
