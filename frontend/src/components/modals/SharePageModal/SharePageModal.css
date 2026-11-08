@@ -128,61 +128,40 @@
   box-shadow: 0 0 0 2px rgba(38, 157, 204, 0.1);
 }
 
-.share-invite-button {
-  height: var(--field-height);
-  padding: 0 var(--space-3);
-
-  border: none;
-  border-radius: var(--radius-md);
-
-  background: #159dcc;
-  color: #ffffff;
-
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.share-invite-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.share-copy-button {
-  height: var(--field-height);
-  padding: 0 var(--space-3);
-
-  background: #ffffff;
-  border: 1px solid #dbe2ec;
-  border-radius: var(--radius-md);
-
-  color: #168dbb;
-  font-size: 13px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.share-done-button {
+.share-primary-button,
+.share-cancel-button {
   height: var(--field-height);
   padding: 0 var(--space-4);
-
-  background: #159dcc;
-  border: none;
   border-radius: var(--radius-md);
-
-  color: #ffffff;
+  font: inherit;
   font-size: 13px;
-  font-weight: 500;
   cursor: pointer;
 }
 
-.share-copy-button:hover {
-  background: #f5faff;
+.share-primary-button {
+  border: none;
+  background: #159dcc;
+  color: #ffffff;
+  font-weight: 600;
 }
 
-.share-done-button:hover,
-.share-invite-button:hover:not(:disabled) {
+.share-primary-button:hover:not(:disabled) {
   background: #118bb7;
+}
+
+.share-primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.share-cancel-button {
+  border: none;
+  background: transparent;
+  color: #64748b;
+}
+
+.share-cancel-button:hover {
+  background: #f8fafc;
 }
 
 .share-permission {
@@ -307,11 +286,4 @@
     padding: var(--space-5) var(--space-4);
   }
 
-  .share-invite-row {
-    flex-wrap: wrap;
-  }
-
-  .share-invite-button {
-    width: 100%;
-  }
 }

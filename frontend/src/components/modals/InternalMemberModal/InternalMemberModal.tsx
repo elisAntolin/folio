@@ -72,14 +72,6 @@ function InternalMemberModal({
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              <button
-                type="button"
-                className="share-invite-button"
-                onClick={handleInvite}
-                disabled={!email.trim()}
-              >
-                Convidar
-              </button>
             </div>
           </div>
 
@@ -118,10 +110,18 @@ function InternalMemberModal({
 
           <div className="share-footer">
             <Dialog.Close asChild>
-              <button className="share-done-button" type="button">
+              <button className="share-cancel-button" type="button">
                 Cancelar
               </button>
             </Dialog.Close>
+            <button
+              type="button"
+              className="share-primary-button"
+              onClick={handleInvite}
+              disabled={!email.trim()}
+            >
+              Convidar
+            </button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

@@ -15,7 +15,7 @@ interface CoverGalleryModalProps {
   onCoverRemove: () => void;
 }
 
-type CoverTab = "gallery" | "upload" | "url";
+type CoverTab = "gallery" | "upload";
 const standardBackgrounds = [
   "#ffffff",
   "#f8fafc",
@@ -33,7 +33,6 @@ function CoverGalleryModal({
   onCoverRemove,
 }: CoverGalleryModalProps) {
   const [activeTab, setActiveTab] = useState<CoverTab>("gallery");
-  const [imageUrl, setImageUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +42,6 @@ function CoverGalleryModal({
 
     if (!value) {
       setActiveTab("gallery");
-      setImageUrl("");
       setErrorMessage("");
     }
   }
@@ -103,38 +101,6 @@ function CoverGalleryModal({
     reader.readAsDataURL(file);
   }
 
-  function handleUrlApply() {
-    const normalizedUrl = imageUrl.trim();
-
-    if (!normalizedUrl) {
-      setErrorMessage("Informe uma URL de imagem.");
-      return;
-    }
-
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(normalizedUrl);
-    } catch {
-      setErrorMessage("Informe uma URL válida.");
-      return;
-    }
-
-    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-      setErrorMessage("Use uma URL pública de imagem.");
-      return;
-    }
-
-    const image = new Image();
-    image.onload = () => {
-      onCoverChange(normalizedUrl);
-      onOpenChange(false);
-    };
-    image.onerror = () => {
-      setErrorMessage("A URL não corresponde a uma imagem válida.");
-    };
-    image.src = normalizedUrl;
-  }
-
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
@@ -178,18 +144,6 @@ function CoverGalleryModal({
               }}
             >
               Fazer Upload
-            </button>
-            <button
-              type="button"
-              className={`cover-gallery-tab ${
-                activeTab === "url" ? "active" : ""
-              }`}
-              onClick={() => {
-                setActiveTab("url");
-                setErrorMessage("");
-              }}
-            >
-              URL de Imagem
             </button>
           </div>
 
@@ -270,37 +224,6 @@ function CoverGalleryModal({
                   <span>ou arraste e solte aqui</span>
                 </button>
                 <p>Escolha uma imagem do seu computador para usar como capa.</p>
-              </div>
-            )}
-
-            {activeTab === "url" && (
-              <div className="cover-gallery-url">
-                <label htmlFor="cover-image-url">
-                  Cole a URL direta da imagem
-                </label>
-                <div className="cover-gallery-url-row">
-                  <input
-                    id="cover-image-url"
-                    type="url"
-                    placeholder="https://images.unsplash.com/..."
-                    value={imageUrl}
-                    onChange={(event) => {
-                      setImageUrl(event.target.value);
-                      setErrorMessage("");
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="cover-gallery-apply"
-                    onClick={handleUrlApply}
-                  >
-                    Aplicar URL
-                  </button>
-                </div>
-                <p>
-                  Funciona com links diretos de imagens públicas (Unsplash,
-                  Pexels, Imgur, etc.).
-                </p>
               </div>
             )}
 

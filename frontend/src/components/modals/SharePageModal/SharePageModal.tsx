@@ -80,13 +80,6 @@ function SharePageModal({
                 readOnly
                 aria-label="Link de acesso público"
               />
-              <button
-                type="button"
-                className="share-copy-button"
-                onClick={handleCopy}
-              >
-                {copied ? "Copiado!" : "Copiar"}
-              </button>
             </div>
           </div>
 
@@ -128,10 +121,17 @@ function SharePageModal({
 
           <div className="share-footer">
             <Dialog.Close asChild>
-              <button className="share-done-button" type="button">
+              <button className="share-cancel-button" type="button">
                 Cancelar
               </button>
             </Dialog.Close>
+            <button
+              type="button"
+              className="share-primary-button"
+              onClick={handleCopy}
+            >
+              {copied ? "Copiado!" : "Copiar"}
+            </button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
