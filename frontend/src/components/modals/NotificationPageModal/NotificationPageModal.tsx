@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Popover } from "radix-ui";
 import "./NotificationPageModal.css";
 import bellIcon from "../../../assets/sino.svg";
 import Avatar from "../../Avatar/Avatar";
+import PermissionAnalysisModal from "../PermissionAnalysisModal/PermissionAnalysisModal";
 
 interface NotificationItem {
   id: string;
@@ -57,35 +59,39 @@ const defaultNotifications: NotificationItem[] = [
 function NotificationPageModal({
   notifications = defaultNotifications,
 }: NotificationPageModalProps) {
+  const [selectedNotification, setSelectedNotification] =
+    useState<NotificationItem | null>(null);
+
   return (
-    <Popover.Root>
-      <Popover.Trigger asChild>
-        <button
-          type="button"
-          className="notification-trigger"
-          aria-label="Abrir notificações"
-        >
-          <img src={bellIcon} alt="" />
+    <>
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <button
+            type="button"
+            className="notification-trigger"
+            aria-label="Abrir notificações"
+          >
+            <img src={bellIcon} alt="" />
 
-          {notifications.length > 0 && (
-            <span className="notification-badge">{notifications.length}</span>
-          )}
-        </button>
-      </Popover.Trigger>
+            {notifications.length > 0 && (
+              <span className="notification-badge">{notifications.length}</span>
+            )}
+          </button>
+        </Popover.Trigger>
 
-      <Popover.Portal>
-        <Popover.Content
-          className="notification-panel"
-          align="end"
-          sideOffset={8}
-          collisionPadding={12}
-        >
+        <Popover.Portal>
+          <Popover.Content
+            className="notification-panel"
+            align="end"
+            sideOffset={8}
+            collisionPadding={12}
+          >
           <div className="notification-header">
             <Popover.Close asChild>
               <button
                 type="button"
                 className="notification-close"
-                aria-label="Fechar notificações"
+                aria-label="Cancelar"
               >
                 ×
               </button>
@@ -95,10 +101,10 @@ function NotificationPageModal({
 
           </div>
 
-          <div className="notification-list">
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
-                <div className="notification-item" key={notification.id}>
+            <div className="notification-list">
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <div className="notification-item" key={notification.id}>
                   <Avatar
                     name={notification.userName}
                     photoUrl={notification.userPhotoUrl}
@@ -112,19 +118,45 @@ function NotificationPageModal({
                     <p className="notification-message">{notification.message}</p>
                     <span>{notification.date}</span>
                   </div>
+                    <button
+                      type="button"
+                      className="notification-review"
+                      aria-label={`Analisar solicitação de ${notification.userName}`}
+                      onClick={() => setSelectedNotification(notification)}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 8h18v11H3z" />
+                        <path d="m3 8 2-4h14l2 4" />
+                        <path d="M8 13h8" />
+                      </svg>
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="notification-empty">
+                  Nenhuma notificação no momento.
                 </div>
-              ))
-            ) : (
-              <div className="notification-empty">
-                Nenhuma notificação no momento.
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <Popover.Arrow className="notification-arrow" />
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
+            <Popover.Arrow className="notification-arrow" />
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+
+      {selectedNotification && (
+        <PermissionAnalysisModal
+          open={Boolean(selectedNotification)}
+          onOpenChange={(open) => {
+            if (!open) setSelectedNotification(null);
+          }}
+          userName={selectedNotification.userName}
+          userPhotoUrl={selectedNotification.userPhotoUrl}
+          action={selectedNotification.action}
+          message={selectedNotification.message}
+        />
+      )}
+    </>
   );
 }
 

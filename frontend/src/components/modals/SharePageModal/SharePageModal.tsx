@@ -74,7 +74,7 @@ function SharePageModal({
               </Dialog.Description>
             </div>
 
-            <Dialog.Close className="share-close" aria-label="Fechar">
+            <Dialog.Close className="share-close" aria-label="Cancelar">
               <img src={closeIcon} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>

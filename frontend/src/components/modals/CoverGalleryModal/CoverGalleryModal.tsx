@@ -16,6 +16,14 @@ interface CoverGalleryModalProps {
 }
 
 type CoverTab = "gallery" | "upload" | "url";
+const standardBackgrounds = [
+  "#ffffff",
+  "#f8fafc",
+  "#eff8ff",
+  "#fef3c7",
+  "#fce7f3",
+  "#ede9fe",
+];
 
 function CoverGalleryModal({
   open,
@@ -27,6 +35,7 @@ function CoverGalleryModal({
   const [activeTab, setActiveTab] = useState<CoverTab>("gallery");
   const [imageUrl, setImageUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleOpenChange(value: boolean) {
@@ -69,6 +78,28 @@ function CoverGalleryModal({
     reader.onerror = () => {
       setErrorMessage("Não foi possível carregar a imagem.");
     };
+    reader.readAsDataURL(file);
+  }
+
+  function handleDroppedFile(file: File | undefined) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setErrorMessage("Selecione um arquivo de imagem válido.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        setErrorMessage("Não foi possível carregar a imagem.");
+        return;
+      }
+
+      onCoverChange(reader.result);
+      onOpenChange(false);
+    };
+    reader.onerror = () => setErrorMessage("Não foi possível carregar a imagem.");
     reader.readAsDataURL(file);
   }
 
@@ -118,7 +149,7 @@ function CoverGalleryModal({
               </Dialog.Title>
             </div>
 
-            <Dialog.Close className="cover-gallery-close" aria-label="Fechar">
+            <Dialog.Close className="cover-gallery-close" aria-label="Cancelar">
               <img src={closeIcon} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>
@@ -164,17 +195,43 @@ function CoverGalleryModal({
 
           <div className="cover-gallery-body">
             {activeTab === "gallery" && (
-              <div className="cover-gallery-grid">
-                <button
-                  type="button"
-                  className={`cover-gallery-option ${
-                    coverImage === capa ? "selected" : ""
-                  }`}
-                  onClick={handleGallerySelect}
-                  aria-label="Selecionar capa nativa"
-                >
-                  <img src={capa} alt="Capa nativa" />
-                </button>
+              <div className="cover-gallery-native">
+                <section>
+                  <h3>Imagens</h3>
+                  <div className="cover-gallery-grid">
+                    <button
+                      type="button"
+                      className={`cover-gallery-option ${
+                        coverImage === capa ? "selected" : ""
+                      }`}
+                      onClick={handleGallerySelect}
+                      aria-label="Selecionar capa nativa"
+                    >
+                      <img src={capa} alt="Capa nativa" />
+                    </button>
+                  </div>
+                </section>
+
+                <section>
+                  <h3>Cores de fundo padrão</h3>
+                  <div className="cover-gallery-colors">
+                    {standardBackgrounds.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        className={`cover-gallery-color ${
+                          coverImage === color ? "selected" : ""
+                        }`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => {
+                          onCoverChange(color);
+                          onOpenChange(false);
+                        }}
+                        aria-label={`Selecionar cor ${color}`}
+                      />
+                    ))}
+                  </div>
+                </section>
               </div>
             )}
 
@@ -189,10 +246,28 @@ function CoverGalleryModal({
                 />
                 <button
                   type="button"
-                  className="cover-gallery-upload-button"
+                  className={`cover-gallery-dropzone ${
+                    isDragging ? "dragging" : ""
+                  }`}
                   onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    setIsDragging(true);
+                  }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    setIsDragging(false);
+                    handleDroppedFile(event.dataTransfer.files[0]);
+                  }}
                 >
-                  Selecionar imagem
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <circle cx="8.5" cy="9" r="1.5" />
+                    <path d="m4 17 4-4 3 3 2-2 5 5" />
+                  </svg>
+                  <strong>Selecionar imagem</strong>
+                  <span>ou arraste e solte aqui</span>
                 </button>
                 <p>Escolha uma imagem do seu computador para usar como capa.</p>
               </div>
@@ -203,23 +278,25 @@ function CoverGalleryModal({
                 <label htmlFor="cover-image-url">
                   Cole a URL direta da imagem
                 </label>
-                <input
-                  id="cover-image-url"
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={imageUrl}
-                  onChange={(event) => {
-                    setImageUrl(event.target.value);
-                    setErrorMessage("");
-                  }}
-                />
-                <button
-                  type="button"
-                  className="cover-gallery-apply"
-                  onClick={handleUrlApply}
-                >
-                  Aplicar URL
-                </button>
+                <div className="cover-gallery-url-row">
+                  <input
+                    id="cover-image-url"
+                    type="url"
+                    placeholder="https://images.unsplash.com/..."
+                    value={imageUrl}
+                    onChange={(event) => {
+                      setImageUrl(event.target.value);
+                      setErrorMessage("");
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="cover-gallery-apply"
+                    onClick={handleUrlApply}
+                  >
+                    Aplicar URL
+                  </button>
+                </div>
                 <p>
                   Funciona com links diretos de imagens públicas (Unsplash,
                   Pexels, Imgur, etc.).
@@ -247,7 +324,7 @@ function CoverGalleryModal({
               Remover capa
             </button>
 
-            <Dialog.Close className="cover-gallery-done">Fechar</Dialog.Close>
+            <Dialog.Close className="cover-gallery-done">Cancelar</Dialog.Close>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

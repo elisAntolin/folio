@@ -56,7 +56,7 @@ function CreatePageModal({
               </Dialog.Title>
             </div>
 
-            <Dialog.Close className="create-close" aria-label="Fechar">
+            <Dialog.Close className="create-close" aria-label="Cancelar">
               <img src={closeIcon} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>

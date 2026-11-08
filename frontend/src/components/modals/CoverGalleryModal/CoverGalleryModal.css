@@ -102,6 +102,45 @@
   gap: var(--space-3);
 }
 
+.cover-gallery-native {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.cover-gallery-native section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cover-gallery-native h3 {
+  margin: 0;
+  color: #526176;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cover-gallery-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.cover-gallery-color {
+  width: 42px;
+  height: 42px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.12);
+  cursor: pointer;
+}
+
+.cover-gallery-color:hover,
+.cover-gallery-color.selected {
+  border-color: #159dcc;
+}
+
 .cover-gallery-option {
   height: 110px;
   padding: 0;
@@ -128,6 +167,49 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.cover-gallery-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-height: 180px;
+  aspect-ratio: 3 / 1;
+  margin: 0;
+  padding: var(--space-4);
+  box-sizing: border-box;
+  border: 1.5px dashed #b8c5d6;
+  border-radius: var(--radius-lg);
+  background: #f8fafc;
+  color: #64748b;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cover-gallery-dropzone:hover,
+.cover-gallery-dropzone.dragging {
+  border-color: #159dcc;
+  background: #eff8ff;
+}
+
+.cover-gallery-dropzone svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: var(--space-1);
+  fill: none;
+  stroke: #159dcc;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cover-gallery-dropzone strong {
+  color: #526176;
+  font-size: 13px;
 }
 
 .cover-gallery-file-input {
@@ -173,6 +255,17 @@
   font: inherit;
   font-size: 13px;
   outline: none;
+}
+
+.cover-gallery-url-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cover-gallery-url-row input {
+  flex: 1;
+  min-width: 0;
 }
 
 .cover-gallery-url input:focus {
@@ -227,6 +320,11 @@
 
   .cover-gallery-tabs {
     overflow-x: auto;
+  }
+
+  .cover-gallery-url-row {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .cover-gallery-tab {

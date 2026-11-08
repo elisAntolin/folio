@@ -17,7 +17,13 @@ function PageDocument() {
     <>
       <div className="page-document">
         <div className="page-document-cover">
-          {coverImage ? (
+          {coverImage && coverImage.startsWith("#") ? (
+            <div
+              className="page-document-cover-color"
+              style={{ backgroundColor: coverImage }}
+              aria-label="Cor de fundo da capa"
+            />
+          ) : coverImage ? (
             <img src={coverImage} alt="Capa do documento da página" />
           ) : (
             <div className="page-document-cover-empty" />

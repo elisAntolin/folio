@@ -138,6 +138,36 @@
     border-color 0.15s ease;
 }
 
+.notification-review {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: #159dcc;
+  cursor: pointer;
+}
+
+.notification-review:hover {
+  background: #eaf8fc;
+}
+
+.notification-review svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .notification-item:last-child {
   margin-bottom: 6px;
 }

@@ -48,7 +48,7 @@ function EditPageModal({
               </Dialog.Title>
             </div>
 
-            <Dialog.Close className="edit-close" aria-label="Fechar">
+            <Dialog.Close className="edit-close" aria-label="Cancelar">
               <img src={closeIcon} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>

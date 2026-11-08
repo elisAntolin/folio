@@ -48,7 +48,7 @@ function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                 Configurações
               </Dialog.Title>
             </div>
-            <Dialog.Close className="settings-close" aria-label="Fechar">
+            <Dialog.Close className="settings-close" aria-label="Cancelar">
               <img src={closeIcon} alt="" aria-hidden="true" />
             </Dialog.Close>
           </div>
