@@ -5,6 +5,7 @@ export interface HomePageItem {
   id: string;
   title: string;
   category: string;
+  categories?: string[];
   sharedEmails: string[];
   sharedPermission: string;
   linkPermission: string;

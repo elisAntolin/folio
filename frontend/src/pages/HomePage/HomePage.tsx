@@ -9,11 +9,20 @@ import PageListItem from "../../components/PageListItem/PageListItem";
 
 function HomePage() {
   const [mode, setMode] = useState<"grid" | "list">("grid");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    "Desenvolvimento",
+    "Trabalho",
+    "Estudos",
+    "Pessoal",
+    "Projetos",
+    "Favoritos",
+  ]);
   const [pages, setPages] = useState<HomePageItem[]>(() =>
     Array.from({ length: 6 }, (_, index) => ({
       id: String(index + 1),
       title: "🤖 Back-end",
       category: "Estudos",
+      categories: ["Estudos"],
       sharedEmails: [],
       sharedPermission: "visualizar",
       linkPermission: "restricted",
@@ -25,6 +34,7 @@ function HomePage() {
       id: String(Date.now()),
       title,
       category,
+      categories: [category],
       sharedEmails: [],
       sharedPermission: "visualizar",
       linkPermission: "restricted",
@@ -41,7 +51,14 @@ function HomePage() {
     setPages((currentPages) =>
       currentPages.map((page) =>
         page.id === id
-          ? { ...page, title: newTitle, category: newCategory }
+          ? {
+              ...page,
+              title: newTitle,
+              category: newCategory,
+              categories: Array.from(
+                new Set([...(page.categories ?? [page.category]), newCategory]),
+              ),
+            }
           : page,
       ),
     );
@@ -79,12 +96,21 @@ function HomePage() {
     );
   }
 
+  const filteredPages =
+    selectedCategories.length === 0
+      ? pages
+      : pages.filter((page) =>
+          (page.categories ?? [page.category]).some((category) =>
+            selectedCategories.includes(category),
+          ),
+        );
+
   return (
     <div>
       <Header></Header>
       <main>
         <section className="search-section">
-          <SearchFilterBar />
+          <SearchFilterBar onFilterChange={setSelectedCategories} />
         </section>
 
         <section className="pages-section">
@@ -95,7 +121,7 @@ function HomePage() {
           />
           {mode === "grid" ? (
             <PageListCard
-              pages={pages}
+              pages={filteredPages}
               onEdit={handleEditPage}
               onShare={handleSharePage}
               onDelete={handleDeletePage}
@@ -103,7 +129,7 @@ function HomePage() {
             />
           ) : (
             <PageListItem
-              pages={pages}
+              pages={filteredPages}
               onEdit={handleEditPage}
               onShare={handleSharePage}
               onDelete={handleDeletePage}

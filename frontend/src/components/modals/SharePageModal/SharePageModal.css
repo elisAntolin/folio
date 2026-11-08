@@ -217,6 +217,15 @@
   border-color: #269dcc;
 }
 
+.share-select [data-radix-select-icon] {
+  display: inline-flex;
+  transition: transform 0.2s ease;
+}
+
+.share-select[data-state="open"] [data-radix-select-icon] {
+  transform: rotate(180deg);
+}
+
 .share-select-content {
   min-width: var(--radix-select-trigger-width);
   padding: var(--space-1);

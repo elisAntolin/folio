@@ -1,20 +1,30 @@
+import { useEffect, useState } from "react";
 import searchIcon from "../../assets/lupa.svg";
 import FilterCategories from "../modals/FilterCategories/FilterCategories";
+import { getCategories, subscribeToCategories } from "../../categories";
 
 import "./SearchFilterBar.css";
 
 interface SearchFilterBarProps {
   showFilter?: boolean;
+  onFilterChange?: (categories: string[]) => void;
 }
 
-function SearchFilterBar({ showFilter = true }: SearchFilterBarProps) {
-  const categories: string[] = [
-    "Trabalho",
-    "Estudos",
-    "Pessoal",
-    "Projetos",
-    "Favoritos",
+function SearchFilterBar({
+  showFilter = true,
+  onFilterChange,
+}: SearchFilterBarProps) {
+  const [categories, setCategories] = useState(getCategories);
+  const filterOnlyCategories = ["Projetos", "Favoritos"];
+  const availableCategories = [
+    ...categories,
+    ...filterOnlyCategories.filter((category) => !categories.includes(category)),
   ];
+
+  useEffect(
+    () => subscribeToCategories(() => setCategories(getCategories())),
+    [],
+  );
 
   return (
     <div className="search-filter-bar">
@@ -30,10 +40,8 @@ function SearchFilterBar({ showFilter = true }: SearchFilterBarProps) {
 
       {showFilter && (
         <FilterCategories
-          categories={categories}
-          onFilterChange={(selectedCategories: string[]) => {
-            console.log("Categorias selecionadas:", selectedCategories);
-          }}
+          categories={availableCategories}
+          onFilterChange={onFilterChange}
         />
       )}
     </div>

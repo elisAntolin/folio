@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { Select } from "radix-ui";
 import chevronDownIcon from "../../../assets/chevron-baixo.svg";
+import {
+  addCategory,
+  getCategories,
+  subscribeToCategories,
+} from "../../../categories";
 import "./CategorySelect.css";
-
-let categories = ["Desenvolvimento", "Estudos", "Trabalho", "Pessoal"];
-const listeners = new Set<() => void>();
-
-function notifyCategoryListeners() {
-  listeners.forEach((listener) => listener());
-}
 
 interface CategorySelectProps {
   value: string;
@@ -25,22 +23,14 @@ function CategorySelect({
   contentClassName,
   itemClassName,
 }: CategorySelectProps) {
-  const [availableCategories, setAvailableCategories] = useState(categories);
+  const [availableCategories, setAvailableCategories] = useState(getCategories);
   const [newCategory, setNewCategory] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
-  function subscribe(listener: () => void) {
-    listeners.add(listener);
-    return () => {
-      listeners.delete(listener);
-    };
-  }
-
-  function refreshCategories() {
-    setAvailableCategories([...categories]);
-  }
-
-  useEffect(() => subscribe(refreshCategories), []);
+  useEffect(
+    () => subscribeToCategories(() => setAvailableCategories(getCategories())),
+    [],
+  );
 
   function handleValueChange(nextValue: string) {
     setIsCreating(false);
@@ -52,19 +42,20 @@ function CategorySelect({
 
     if (
       !normalizedCategory ||
-      categories.some(
+      getCategories().some(
         (category) =>
-          category.toLocaleLowerCase() === normalizedCategory.toLocaleLowerCase(),
+          category.toLocaleLowerCase() ===
+          normalizedCategory.toLocaleLowerCase(),
       )
     ) {
       return;
     }
 
-    categories = [...categories, normalizedCategory];
+    if (!addCategory(normalizedCategory)) return;
+
     setNewCategory("");
     setIsCreating(false);
     onChange(normalizedCategory);
-    notifyCategoryListeners();
   }
 
   return (
@@ -106,16 +97,7 @@ function CategorySelect({
                 </Select.Item>
               ))}
 
-              <button
-                type="button"
-                className={`${itemClassName} category-create-option`}
-                onClick={() => setIsCreating(true)}
-                onPointerDown={(event) => event.preventDefault()}
-              >
-                + Criar nova categoria
-              </button>
-
-              {isCreating && (
+              {isCreating ? (
                 <div
                   className="category-create-field"
                   onPointerDown={(event) => event.stopPropagation()}
@@ -130,6 +112,9 @@ function CategorySelect({
                       if (event.key === "Enter") {
                         event.preventDefault();
                         handleCreateCategory();
+                      } else if (event.key === "Escape") {
+                        setIsCreating(false);
+                        setNewCategory("");
                       }
                     }}
                     maxLength={40}
@@ -145,6 +130,15 @@ function CategorySelect({
                     Adicionar
                   </button>
                 </div>
+              ) : (
+                <button
+                  type="button"
+                  className={`${itemClassName} category-create-option`}
+                  onClick={() => setIsCreating(true)}
+                  onPointerDown={(event) => event.preventDefault()}
+                >
+                  + Criar nova categoria
+                </button>
               )}
             </Select.Viewport>
           </Select.Content>

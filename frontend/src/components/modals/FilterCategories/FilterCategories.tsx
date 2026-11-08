@@ -13,19 +13,37 @@ function FilterCategories({
   categories,
   onFilterChange,
 }: FilterCategoriesProps) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([
-    "Trabalho",
-    "Projetos",
-  ]);
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(categories);
+
+  const effectiveSelectedCategories = selectedCategories.filter((category) =>
+    categories.includes(category),
+  );
 
   function handleCategoryChange(category: string, checked: boolean) {
     const updatedCategories = checked
-      ? [...selectedCategories, category]
-      : selectedCategories.filter((item) => item !== category);
+      ? effectiveSelectedCategories.includes(category)
+        ? selectedCategories
+        : [...selectedCategories, category]
+      : effectiveSelectedCategories.filter((item) => item !== category);
 
-    setSelectedCategories(updatedCategories);
-    onFilterChange?.(updatedCategories);
+    updateSelection(updatedCategories);
   }
+
+  function updateSelection(nextCategories: string[]) {
+    setSelectedCategories(nextCategories);
+    onFilterChange?.(nextCategories);
+  }
+
+  function clearCategories() {
+    updateSelection([]);
+  }
+
+  const allSelected =
+    categories.length > 0 &&
+    effectiveSelectedCategories.length === categories.length;
+  const partiallySelected =
+    effectiveSelectedCategories.length > 0 && !allSelected;
 
   return (
     <DropdownMenu.Root>
@@ -51,8 +69,39 @@ function FilterCategories({
           </DropdownMenu.Label>
 
           <div className="filter-options">
+            <DropdownMenu.CheckboxItem
+              className="filter-item filter-all-item"
+              checked={allSelected ? true : partiallySelected ? "indeterminate" : false}
+              onCheckedChange={(checked) =>
+                updateSelection(checked === true ? [...categories] : [])
+              }
+              onSelect={(event) => event.preventDefault()}
+            >
+              <span
+                className={`custom-checkbox${
+                  partiallySelected ? " custom-checkbox-partial" : ""
+                }`}
+              >
+                {allSelected && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polyline points="5 12 10 17 20 7" />
+                  </svg>
+                )}
+                {partiallySelected && <span aria-hidden="true" />}
+              </span>
+              <span>Todas</span>
+            </DropdownMenu.CheckboxItem>
+
             {categories.map((category) => {
-              const isSelected = selectedCategories.includes(category);
+              const isSelected = effectiveSelectedCategories.includes(category);
 
               return (
                 <DropdownMenu.CheckboxItem
@@ -84,6 +133,13 @@ function FilterCategories({
                 </DropdownMenu.CheckboxItem>
               );
             })}
+
+            <DropdownMenu.Item
+              className="filter-action filter-clear-action"
+              onSelect={clearCategories}
+            >
+              Limpar seleção
+            </DropdownMenu.Item>
           </div>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

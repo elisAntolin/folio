@@ -71,9 +71,50 @@
   }
 }
 
+:root[data-theme="light"] {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --border-control: #e2e8f0;
+  --surface-muted: #f4f5f7;
+  --surface-subtle: #e9e9eb;
+  --text-muted: #64748b;
+  --text-secondary: #4b5563;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
+  --bg: #16171d;
+  --border: #2e303a;
+  --surface-muted: #202127;
+  --surface-subtle: #2a2b34;
+  --text-muted: #9ca3af;
+  --text-secondary: #d1d5db;
+  --code-bg: #1f2028;
+  --accent: #c084fc;
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
 }
+
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href] {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 main {
   width: 100%;
   margin: 0 auto;

@@ -13,6 +13,11 @@ header {
   height: 36px;
 }
 
+.header-logo-link {
+  display: inline-flex;
+  cursor: pointer;
+}
+
 .header-actions {
   display: flex;
   align-items: center;

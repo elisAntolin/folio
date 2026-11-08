@@ -10,6 +10,8 @@ import SharePageModal from "../SharePageModal/SharePageModal";
 import trashIcon from "../../../assets/lixeira.svg";
 import starIcon from "../../../assets/estrela.svg";
 import filledStarIcon from "../../../assets/estrela-preenchida.svg";
+import pinIcon from "../../../assets/fixar-diagonal-direita.svg";
+import filledPinIcon from "../../../assets/fixar-diagonal-direita-preenchido.svg";
 import editIcon from "../../../assets/editar-quadrado.svg";
 import shareIcon from "../../../assets/compartilhar-seta.svg";
 import verticalDotsIcon from "../../../assets/pontos-vertical.svg";
@@ -22,6 +24,9 @@ interface PageActionsMenuProps {
   onShare: (email: string, permission: string) => void;
   onDelete: () => void;
   onLinkPermissionChange: (permission: string) => void;
+  isSubpage?: boolean;
+  isPinned?: boolean;
+  onPinnedChange?: (isPinned: boolean) => void;
 }
 
 function PageActionsMenu({
@@ -32,15 +37,26 @@ function PageActionsMenu({
   onShare,
   onDelete,
   onLinkPermissionChange,
+  isSubpage = false,
+  isPinned: controlledIsPinned,
+  onPinnedChange,
 }: PageActionsMenuProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const [isFavorite, setIsFavorite] = useState(false);
+  const [internalIsPinned, setInternalIsPinned] = useState(false);
+  const isPinned = controlledIsPinned ?? internalIsPinned;
 
   const handleFavorite = () => {
     setIsFavorite((prev) => !prev);
+  };
+
+  const handlePin = () => {
+    const nextIsPinned = !isPinned;
+    setInternalIsPinned(nextIsPinned);
+    onPinnedChange?.(nextIsPinned);
   };
 
   return (
@@ -63,13 +79,31 @@ function PageActionsMenu({
           >
             <DropdownMenu.Item
               className="page-actions-item"
-              onSelect={handleFavorite}
+              onSelect={isSubpage ? handlePin : handleFavorite}
+              data-action={isSubpage ? "pin-subpage" : "favorite-page"}
+              title={isSubpage ? "Fixar subpágina" : "Favoritar página"}
             >
               <img
-                src={isFavorite ? filledStarIcon : starIcon}
+                src={
+                  isSubpage
+                    ? isPinned
+                      ? filledPinIcon
+                      : pinIcon
+                    : isFavorite
+                      ? filledStarIcon
+                      : starIcon
+                }
                 alt=""
               />
-              <span>{isFavorite ? "Remover dos favoritos" : "Favoritar"}</span>
+              <span>
+                {isSubpage
+                  ? isPinned
+                    ? "Desafixar"
+                    : "Fixar"
+                  : isFavorite
+                    ? "Remover dos favoritos"
+                    : "Favoritar"}
+              </span>
             </DropdownMenu.Item>
 
             <DropdownMenu.Item
