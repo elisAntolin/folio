@@ -158,8 +158,8 @@ function PageActionsMenu({
                 className="page-actions-item"
                 onSelect={() => setIsShareOpen(true)}
               >
-                <img src={shareIcon} alt="" />
-                <span>Compartilhar</span>
+                <img src={linkIcon} alt="" />
+                <span>Link da Página</span>
               </DropdownMenu.Item>
             )}
 
