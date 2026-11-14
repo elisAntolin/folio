@@ -1,7 +1,7 @@
 .share-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.35);
+  background: var(--overlay);
   backdrop-filter: blur(3px);
   z-index: 1000;
 }
@@ -20,8 +20,8 @@
   padding: var(--modal-padding);
   box-sizing: border-box;
 
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--modal-radius);
 
   box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15);
@@ -53,14 +53,14 @@
 
 .share-title {
   margin: 0;
-  color: #273449;
+  color: var(--text-h);
   font-size: 18px;
   font-weight: 600;
 }
 
 .share-description {
   margin-top: var(--space-1);
-  color: #718096;
+  color: var(--text-muted);
   font-size: 13px;
   line-height: 20px;
 }
@@ -71,7 +71,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 16px;
   line-height: 16px;
   cursor: pointer;
@@ -91,7 +91,7 @@
 
 .share-label {
   display: block;
-  color: #526176;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
 }
@@ -110,21 +110,21 @@
   height: var(--field-height);
   padding: 0 var(--space-3);
 
-  border: 1px solid #dbe2ec;
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   outline: none;
 
-  color: #334155;
+  color: var(--text-secondary);
   font-family: inherit;
   font-size: 13px;
 }
 
 .share-input::placeholder {
-  color: #a0aec0;
+  color: var(--text-muted);
 }
 
 .share-input:focus {
-  border-color: #269dcc;
+  border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(38, 157, 204, 0.1);
 }
 
@@ -140,13 +140,13 @@
 
 .share-primary-button {
   border: none;
-  background: #159dcc;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--on-primary);
   font-weight: 600;
 }
 
 .share-primary-button:hover:not(:disabled) {
-  background: #118bb7;
+  background: var(--primary-hover);
 }
 
 .share-primary-button:disabled {
@@ -157,11 +157,11 @@
 .share-cancel-button {
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .share-cancel-button:hover {
-  background: #f8fafc;
+  background: var(--surface-muted);
 }
 
 .share-permission {
@@ -180,11 +180,11 @@
   height: var(--field-height);
   padding: 0 var(--space-3);
 
-  background: #ffffff;
-  border: 1px solid #dbe2ec;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
 
-  color: #475569;
+  color: var(--text-secondary);
   font-family: inherit;
   font-size: 13px;
 
@@ -193,7 +193,7 @@
 
 .share-select:focus {
   outline: none;
-  border-color: #269dcc;
+  border-color: var(--accent);
 }
 
 .share-select [data-radix-select-icon] {
@@ -209,8 +209,8 @@
   min-width: var(--radix-select-trigger-width);
   padding: var(--space-1);
 
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
 
   box-shadow: 0 5px 15px rgba(15, 23, 42, 0.12);
@@ -225,7 +225,7 @@
   padding: 0 var(--space-3);
 
   border-radius: var(--radius-sm);
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 13px;
 
   outline: none;
@@ -233,12 +233,12 @@
 }
 
 .share-select-item[data-highlighted] {
-  background: #eff8ff;
-  color: #0284c7;
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .share-helper {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 20px;
 }
@@ -251,11 +251,11 @@
   height: var(--field-height);
   padding: 0 var(--space-3);
 
-  background: #f8fafc;
-  border: 1px solid #dbe2ec;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
 
-  color: #718096;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
@@ -268,7 +268,7 @@
 .share-divider {
   height: 1px;
   margin: var(--space-4) 0;
-  background: #edf0f4;
+  background: var(--border);
 }
 
 .share-footer {
@@ -278,7 +278,7 @@
   margin-top: var(--space-4);
   padding-top: var(--space-4);
 
-  border-top: 1px solid #edf0f4;
+  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 480px) {

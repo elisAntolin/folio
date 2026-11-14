@@ -109,6 +109,10 @@ function CategorySelect({
                     value={newCategory}
                     onChange={(event) => setNewCategory(event.target.value)}
                     onKeyDown={(event) => {
+                      // Keep typing and caret navigation out of Select's typeahead.
+                      if (event.key !== "Escape" && event.key !== "Tab") {
+                        event.stopPropagation();
+                      }
                       if (event.key === "Enter") {
                         event.preventDefault();
                         handleCreateCategory();

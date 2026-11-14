@@ -2,12 +2,12 @@
   box-sizing: border-box;
   min-height: var(--control-height);
   border: 1px solid var(--border-control);
-  background-color: #ffffff;
+  background-color: var(--surface);
   box-shadow: var(--control-shadow);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
   font: 600 14px / 1.4 var(--sans);
-  color: #4b5563;
+  color: var(--text-secondary);
 
   display: flex;
   align-items: center;

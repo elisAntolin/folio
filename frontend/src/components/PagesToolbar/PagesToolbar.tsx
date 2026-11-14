@@ -3,8 +3,7 @@ import "./PagesToolbar.css";
 import AddPageButton from "../AddPageButton/AddPageButton";
 import SortFilter from "../modals/SortFilter/SortFilter";
 
-import favoriteIcon from "../../assets/favorito.svg";
-import gridIcon from "../../assets/grade.svg";
+import Icon from "../Icon/Icon";
 import listIcon from "../../assets/lista.svg";
 
 interface PagesToolbarProps {
@@ -34,17 +33,25 @@ function PagesToolbar({
         <SortFilter></SortFilter>
         <button
           type="button"
+          className="favorites-filter"
           aria-pressed={showFavorites}
           aria-label={showFavorites ? "Mostrar todas as páginas" : "Mostrar favoritos"}
           onClick={() => onFavoritesChange(!showFavorites)}
         >
-          <img src={favoriteIcon} alt="Favoritos" />
+          <Icon name="star" filled={showFavorites} />
         </button>
-        <button onClick={() => changeMode(mode === "grid" ? "list" : "grid")}>
-          <img
-            src={mode === "grid" ? listIcon : gridIcon}
-            alt="Tipo de disposição"
-          />
+        <button
+          type="button"
+          className="view-mode-toggle"
+          aria-label="Tipo de disposição"
+          aria-pressed={mode === "list"}
+          onClick={() => changeMode(mode === "grid" ? "list" : "grid")}
+        >
+          {mode === "grid" ? (
+            <img src={listIcon} alt="" />
+          ) : (
+            <Icon name="grid" filled />
+          )}
         </button>
       </div>
     </div>

@@ -9,8 +9,7 @@ import SharePageModal from "../SharePageModal/SharePageModal";
 import InternalMemberModal from "../InternalMemberModal/InternalMemberModal";
 
 import trashIcon from "../../../assets/lixeira.svg";
-import starIcon from "../../../assets/estrela.svg";
-import filledStarIcon from "../../../assets/estrela-preenchida.svg";
+import Icon from "../../Icon/Icon";
 import pinIcon from "../../../assets/fixar-diagonal-direita.svg";
 import filledPinIcon from "../../../assets/fixar-diagonal-direita-preenchido.svg";
 import editIcon from "../../../assets/editar-quadrado.svg";
@@ -92,20 +91,14 @@ function PageActionsMenu({
               className="page-actions-item"
               onSelect={isSubpage ? handlePin : handleFavorite}
               data-action={isSubpage ? "pin-subpage" : "favorite-page"}
+              data-active={isSubpage ? isPinned : isFavorite}
               title={isSubpage ? "Fixar subpágina" : "Favoritar página"}
             >
-              <img
-                src={
-                  isSubpage
-                    ? isPinned
-                      ? filledPinIcon
-                      : pinIcon
-                    : isFavorite
-                      ? filledStarIcon
-                      : starIcon
-                }
-                alt=""
-              />
+              {isSubpage ? (
+                <img src={isPinned ? filledPinIcon : pinIcon} alt="" />
+              ) : (
+                <Icon name="star" filled={isFavorite} />
+              )}
               <span>
                 {isSubpage
                   ? isPinned

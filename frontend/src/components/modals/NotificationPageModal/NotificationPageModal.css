@@ -15,12 +15,12 @@
   border-radius: 7px;
   background: transparent;
 
-  color: #64748b;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .notification-trigger:hover {
-  background: #f1f5f9;
+  background: var(--surface-muted);
 }
 
 .notification-trigger img {
@@ -47,11 +47,11 @@
   height: 14px;
   padding: 0;
 
-  background: #159dcc;
-  border: 1.5px solid #ffffff;
+  background: var(--primary);
+  border: 1.5px solid var(--surface);
   border-radius: 50%;
 
-  color: #ffffff;
+  color: var(--on-primary);
   font-size: 8px;
   font-weight: 600;
   line-height: 1;
@@ -72,8 +72,8 @@
 
   padding: 0;
 
-  background-color: #fff;
-  border: 1px solid #dce1e8;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
 
   box-shadow: 0 5px 18px rgba(15, 23, 42, 0.12);
@@ -91,8 +91,8 @@
   min-height: 42px;
   padding: 0 15px;
 
-  border-bottom: 1px solid #e2e5e9;
-  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
 
   box-sizing: border-box;
 }
@@ -100,13 +100,13 @@
 .notification-header h2 {
   margin: 0;
 
-  color: #303642;
+  color: var(--text-h);
   font-size: 14px;
   font-weight: 600;
 }
 
 .notification-count {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -131,7 +131,7 @@
 
   border: 1px solid transparent;
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--surface);
 
   transition:
     background 0.15s ease,
@@ -148,7 +148,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: transparent;
-  color: #159dcc;
+  color: var(--accent);
   font: inherit;
   font-size: 11px;
   font-weight: 600;
@@ -156,7 +156,8 @@
 }
 
 .notification-review:hover {
-  color: #118bb7;
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 .notification-item:last-child {
@@ -164,8 +165,8 @@
 }
 
 .notification-item:hover {
-  background: #f8fafc;
-  border-color: #dce1e8;
+  background: var(--surface-muted);
+  border-color: var(--border);
 }
 
 .notification-item .avatar {
@@ -182,7 +183,7 @@
 .notification-content p {
   margin: 0;
 
-  color: #414854;
+  color: var(--text-secondary);
   font-size: 12px;
   font-weight: 400;
   line-height: 19px;
@@ -192,7 +193,7 @@
 
 .notification-content .notification-message {
   margin-top: 2px;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 16px;
 }
@@ -206,7 +207,7 @@
 
   margin-top: 5px;
 
-  color: #858b98;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 14px;
 }
@@ -226,7 +227,7 @@
 .notification-empty {
   padding: 30px 15px;
 
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 12px;
   text-align: center;
 }
@@ -240,16 +241,16 @@
 }
 
 .notification-list::-webkit-scrollbar-thumb {
-  background: #c5c9cf;
+  background: var(--border);
   border-radius: 10px;
 }
 
 .notification-list::-webkit-scrollbar-thumb:hover {
-  background: #aeb4bd;
+  background: var(--border);
 }
 
 .notification-arrow {
-  fill: #ffffff;
+  fill: var(--surface);
 }
 
 

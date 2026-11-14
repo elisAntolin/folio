@@ -1,0 +1,179 @@
+/* Shared color and keyboard states, without changing component measurements. */
+button, a, input, textarea, select, [contenteditable], [role^="menuitem"], [role="option"] {
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+button:disabled, [aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.new-page, .share {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+}
+
+.new-page:hover:not(:disabled), .share:hover:not(:disabled), .create-submit:hover:not(:disabled), .edit-save:hover:not(:disabled),
+.share-primary-button:hover:not(:disabled), .category-add-button:hover:not(:disabled),
+.cover-gallery-upload-button:hover:not(:disabled), .permission-analysis-grant:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.new-page:active:not(:disabled), .share:active:not(:disabled), .create-submit:active:not(:disabled), .edit-save:active:not(:disabled),
+.share-primary-button:active:not(:disabled), .category-add-button:active:not(:disabled),
+.cover-gallery-upload-button:active:not(:disabled), .permission-analysis-grant:active:not(:disabled) {
+  background: var(--primary-active);
+}
+
+.filter-trigger:hover, .page-actions-trigger:hover,
+button[class$="-close"]:hover, .page-document-edit-image:hover {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.pages-tool-bar .favorites-filter[aria-pressed="true"],
+.pages-tool-bar .view-mode-toggle[aria-pressed="true"],
+.sort-trigger[data-active="true"], .page-actions-item[data-active="true"] {
+  color: var(--primary);
+}
+
+.page-actions-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.filter-trigger[data-active="true"] img,
+.page-actions-item[data-active="true"] img {
+  filter: var(--primary-icon-filter);
+}
+
+[role^="menuitem"][data-highlighted], [role="option"][data-highlighted] {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.filter-clear-action[data-highlighted] {
+  color: var(--danger);
+  background: transparent;
+}
+
+.page-actions-item.delete[data-highlighted], .user-menu-logout[data-highlighted] {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.create-cancel:hover, .edit-cancel:hover, .share-cancel-button:hover,
+.cover-gallery-done:hover, .permission-analysis-deny:hover {
+  background: var(--surface-muted);
+}
+
+button:where(:not(.cover-gallery-option):not(.settings-theme-option)) > img,
+.search-bar > img, [role^="menuitem"] > img, .sidebar-link > img,
+.page-card-badge > img, .page-item-badge > img {
+  filter: var(--icon-filter);
+}
+
+.new-page > img, .share > img {
+  filter: brightness(0) invert(1);
+}
+
+.page-card-category > img, .page-item-category > img {
+  filter: var(--primary-icon-filter);
+}
+
+.sidebar-create-button .new-page > img {
+  filter: var(--icon-filter);
+}
+
+.sidebar-create-button .new-page {
+  color: var(--text-secondary);
+}
+
+.sidebar-create-button .new-page:hover {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: transparent;
+}
+
+/* Override local outline resets, preserving the original element dimensions. */
+:is(button, a[href], input, textarea, select, [tabindex], [contenteditable], [role^="menuitem"], [role="option"]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+:is(input, textarea, select):focus, .search-bar:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.search-bar input:focus {
+  box-shadow: none;
+}
+
+.search-bar input:focus-visible {
+  outline: none;
+}
+
+.page-document-body:focus-visible, .page-card-cover-link:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Bound existing dialogs and menus to the viewport without adding content. */
+.create-modal, .edit-modal, .share-modal, .settings-modal, .permission-analysis-modal, .cover-gallery-modal {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.create-select-content, .edit-select-content, .share-select-content,
+.page-actions-content, .sort-content, .filter-content, .user-menu-content, .share-options-menu {
+  max-width: calc(100vw - 24px);
+  max-height: min(70dvh, var(--radix-dropdown-menu-content-available-height, 70dvh));
+  overflow-y: auto;
+}
+
+@media (max-width: 767px) {
+  main {
+    padding-inline: var(--space-4);
+  }
+
+  .edit-modal {
+    box-sizing: border-box;
+  }
+
+  .create-heading, .edit-heading, .share-heading, .settings-heading,
+  .cover-gallery-heading, .permission-analysis-heading {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .create-header, .edit-header, .settings-header, .cover-gallery-header, .permission-analysis-header {
+    gap: var(--space-2);
+  }
+
+  button[class$="-close"] {
+    flex-shrink: 0;
+  }
+
+  .create-modal, .edit-modal, .share-modal, .settings-modal, .permission-analysis-modal, .cover-gallery-modal {
+    overflow-wrap: anywhere;
+  }
+
+  .permission-analysis-actions, .colaboration-bar {
+    flex-wrap: wrap;
+  }
+
+  .permission-analysis-user > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -2,12 +2,12 @@
   box-sizing: border-box;
   min-height: var(--control-height);
   border: 1px solid var(--border-control);
-  background-color: #ffffff;
+  background-color: var(--surface);
   box-shadow: var(--control-shadow);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
   font: 600 14px / 1.4 var(--sans);
-  color: #4b5563;
+  color: var(--text-secondary);
 
   display: flex;
   align-items: center;
@@ -26,8 +26,8 @@
   min-width: 180px;
   max-width: 240px;
   padding: var(--space-1);
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 100;
@@ -39,7 +39,7 @@
   gap: var(--space-2);
   padding: 6px 10px;
   border-radius: 6px;
-  color: #27272a;
+  color: var(--text-h);
   font-size: 13px;
   line-height: 20px;
   cursor: pointer;
@@ -53,5 +53,5 @@
 
 .share-options-item:hover,
 .share-options-item:focus {
-  background: #f4f4f5;
+  background: var(--surface-muted);
 }

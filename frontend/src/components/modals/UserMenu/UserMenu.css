@@ -16,8 +16,8 @@
   max-width: 240px;
   padding: var(--space-1);
 
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -35,7 +35,7 @@
 
   border-radius: 6px;
 
-  color: #27272a;
+  color: var(--text-h);
   font-size: 13px;
   line-height: 20px;
 
@@ -46,7 +46,7 @@
 
 .user-menu-item:hover,
 .user-menu-item:focus {
-  background: #f4f4f5;
+  background: var(--surface-muted);
 }
 
 .user-menu-item img {
@@ -59,11 +59,11 @@
   height: 1px;
   margin: var(--space-1) 0;
 
-  background: #e4e4e7;
+  background: var(--border);
 }
 
 .user-menu-logout {
-  color: #e05270;
+  color: var(--danger);
 }
 
 .user-menu-logout img {
@@ -72,7 +72,7 @@
 
 .user-menu-logout:hover,
 .user-menu-logout:focus {
-  background-color: #fff1f3;
+  background-color: var(--danger-bg);
 }
 
 .user-menu-trigger {

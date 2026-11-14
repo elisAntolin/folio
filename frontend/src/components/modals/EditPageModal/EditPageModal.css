@@ -1,7 +1,7 @@
 .edit-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(30, 41, 59, 0.35);
+  background: var(--overlay);
   backdrop-filter: blur(4px);
   z-index: 1000;
 }
@@ -16,7 +16,7 @@
   max-width: var(--modal-max-width);
   padding: var(--modal-padding);
 
-  background: #ffffff;
+  background: var(--surface);
   border-radius: var(--modal-radius);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 
@@ -38,7 +38,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-h);
 }
 
 .edit-close {
@@ -46,7 +46,7 @@
   height: 28px;
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 16px;
   line-height: 16px;
   cursor: pointer;
@@ -59,7 +59,7 @@
 
 .edit-description {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-muted);
   line-height: 20px;
   margin-bottom: var(--space-4);
 }
@@ -67,7 +67,7 @@
 .edit-label {
   display: block;
   font-size: 13px;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
@@ -76,17 +76,17 @@
   height: var(--field-height);
   padding: 0 var(--space-3);
 
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   outline: none;
 
   font-size: 13px;
-  color: #334155;
+  color: var(--text-secondary);
   box-sizing: border-box;
 }
 
 .edit-input:focus {
-  border-color: #55b8a8;
+  border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(85, 184, 168, 0.12);
 }
 
@@ -98,10 +98,10 @@
   height: var(--field-height);
   padding: 0 var(--space-3);
   box-sizing: border-box;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: #ffffff;
-  color: #334155;
+  background: var(--surface);
+  color: var(--text-secondary);
   font: inherit;
   font-size: 13px;
   outline: none;
@@ -109,7 +109,7 @@
 }
 
 .edit-select:focus {
-  border-color: #55b8a8;
+  border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(85, 184, 168, 0.12);
 }
 
@@ -121,8 +121,8 @@
 .edit-select-content {
   min-width: var(--radix-select-trigger-width);
   padding: var(--space-1);
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: 0 5px 15px rgba(15, 23, 42, 0.12);
   z-index: 1100;
@@ -134,15 +134,15 @@
   min-height: var(--field-height);
   padding: 0 var(--space-3);
   border-radius: var(--radius-sm);
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 13px;
   outline: none;
   cursor: pointer;
 }
 
 .edit-select-item[data-highlighted] {
-  background: #eff8ff;
-  color: #0284c7;
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .edit-footer {
@@ -164,16 +164,16 @@
 .edit-cancel {
   background: transparent;
   border: none;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .edit-save {
-  background: #1596c9;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--on-primary);
   border: none;
   font-weight: 600;
 }
 
 .edit-save:hover {
-  background: #1285b3;
+  background: var(--primary-hover);
 }

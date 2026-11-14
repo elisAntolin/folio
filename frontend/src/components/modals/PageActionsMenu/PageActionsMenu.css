@@ -10,12 +10,12 @@
   border-radius: 6px;
   background: transparent;
 
-  color: #888;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .page-actions-trigger:hover {
-  background: #f4f4f5;
+  background: var(--surface-muted);
 }
 
 .page-actions-content {
@@ -23,8 +23,8 @@
   max-width: 240px;
   padding: var(--space-1);
 
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -41,7 +41,7 @@
 
   font-size: 13px;
   line-height: 20px;
-  color: #27272a;
+  color: var(--text-h);
 
   cursor: pointer;
   outline: none;
@@ -50,7 +50,7 @@
 
 .page-actions-item:hover,
 .page-actions-item:focus {
-  background: #f4f4f5;
+  background: var(--surface-muted);
 }
 
 .page-actions-item img {
@@ -61,14 +61,14 @@
 .page-actions-separator {
   height: 1px;
   margin: var(--space-1) 0;
-  background: #e4e4e7;
+  background: var(--border);
 }
 
 .page-actions-item.delete {
-  color: #dc5252;
+  color: var(--danger);
 }
 
 .page-actions-item.delete:hover,
 .page-actions-item.delete:focus {
-  background: #fef2f2;
+  background: var(--danger-bg);
 }

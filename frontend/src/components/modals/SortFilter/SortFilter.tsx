@@ -2,7 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import "./SortFilter.css";
 
-import filterIcon from "../../../assets/filtro.svg";
+import Icon from "../../Icon/Icon";
 
 export type SortOption = "alphabetical" | "recent" | "creation";
 
@@ -26,8 +26,9 @@ function SortFilter({ onSortChange }: SortFilterProps) {
           type="button"
           className="sort-trigger"
           aria-label="Abrir opções de classificação"
+          data-active={sortBy !== "alphabetical"}
         >
-          <img src={filterIcon} alt="" />
+          <Icon name="filter" filled={sortBy !== "alphabetical"} />
         </button>
       </DropdownMenu.Trigger>
 

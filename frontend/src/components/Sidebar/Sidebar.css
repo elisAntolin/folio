@@ -96,22 +96,21 @@ aside {
 }
 
 .sidebar-list-item-pinned {
-  border-left-color: #2563eb;
-  background-color: #eff6ff;
+  border-left-color: var(--accent);
+  background-color: var(--accent-bg);
   border-radius: var(--radius-sm);
 }
 
 .sidebar-list-item-pinned .sidebar-link,
 .sidebar-list-item-pinned .subpages-name {
-  color: #2563eb;
+  color: var(--accent);
 }
 
 .sidebar-pinned-icon {
   width: 16px;
   height: 16px;
   margin-left: var(--space-1);
-  filter: brightness(0) saturate(100%) invert(36%) sepia(97%) saturate(1325%)
-    hue-rotate(207deg) brightness(91%) contrast(93%);
+  filter: var(--primary-icon-filter);
 }
 
 .sidebar-list-item .sidebar-link {
@@ -141,4 +140,13 @@ aside {
   background-color: var(--surface-subtle);
   border-color: transparent;
   box-shadow: none;
+}
+
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar { width: 240px; padding: var(--space-4); }
+}
+@media (max-width: 767px) {
+  .sidebar { width: 100%; max-width: none; padding: var(--space-4); }
+  .sidebar-navigation { max-height: 240px; overflow-y: auto; }
 }

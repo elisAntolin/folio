@@ -1,40 +1,78 @@
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 56px;
-  padding: var(--space-2) var(--space-4);
   box-sizing: border-box;
-  border-bottom: 1px solid var(--border-control);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-}
-
-.header-logo {
-  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  padding: 12px 32px;
+  gap: var(--space-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .header-logo-link {
   display: inline-flex;
-  cursor: pointer;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.header-logo {
+  width: 28px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.header-wordmark {
+  color: var(--text-h);
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+}
+
+.header-wordmark > span {
+  color: var(--accent);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
 }
 
-.header-actions button:where(:not(.notification-trigger)) {
-  all: unset;
-  cursor: pointer;
+.header-actions .user-menu-trigger .avatar {
+  font-weight: 400;
 }
 
-.header-actions .header-user {
-  font: 600 14px/1.4 var(--sans);
+.header-user {
+  font-size: 13px;
   color: var(--text-secondary);
-  white-space: nowrap;
 }
 
 .header-divider {
-  color: #cbd2dc;
+  color: var(--border);
+}
+
+.header-actions .header-divider {
+  display: block;
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  font-size: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  header {
+    min-height: 64px;
+    padding: 10px 16px;
+  }
+  .header-user, .header-actions > .header-divider {
+    display: none;
+  }
+  .header-actions {
+    gap: var(--space-2);
+  }
 }

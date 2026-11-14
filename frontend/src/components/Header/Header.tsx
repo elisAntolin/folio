@@ -16,13 +16,14 @@ function Header() {
     <header>
       <Link to="/" className="header-logo-link" aria-label="Ir para a página inicial">
         <img className="header-logo" src={logo} alt="Folio" />
+        <span className="header-wordmark" aria-hidden="true">folio<span>.</span></span>
       </Link>
 
       <div className="header-actions">
         <NotificationPageModal></NotificationPageModal>
         <span className="header-divider">|</span>
 
-        <button className="header-user">eliscardoso@gmail.com</button>
+        <span className="header-user">eliscardoso@gmail.com</span>
 
         <UserMenu
           name={name}

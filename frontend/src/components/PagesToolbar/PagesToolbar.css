@@ -1,5 +1,10 @@
 .pages-tool-bar button:not(.new-page) {
-  all: unset;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
   box-sizing: border-box;
   cursor: pointer;
   font-size: 14px;
@@ -34,4 +39,51 @@
   font-weight: 600;
   line-height: 24px;
   margin: 0;
+}
+
+
+@media (max-width: 767px) {
+  .pages-tool-bar {
+    display: grid;
+    grid-template-columns: auto auto auto minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .pages-tool-bar h1 {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .pages-toolbar-actions {
+    display: contents;
+  }
+
+  .pages-toolbar-actions .new-page {
+    grid-column: 4;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .pages-toolbar-actions .header-divider {
+    display: none;
+  }
+
+  .pages-toolbar-actions .sort-trigger {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .pages-toolbar-actions .favorites-filter {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .pages-toolbar-actions .view-mode-toggle {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: start;
+  }
 }

@@ -52,6 +52,7 @@ function FilterCategories({
           type="button"
           className="filter-trigger"
           aria-label="Filtrar categorias"
+          data-active={partiallySelected}
         >
           <img src={categoryFilterIcon} alt="" aria-hidden="true" />
         </button>
