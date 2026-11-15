@@ -1,0 +1,94 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useState } from "react";
+import "./SortFilter.css";
+
+import Icon from "../../Icon/Icon";
+
+export type SortOption = "alphabetical" | "recent" | "creation";
+
+interface SortFilterProps {
+  onSortChange?: (sortBy: SortOption) => void;
+}
+
+function SortFilter({ onSortChange }: SortFilterProps) {
+  const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
+
+  const options = [
+    { value: "alphabetical", label: "A–Z" },
+    { value: "recent", label: "Recentes" },
+    { value: "creation", label: "Criação" },
+  ];
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className="sort-trigger"
+          aria-label="Abrir opções de classificação"
+          data-active={sortBy !== "alphabetical"}
+        >
+          <Icon name="filter" filled={sortBy !== "alphabetical"} />
+        </button>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          className="sort-content"
+          side="bottom"
+          align="end"
+          sideOffset={10}
+        >
+          <DropdownMenu.Label className="sort-label">
+            Classificar por
+          </DropdownMenu.Label>
+
+          <DropdownMenu.RadioGroup
+            value={sortBy}
+            onValueChange={(value) => {
+              if (
+                value !== "alphabetical" &&
+                value !== "recent" &&
+                value !== "creation"
+              ) {
+                return;
+              }
+
+              const nextSortBy: SortOption = value;
+              setSortBy(nextSortBy);
+              onSortChange?.(nextSortBy);
+            }}
+          >
+            {options.map((option) => (
+              <DropdownMenu.RadioItem
+                key={option.value}
+                value={option.value}
+                className="sort-item"
+              >
+                <span className="sort-checkbox">
+                  <DropdownMenu.ItemIndicator>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="5 12 10 17 20 7" />
+                    </svg>
+                  </DropdownMenu.ItemIndicator>
+                </span>
+
+                <span>{option.label}</span>
+              </DropdownMenu.RadioItem>
+            ))}
+          </DropdownMenu.RadioGroup>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
+
+export default SortFilter;

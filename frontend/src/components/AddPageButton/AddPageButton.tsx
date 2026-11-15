@@ -1,13 +1,33 @@
+import { useState } from "react";
 import "./AddPageButton.css";
 
-import mais from "../../assets/mais.svg";
+import plusIcon from "../../assets/mais.svg";
+import CreatePageModal from "../modals/CreatePageModal/CreatePageModal";
 
-function AddPageButton() {
+interface AddPageButtonProps {
+  onCreate: (title: string, category: string) => void;
+  label?: string;
+}
+
+function AddPageButton({
+  onCreate,
+  label = "Nova Página",
+}: AddPageButtonProps) {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
   return (
-    <button className="new-page">
-      <img src={mais} alt="Nova Páginas" />
-      <span>Nova Página</span>
-    </button>
+    <>
+      <button className="new-page" onClick={() => setIsCreateOpen(true)}>
+        <img src={plusIcon} alt="" />
+        <span>{label}</span>
+      </button>
+
+      <CreatePageModal
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        onCreate={onCreate}
+      />
+    </>
   );
 }
 

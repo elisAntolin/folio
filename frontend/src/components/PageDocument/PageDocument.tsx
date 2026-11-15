@@ -1,30 +1,60 @@
+import { useState } from "react";
+import { useLocation } from "react-router";
 import "./PageDocument.css";
 
 import capa from "../../assets/capa.jpg";
-import editar_imagem from "../../assets/editar-imagem.svg";
+import editImageIcon from "../../assets/editar-imagem.svg";
+import CoverGalleryModal from "../modals/CoverGalleryModal/CoverGalleryModal";
 
 function PageDocument() {
-  return (
-    <div className="page-document">
-      <div className="page-document-cover">
-        <img src={capa} alt="Capa do documento da página" />
+  const location = useLocation();
+  const [coverImage, setCoverImage] = useState<string | null>(() =>
+    location.state?.isNewPage ? null : capa,
+  );
+  const [isCoverGalleryOpen, setIsCoverGalleryOpen] = useState(false);
 
-        <button
-          className="page-document-edit-image"
-          title="Alterar imagem da capa"
-        >
-          <img src={editar_imagem} alt="" />
-        </button>
+  return (
+    <>
+      <div className="page-document">
+        <div className="page-document-cover">
+          {coverImage && coverImage.startsWith("#") ? (
+            <div
+              className="page-document-cover-color"
+              style={{ backgroundColor: coverImage }}
+              aria-label="Cor de fundo da capa"
+            />
+          ) : coverImage ? (
+            <img src={coverImage} alt="Capa do documento da página" />
+          ) : (
+            <div className="page-document-cover-empty" />
+          )}
+
+          <button
+            className="page-document-edit-image"
+            title="Alterar imagem da capa"
+            onClick={() => setIsCoverGalleryOpen(true)}
+          >
+            <img src={editImageIcon} alt="" />
+          </button>
+        </div>
+
+        <div
+          className="page-document-body"
+          contentEditable
+          role="textbox"
+          aria-label="Conteúdo do documento"
+          suppressContentEditableWarning
+        />
       </div>
 
-      <div
-        className="page-document-body"
-        contentEditable
-        role="textbox"
-        aria-label="Conteúdo do documento"
-        suppressContentEditableWarning
+      <CoverGalleryModal
+        open={isCoverGalleryOpen}
+        coverImage={coverImage}
+        onOpenChange={setIsCoverGalleryOpen}
+        onCoverChange={setCoverImage}
+        onCoverRemove={() => setCoverImage(null)}
       />
-    </div>
+    </>
   );
 }
 

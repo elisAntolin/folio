@@ -7,14 +7,30 @@ aside {
   background: var(--surface-muted);
 }
 
+.sidebar-search {
+  width: 100%;
+  margin-top: var(--space-3);
+}
+
+.sidebar-search .search-filter-bar {
+  display: block;
+}
+
+.sidebar-search .search-bar {
+  width: 100%;
+}
+
 .sidebar-pages-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-3);
 }
 
-ul {
+.sidebar-list,
+.sidebar-list ul {
   list-style: none;
+  margin: 0;
   padding: 0 0 var(--space-2) var(--space-5);
 }
 
@@ -22,17 +38,24 @@ ul {
   padding: 0;
 }
 
-h2 {
+.sidebar-pages-header h2 {
   font-size: 18px;
   font-weight: 600;
   margin: 0;
+}
+
+.sidebar-divider {
+  border: none;
+  height: 1px;
+  margin: var(--space-3) 0;
+  background-color: var(--border-control);
 }
 
 .page-name {
   font: 600 14px / 1.4 var(--sans);
 }
 
-li > a {
+.sidebar-list li > a {
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -45,8 +68,59 @@ li > a {
   font: 400 14px / 1.4 var(--sans);
 }
 
+.sidebar-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  min-height: 32px;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-2);
+  box-sizing: border-box;
+  margin-top: var(--space-2);
+  border-left: 3px solid transparent;
+}
+
 .sidebar-list-item > a {
-  padding-top: var(--space-3);
+  min-width: 0;
+  min-height: 24px;
+}
+
+.sidebar-list-item .page-actions-trigger {
+  width: 24px;
+  height: 24px;
+  margin-left: var(--space-1);
+}
+
+.sidebar-list-item .page-actions-trigger img {
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-list-item-pinned {
+  border-left-color: var(--accent);
+  background-color: var(--accent-bg);
+  border-radius: var(--radius-sm);
+}
+
+.sidebar-list-item-pinned .sidebar-link,
+.sidebar-list-item-pinned .subpages-name {
+  color: var(--accent);
+}
+
+.sidebar-pinned-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: var(--space-1);
+  filter: var(--primary-icon-filter);
+}
+
+.sidebar-list-item .sidebar-link {
+  overflow: hidden;
+}
+
+.sidebar-list-item .subpages-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sidebar-link-home {
@@ -55,14 +129,24 @@ li > a {
   border-radius: var(--radius-md);
 }
 
-hr {
-  border: none;
-  height: 1px;
-  background-color: var(--border-control);
-  margin: var(--space-4) 0;
+.sidebar-create-button {
+  margin-top: var(--space-2);
 }
 
-.subpages-actions {
-  width: 15px;
-  height: 15px;
+.sidebar-create-button .new-page {
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  background-color: var(--surface-subtle);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar { width: 240px; padding: var(--space-4); }
+}
+@media (max-width: 767px) {
+  .sidebar { width: 100%; max-width: none; padding: var(--space-4); }
+  .sidebar-navigation { max-height: 240px; overflow-y: auto; }
 }

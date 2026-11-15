@@ -1,0 +1,74 @@
+.page-actions-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.page-actions-trigger:hover {
+  background: var(--surface-muted);
+}
+
+.page-actions-content {
+  min-width: 180px;
+  max-width: 240px;
+  padding: var(--space-1);
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.page-actions-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  padding: 6px 10px;
+  border-radius: 6px;
+
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-h);
+
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.page-actions-item:hover,
+.page-actions-item:focus {
+  background: var(--surface-muted);
+}
+
+.page-actions-item img {
+  width: 16px;
+  height: 16px;
+}
+
+.page-actions-separator {
+  height: 1px;
+  margin: var(--space-1) 0;
+  background: var(--border);
+}
+
+.page-actions-item.delete {
+  color: var(--danger);
+}
+
+.page-actions-item.delete:hover,
+.page-actions-item.delete:focus {
+  background: var(--danger-bg);
+}

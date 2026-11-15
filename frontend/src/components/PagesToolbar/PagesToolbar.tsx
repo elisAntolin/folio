@@ -1,35 +1,57 @@
 import "./PagesToolbar.css";
 
 import AddPageButton from "../AddPageButton/AddPageButton";
+import SortFilter from "../modals/SortFilter/SortFilter";
 
-import filtro from "../../assets/filtro.svg";
-import favorito from "../../assets/favorito.svg";
-import grid from "../../assets/grade.svg";
-import list from "../../assets/lista.svg";
+import Icon from "../Icon/Icon";
+import listIcon from "../../assets/lista.svg";
 
-type PagesToolbarProps = {
+interface PagesToolbarProps {
   mode: "grid" | "list";
   changeMode: (mode: "grid" | "list") => void;
-};
+  onCreate: (title: string, category: string) => void;
+  showFavorites: boolean;
+  onFavoritesChange: (showFavorites: boolean) => void;
+}
 
-function PagesToolbar({ mode, changeMode }: PagesToolbarProps) {
+function PagesToolbar({
+  mode,
+  changeMode,
+  onCreate,
+  showFavorites,
+  onFavoritesChange,
+}: PagesToolbarProps) {
   return (
     <div className="pages-tool-bar">
       <h1>Suas Páginas</h1>
 
       <div className="pages-toolbar-actions">
-        <AddPageButton></AddPageButton>
+        <AddPageButton onCreate={onCreate} />
 
         <span className="header-divider">|</span>
 
-        <button>
-          <img src={filtro} alt="Filtro" />
+        <SortFilter></SortFilter>
+        <button
+          type="button"
+          className="favorites-filter"
+          aria-pressed={showFavorites}
+          aria-label={showFavorites ? "Mostrar todas as páginas" : "Mostrar favoritos"}
+          onClick={() => onFavoritesChange(!showFavorites)}
+        >
+          <Icon name="star" filled={showFavorites} />
         </button>
-        <button>
-          <img src={favorito} alt="Favoritos" />
-        </button>
-        <button onClick={() => changeMode(mode === "grid" ? "list" : "grid")}>
-          <img src={mode === "grid" ? list : grid} alt="Tipo de disposição" />
+        <button
+          type="button"
+          className="view-mode-toggle"
+          aria-label="Tipo de disposição"
+          aria-pressed={mode === "list"}
+          onClick={() => changeMode(mode === "grid" ? "list" : "grid")}
+        >
+          {mode === "grid" ? (
+            <img src={listIcon} alt="" />
+          ) : (
+            <Icon name="grid" filled />
+          )}
         </button>
       </div>
     </div>

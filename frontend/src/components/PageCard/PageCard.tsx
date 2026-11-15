@@ -2,36 +2,65 @@ import { Link } from "react-router";
 
 import "./PageCard.css";
 
-import capa from "../../assets/capa.jpg";
-import pontosVertical from "../../assets/pontos-vertical.svg";
-import relogio from "../../assets/relogio.svg";
-import estudo from "../../assets/categoria-estudo.svg";
+import PageActionsMenu from "../modals/PageActionsMenu/PageActionsMenu";
 
-function PageCard() {
+import capa from "../../assets/capa.jpg";
+import clockIcon from "../../assets/relogio.svg";
+import studyIcon from "../../assets/categoria-estudo.svg";
+
+interface PageCardProps {
+  id: string;
+  title: string;
+  category: string;
+  onEdit: (newTitle: string, newCategory: string) => void;
+  onDelete: () => void;
+  onLinkPermissionChange: (permission: string) => void;
+  isFavorite: boolean;
+  onFavoriteChange: (isFavorite: boolean) => void;
+}
+
+function PageCard({
+  id,
+  title,
+  category,
+  onEdit,
+  onDelete,
+  onLinkPermissionChange,
+  isFavorite,
+  onFavoriteChange,
+}: PageCardProps) {
+
   return (
     <div className="page-card">
       <div className="page-card-cover">
-        <Link to="/pages/1" className="page-card-cover-link">
+        <Link to={`/pages/${id}`} className="page-card-cover-link">
           <img src={capa} alt="Capa da página" />
         </Link>
         <span className="page-card-badge page-card-category">
-          <img src={estudo} alt="Categoria" />
-          Estudos
+          <img src={studyIcon} alt="Categoria" />
+          {category}
         </span>
 
         <span className="page-card-badge page-card-recent">
-          <img src={relogio} alt="Recente" />
+          <img src={clockIcon} alt="Recente" />
           Recente
         </span>
       </div>
 
       <div className="page-card-body">
         <div className="page-card-title-bar">
-          <h2>🤖 Back-end</h2>
+          <h2>{title}</h2>
 
-          <button className="page-card-menu-button" aria-label="Mais opções">
-            <img src={pontosVertical} alt="" />
-          </button>
+          <PageActionsMenu
+            currentTitle={title}
+            currentCategory={category}
+            publicLink={`/pages/${id}`}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onLinkPermissionChange={onLinkPermissionChange}
+            isFavorite={isFavorite}
+            onFavoriteChange={onFavoriteChange}
+          />
         </div>
 
         <p>57m atrás</p>

@@ -1,27 +1,38 @@
-import Avatar from "../Avatar/Avatar";
+import { useState } from "react";
 import "./Header.css";
 import logo from "/folio.svg";
-import sino from "../../assets/sino.svg";
+import { Link } from "react-router";
+
+import NotificationPageModal from "../modals/NotificationPageModal/NotificationPageModal";
+import UserMenu from "../modals/UserMenu/UserMenu";
+import SettingsModal from "../modals/SettingsModal/SettingsModal";
 
 function Header() {
   const name = "Elis Cardoso";
   const photoUrl = undefined;
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <header>
-      <img className="header-logo" src={logo} alt="Folio" />
+      <Link to="/" className="header-logo-link" aria-label="Ir para a página inicial">
+        <img className="header-logo" src={logo} alt="Folio" />
+        <span className="header-wordmark" aria-hidden="true">folio<span>.</span></span>
+      </Link>
 
       <div className="header-actions">
-        <button className="header-bell">
-          <img src={sino} alt="Notificações" />
-        </button>
-
+        <NotificationPageModal></NotificationPageModal>
         <span className="header-divider">|</span>
 
-        <button className="header-user">eliscardoso@gmail.com</button>
+        <span className="header-user">eliscardoso@gmail.com</span>
 
-        <Avatar name={name} photoUrl={photoUrl} />
+        <UserMenu
+          name={name}
+          photoUrl={photoUrl}
+          onSettingsClick={() => setIsSettingsOpen(true)}
+          onLogout={() => console.log("Sair")}
+        />
       </div>
+      <SettingsModal open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />
     </header>
   );
 }
