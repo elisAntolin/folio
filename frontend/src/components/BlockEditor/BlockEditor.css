@@ -1,0 +1,122 @@
+/* The same class is copied by BlockNote to its portalled menu roots. */
+.folio-block-editor.bn-root[data-color-scheme] {
+  --bn-font-family: var(--sans);
+  --bn-border-radius: var(--radius-md);
+  --bn-colors-editor-text: var(--text);
+  --bn-colors-editor-background: var(--surface, #fff);
+  --bn-colors-menu-text: var(--text);
+  --bn-colors-menu-background: var(--surface, #fff);
+  --bn-colors-tooltip-text: var(--text);
+  --bn-colors-tooltip-background: var(--surface-muted);
+  --bn-colors-hovered-text: var(--text);
+  --bn-colors-hovered-background: var(--surface-muted);
+  --bn-colors-selected-text: var(--accent);
+  --bn-colors-selected-background: var(--accent-bg);
+  --bn-colors-disabled-text: var(--text-muted);
+  --bn-colors-disabled-background: var(--surface-muted);
+  --bn-colors-border: var(--border-control);
+  --bn-colors-side-menu: var(--text-muted);
+  --bn-shadow-medium: var(--shadow);
+  color-scheme: inherit;
+}
+
+.folio-block-editor.bn-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.folio-block-editor .bn-editor {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  overflow: visible;
+  font: inherit;
+  overflow-wrap: anywhere;
+}
+
+.folio-block-editor .bn-editor:focus-visible {
+  outline: none;
+}
+
+.folio-block-editor .bn-editor a {
+  color: var(--accent);
+}
+
+.folio-block-editor .bn-editor :is(h1, h2, h3) {
+  color: inherit;
+  font-family: var(--heading);
+}
+
+.folio-block-editor .bn-editor input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+.folio-block-editor :is(.bn-ak-menu, .bn-ak-popover, .bn-ak-toolbar, .bn-ak-tooltip) {
+  color: var(--bn-colors-menu-text);
+  background: var(--bn-colors-menu-background);
+  border-color: var(--border-control);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  font-family: var(--sans);
+}
+
+/* A wrapping toolbar keeps its link popover visible without an inner scroller. */
+.folio-block-editor .bn-ak-toolbar {
+  flex-wrap: wrap;
+  max-width: calc(100vw - var(--space-4));
+  overflow: visible;
+}
+
+.folio-block-editor :is(.bn-ak-menu, .bn-ak-popover) {
+  min-width: 0;
+  max-width: calc(100vw - var(--space-4));
+  box-sizing: border-box;
+}
+
+/* BlockNote measures an inline minimum width; constrain it on narrow screens. */
+.folio-block-editor [data-floating-ui-focusable] {
+  min-width: 0 !important;
+  max-width: calc(100vw - var(--space-4));
+}
+
+.folio-block-editor .bn-ak-suggestion-menu-item-body {
+  min-width: 0;
+}
+
+.folio-block-editor .bn-ak-button {
+  color: var(--text);
+  background: var(--bn-colors-menu-background);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-family: var(--sans);
+}
+
+.folio-block-editor :is(.bn-ak-button:hover, .bn-ak-button[data-selected]) {
+  color: var(--accent);
+  background: var(--accent-bg);
+  box-shadow: none;
+}
+
+.folio-block-editor :is(
+  .bn-ak-menu-item:hover,
+  .bn-ak-menu-item[aria-selected="true"],
+  .bn-ak-menu-item[data-active-item],
+  .bn-ak-select-item[data-active-item]
+) {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.folio-block-editor .bn-ak-input {
+  color: var(--text);
+  background: var(--bn-colors-menu-background);
+  border-color: var(--border-control);
+  font-family: var(--sans);
+}
+
+.folio-block-editor :is(button, input):is(:focus-visible, [data-focus-visible]) {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
+}

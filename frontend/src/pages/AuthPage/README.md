@@ -4,7 +4,7 @@
 - `/cadastro`: nome, e-mail, senha com mínimo de 8 caracteres e confirmação.
 - `/recuperar-senha`: formulário de recuperação e retorno ao login.
 
-Implementação apenas de front-end. Os formulários usam validação nativa e os botões exibem uma mensagem de prévia; não autenticam, criam contas nem enviam e-mails. Nenhuma senha ou informação do formulário é armazenada. O checkbox de lembrar de mim está preparado visualmente para a integração futura.
+Implementação apenas de front-end para apresentação escolar. Os formulários usam validação nativa; não autenticam, criam contas nem enviam e-mails. Os botões de provedores são visuais e não iniciam autenticação. A interface não exibe avisos de prévia ou de disponibilidade futura. Nenhuma senha ou informação do formulário é armazenada. O checkbox de lembrar de mim está preparado visualmente para a integração futura.
 
 A página inicial e o editor continuam públicos. O menu “Sair” abre `/login`, sem simular uma sessão. “Explorar o Folio” volta à página inicial.
 

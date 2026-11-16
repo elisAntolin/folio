@@ -39,22 +39,16 @@ const content = {
 
 export default function AuthPage({ mode }: { mode: AuthMode }) {
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const copy = content[mode];
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage(mode === "recovery"
-      ? "A recuperação de senha estará disponível em breve. Nenhum e-mail foi enviado."
-      : mode === "signup"
-        ? "O cadastro estará disponível em breve. Nenhuma conta foi criada."
-        : "O acesso às contas estará disponível em breve. Por enquanto, você pode explorar o Folio.");
   }
 
   return (
-    <div className="auth-page">
+    <div className="auth-page" data-mode={mode}>
       <aside className="auth-story" aria-label="Sobre o Folio">
         <Link to="/" className="auth-brand" aria-label="Folio, página inicial">
           <span className="auth-brand-mark"><img src="/folio.svg" alt="" /></span>
@@ -62,6 +56,7 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
         </Link>
 
         <div className="auth-art" aria-hidden="true">
+          <div className="auth-art-content">
           <div className="auth-art-orbit" />
           <div className="auth-paper auth-paper-back" />
           <div className="auth-paper auth-paper-main">
@@ -75,10 +70,10 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
           </div>
           <div className="auth-floating-note"><span>✧</span> Um lugar para o que importa.</div>
           <div className="auth-art-spark">✳</div>
+          </div>
         </div>
 
         <div className="auth-story-copy">
-          <span className="auth-eyebrow">MENOS RUÍDO. MAIS POSSIBILIDADES.</span>
           <h2>Suas ideias.<br />Seu ritmo. Seu espaço.</h2>
           <p>Organize seus projetos, conecte suas ideias e<br className="auth-desktop-break" /> deixe espaço para o que vem a seguir.</p>
         </div>
@@ -86,30 +81,17 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
       </aside>
 
       <main className="auth-main">
-        <div className="auth-main-top"><span>Seu próximo capítulo começa aqui.</span><span className="auth-preview-badge">Prévia</span></div>
+        <div className="auth-main-top" aria-hidden="true" />
         <div className="auth-form-container">
           <div className="auth-heading">
-            <span className="auth-form-kicker">{mode === "signup" ? "VAMOS COMEÇAR" : mode === "recovery" ? "VAMOS RESOLVER" : "BOM TER VOCÊ POR AQUI"}</span>
             <h1>{copy.title}</h1>
             <p>{copy.description}</p>
           </div>
 
-          {mode !== "recovery" && <>
-            <div className="auth-providers">
-              {(["google", "github"] as const).map((provider) => (
-                <button key={provider} type="button" className="auth-provider" onClick={() => setMessage(`O acesso com ${provider === "google" ? "Google" : "GitHub"} estará disponível em breve.`)}>
-                  <ProviderIcon provider={provider} />
-                  <span>Continuar com {provider === "google" ? "Google" : "GitHub"}</span>
-                </button>
-              ))}
-            </div>
-            <div className="auth-divider"><span>ou continue com e-mail</span></div>
-          </>}
-
           <form className="auth-form" onSubmit={handleSubmit}>
             {mode === "signup" && <div className="auth-field">
               <label htmlFor="auth-name">Nome</label>
-              <div className="auth-input-wrap"><FieldIcon name="user" /><input id="auth-name" name="name" type="text" autoComplete="name" placeholder="Como podemos chamar você?" required maxLength={100} /></div>
+              <div className="auth-input-wrap"><FieldIcon name="user" /><input id="auth-name" name="name" type="text" autoComplete="name" placeholder="Seu nome" required maxLength={100} /></div>
             </div>}
             <div className="auth-field">
               <label htmlFor="auth-email">E-mail</label>
@@ -126,18 +108,27 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
             </div>}
             {mode === "signup" && <div className="auth-field">
               <label htmlFor="auth-confirm-password">Confirmar senha</label>
-              <div className="auth-input-wrap"><FieldIcon name="lock" /><input id="auth-confirm-password" name="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="Digite sua senha novamente" required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} ref={(input) => { input?.setCustomValidity(confirmPassword && confirmPassword !== password ? "As senhas precisam ser iguais." : ""); }} /></div>
+              <div className="auth-input-wrap"><FieldIcon name="lock" /><input id="auth-confirm-password" name="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="Repita sua senha" required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} ref={(input) => { input?.setCustomValidity(confirmPassword && confirmPassword !== password ? "As senhas precisam ser iguais." : ""); }} /></div>
             </div>}
             {mode === "login" && <div className="auth-form-options"><label className="auth-remember"><input type="checkbox" name="remember" /> Lembrar de mim</label><Link to="/recuperar-senha">Esqueceu a senha?</Link></div>}
             <button type="submit" className="auth-submit"><span>{copy.submit}</span><FieldIcon name="arrow" /></button>
           </form>
 
-          <div className="auth-feedback" role="status" aria-live="polite">{message}</div>
+          {mode !== "recovery" && <>
+            <div className="auth-divider"><span>ou continue com</span></div>
+            <div className="auth-providers">
+              {(["google", "github"] as const).map((provider) => (
+                <button key={provider} type="button" className="auth-provider">
+                  <ProviderIcon provider={provider} />
+                  <span>{provider === "google" ? "Google" : "GitHub"}</span>
+                </button>
+              ))}
+            </div>
+          </>}
 
           <p className="auth-switch">{mode === "login" ? <>Ainda não tem uma conta? <Link to="/cadastro">Criar conta</Link></> : mode === "signup" ? <>Já tem uma conta? <Link to="/login">Entrar</Link></> : <Link to="/login">Voltar para o login</Link>}</p>
-          <p className="auth-preview-note">Esta é uma prévia. O acesso às contas estará disponível em breve.</p>
         </div>
-        <div className="auth-main-footer"><span>Um lugar para suas próximas ideias.</span><Link to="/">Explorar o Folio <span aria-hidden="true">↗</span></Link></div>
+        <div className="auth-main-footer" aria-hidden="true" />
       </main>
     </div>
   );

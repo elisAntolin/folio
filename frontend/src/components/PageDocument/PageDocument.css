@@ -62,7 +62,8 @@
 }
 
 .page-document-body {
-  display: block;
+  display: flex;
+  flex-direction: column;
   flex: none;
   align-self: stretch;
   width: 100%;
@@ -86,14 +87,6 @@
     padding: var(--space-6) var(--space-4);
   }
 }
-
-.page-document-body[contenteditable="true"] {
-  outline: none;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  word-break: normal;
-}
-
 
 @media (max-width: 767px) {
   .page-document-cover { height: 160px; }
