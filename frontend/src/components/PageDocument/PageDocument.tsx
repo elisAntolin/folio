@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useParams } from "react-router";
 import "./PageDocument.css";
+import BlockEditor from "../BlockEditor/BlockEditor";
+import type { BlockEditorProps } from "../BlockEditor/BlockEditor";
 
 import capa from "../../assets/capa.jpg";
 import editImageIcon from "../../assets/editar-imagem.svg";
 import CoverGalleryModal from "../modals/CoverGalleryModal/CoverGalleryModal";
 
-function PageDocument() {
+function PageDocument({ initialContent, onChange }: BlockEditorProps) {
+  const { id } = useParams();
   const location = useLocation();
   const [coverImage, setCoverImage] = useState<string | null>(() =>
     location.state?.isNewPage ? null : capa,
@@ -38,13 +41,9 @@ function PageDocument() {
           </button>
         </div>
 
-        <div
-          className="page-document-body"
-          contentEditable
-          role="textbox"
-          aria-label="Conteúdo do documento"
-          suppressContentEditableWarning
-        />
+        <div className="page-document-body">
+          <BlockEditor key={id} initialContent={initialContent} onChange={onChange} />
+        </div>
       </div>
 
       <CoverGalleryModal
