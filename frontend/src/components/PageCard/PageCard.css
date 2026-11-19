@@ -23,8 +23,6 @@
 }
 
 .page-card-badge {
-  position: absolute;
-  top: var(--space-3);
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -36,13 +34,31 @@
 }
 
 .page-card-category {
-  left: var(--space-3);
+  box-sizing: border-box;
+  max-width: 55%;
+  overflow-wrap: anywhere;
   color: var(--accent);
   background: var(--accent-bg);
 }
 
 .page-card-recent {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+}
+
+.page-card-actions {
+  position: absolute;
+  top: var(--space-3);
   right: var(--space-3);
+}
+
+.page-card-actions .page-actions-trigger {
+  background: var(--surface);
+}
+
+.page-card-actions .page-actions-trigger:hover {
+  background: var(--accent-bg);
 }
 
 .page-card-badge img {
@@ -76,4 +92,3 @@
 
 
 .page-card h2 { min-width: 0; overflow-wrap: anywhere; }
-.page-card .page-actions-trigger { flex-shrink: 0; }
