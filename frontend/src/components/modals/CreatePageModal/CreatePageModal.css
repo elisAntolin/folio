@@ -118,12 +118,6 @@
   color: var(--text-muted);
 }
 
-.create-input:focus,
-.create-select:focus {
-  border-color: var(--accent);
-  box-shadow: var(--focus-ring);
-}
-
 
 
 .create-select {

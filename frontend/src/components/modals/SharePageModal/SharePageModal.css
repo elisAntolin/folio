@@ -123,11 +123,6 @@
   color: var(--text-muted);
 }
 
-.share-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(38, 157, 204, 0.1);
-}
-
 .share-primary-button,
 .share-cancel-button {
   height: var(--field-height);
@@ -189,11 +184,6 @@
   font-size: 13px;
 
   cursor: pointer;
-}
-
-.share-select:focus {
-  outline: none;
-  border-color: var(--accent);
 }
 
 .share-select [data-radix-select-icon] {
