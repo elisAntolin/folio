@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { DropdownMenu } from "radix-ui";
 import "./FilterCategories.css";
 
 import categoryFilterIcon from "../../../assets/filtro-categoria.svg";
+import searchIcon from "../../../assets/lupa.svg";
 
 interface FilterCategoriesProps {
   categories: string[];
@@ -15,6 +16,21 @@ function FilterCategories({
 }: FilterCategoriesProps) {
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(categories);
+  const [query, setQuery] = useState("");
+  const searchInput = useRef<HTMLInputElement>(null);
+  const selectAllItem = useRef<HTMLDivElement>(null);
+  const mountSearchInput = useCallback((input: HTMLInputElement | null) => {
+    searchInput.current = input;
+    if (input) {
+      requestAnimationFrame(() => {
+        if (input.isConnected) input.focus({ preventScroll: true });
+      });
+    }
+  }, []);
+  const search = query.trim().toLocaleLowerCase("pt-BR");
+  const visibleCategories = categories.filter((category) =>
+    category.toLocaleLowerCase("pt-BR").includes(search),
+  );
 
   const effectiveSelectedCategories = selectedCategories.filter((category) =>
     categories.includes(category),
@@ -46,7 +62,11 @@ function FilterCategories({
     effectiveSelectedCategories.length > 0 && !allSelected;
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root
+      onOpenChange={(open) => {
+        if (!open) setQuery("");
+      }}
+    >
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
@@ -69,14 +89,42 @@ function FilterCategories({
             Filtrar por categoria
           </DropdownMenu.Label>
 
+          <div className="filter-search">
+            <img src={searchIcon} alt="" />
+            <input
+              type="search"
+              ref={mountSearchInput}
+              aria-label="Buscar categorias"
+              placeholder="Buscar categorias"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
+                  event.preventDefault();
+                  selectAllItem.current?.focus();
+                  event.stopPropagation();
+                } else if (event.key !== "Escape" && event.key !== "Tab") {
+                  event.stopPropagation();
+                }
+              }}
+            />
+          </div>
+
           <div className="filter-options">
             <DropdownMenu.CheckboxItem
+              ref={selectAllItem}
               className="filter-item filter-all-item"
               checked={allSelected ? true : partiallySelected ? "indeterminate" : false}
               onCheckedChange={(checked) =>
                 updateSelection(checked === true ? [...categories] : [])
               }
               onSelect={(event) => event.preventDefault()}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey)) {
+                  event.preventDefault();
+                  searchInput.current?.focus();
+                }
+              }}
             >
               <span
                 className={`custom-checkbox${
@@ -101,7 +149,9 @@ function FilterCategories({
               <span>Todas</span>
             </DropdownMenu.CheckboxItem>
 
-            {categories.map((category) => {
+            <DropdownMenu.Separator className="filter-separator" />
+
+            {visibleCategories.map((category) => {
               const isSelected = effectiveSelectedCategories.includes(category);
 
               return (
@@ -134,6 +184,10 @@ function FilterCategories({
                 </DropdownMenu.CheckboxItem>
               );
             })}
+
+            {visibleCategories.length === 0 && (
+              <p className="filter-empty" role="status">Nenhuma categoria encontrada.</p>
+            )}
 
             <DropdownMenu.Item
               className="filter-action filter-clear-action"
