@@ -44,6 +44,10 @@
   color: var(--accent);
 }
 
+.folio-block-editor .bn-editor:focus-visible {
+  outline: none;
+}
+
 .folio-block-editor .bn-editor :is(h1, h2, h3) {
   color: inherit;
   font-family: var(--heading);
