@@ -1,13 +1,14 @@
 import { useState } from "react";
 import "./Header.css";
 import logo from "/folio.svg";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import NotificationPageModal from "../modals/NotificationPageModal/NotificationPageModal";
 import UserMenu from "../modals/UserMenu/UserMenu";
 import SettingsModal from "../modals/SettingsModal/SettingsModal";
 
 function Header() {
+  const navigate = useNavigate();
   const name = "Elis Cardoso";
   const photoUrl = undefined;
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -29,7 +30,7 @@ function Header() {
           name={name}
           photoUrl={photoUrl}
           onSettingsClick={() => setIsSettingsOpen(true)}
-          onLogout={() => console.log("Sair")}
+          onLogout={() => navigate("/login")}
         />
       </div>
       <SettingsModal open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />

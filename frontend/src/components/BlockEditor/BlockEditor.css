@@ -36,6 +36,10 @@
   overflow-wrap: anywhere;
 }
 
+.folio-block-editor .bn-editor:focus-visible {
+  outline: none;
+}
+
 .folio-block-editor .bn-editor a {
   color: var(--accent);
 }
