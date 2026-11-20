@@ -36,21 +36,11 @@ function PageCard({
         <Link to={`/pages/${id}`} className="page-card-cover-link">
           <img src={capa} alt="Capa da página" />
         </Link>
-        <span className="page-card-badge page-card-category">
-          <img src={studyIcon} alt="Categoria" />
-          {category}
-        </span>
-
         <span className="page-card-badge page-card-recent">
           <img src={clockIcon} alt="Recente" />
           Recente
         </span>
-      </div>
-
-      <div className="page-card-body">
-        <div className="page-card-title-bar">
-          <h2>{title}</h2>
-
+        <div className="page-card-actions">
           <PageActionsMenu
             currentTitle={title}
             currentCategory={category}
@@ -61,6 +51,16 @@ function PageCard({
             isFavorite={isFavorite}
             onFavoriteChange={onFavoriteChange}
           />
+        </div>
+      </div>
+
+      <div className="page-card-body">
+        <div className="page-card-title-bar">
+          <h2>{title}</h2>
+          <span className="page-card-badge page-card-category">
+            <img src={studyIcon} alt="Categoria" />
+            {category}
+          </span>
         </div>
 
         <p>57m atrás</p>

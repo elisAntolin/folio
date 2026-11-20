@@ -3,11 +3,16 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 72px;
+  min-height: 56px;
   padding: 12px 32px;
   gap: var(--space-4);
   background: var(--surface);
   border-bottom: 1px solid var(--border);
+}
+.header-actions .header-user {
+    font: 600 14px / 1.4 var(--sans);
+    color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .header-logo-link {
@@ -69,7 +74,8 @@ header {
     min-height: 64px;
     padding: 10px 16px;
   }
-  .header-user, .header-actions > .header-divider {
+  .header-user,
+  .header-actions > .header-divider {
     display: none;
   }
   .header-actions {

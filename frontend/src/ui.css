@@ -27,15 +27,14 @@ button:disabled, [aria-disabled="true"] {
   background: var(--primary-active);
 }
 
-.filter-trigger:hover, .page-actions-trigger:hover,
-button[class$="-close"]:hover, .page-document-edit-image:hover {
+.filter-trigger:hover, .page-actions-trigger:hover, .page-document-edit-image:hover {
   color: var(--accent);
   background: var(--accent-bg);
 }
 
 .pages-tool-bar .favorites-filter[aria-pressed="true"],
 .pages-tool-bar .view-mode-toggle[aria-pressed="true"],
-.sort-trigger[data-active="true"], .page-actions-item[data-active="true"] {
+.page-actions-item[data-active="true"] {
   color: var(--primary);
 }
 
@@ -45,8 +44,14 @@ button[class$="-close"]:hover, .page-document-edit-image:hover {
 }
 
 .filter-trigger[data-active="true"] img,
-.page-actions-item[data-active="true"] img {
+.page-actions-item[data-active="true"] img,
+.page-actions-item:not(.delete):is(:hover, [data-highlighted]) img,
+.share-options-item:is(:hover, [data-highlighted]) img {
   filter: var(--primary-icon-filter);
+}
+
+.page-actions-item.delete img {
+  filter: none;
 }
 
 [role^="menuitem"][data-highlighted], [role="option"][data-highlighted] {
@@ -97,26 +102,23 @@ button:where(:not(.cover-gallery-option):not(.settings-theme-option)) > img,
   border-color: transparent;
 }
 
-/* Override local outline resets, preserving the original element dimensions. */
-:is(button, a[href], input, textarea, select, [tabindex], [contenteditable], [role^="menuitem"], [role="option"]):focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-:is(input, textarea, select):focus, .search-bar:focus-within {
-  border-color: var(--accent);
-  box-shadow: var(--focus-ring);
-}
-
-.search-bar input:focus {
-  box-shadow: none;
-}
-
-.search-bar input:focus-visible {
+/* Menus already highlight the active item. */
+:is([role="menu"], [role^="menuitem"], [role="listbox"], [role="option"]):focus-visible {
   outline: none;
 }
 
-.page-document-body:focus-visible, .page-card-cover-link:focus-visible {
+:is(button, a[href], [tabindex]):not(:is(input, textarea, select, .bn-editor, [role="combobox"], [role="menu"], [role^="menuitem"], [role="listbox"], [role="option"])):focus-visible {
+  outline: 2px solid var(--text-muted);
+  outline-offset: 2px;
+}
+
+:is(input, textarea, select, button[role="combobox"]):focus, .search-bar:focus-within {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: none;
+}
+
+.page-card-cover-link:focus-visible {
   outline-offset: -2px;
 }
 
@@ -132,6 +134,10 @@ button:where(:not(.cover-gallery-option):not(.settings-theme-option)) > img,
   max-width: calc(100vw - 24px);
   max-height: min(70dvh, var(--radix-dropdown-menu-content-available-height, 70dvh));
   overflow-y: auto;
+}
+
+:is(.create-select-item + .create-select-item, .edit-select-item + .edit-select-item, .share-select-item + .share-select-item) {
+  margin-block-start: var(--space-1);
 }
 
 @media (max-width: 767px) {

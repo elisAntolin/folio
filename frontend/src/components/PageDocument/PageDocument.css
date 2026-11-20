@@ -6,7 +6,6 @@
   min-height: calc(100vh - 56px);
   background-color: var(--surface);
   overflow: visible;
-  border: 1px solid var(--border);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
@@ -62,14 +61,17 @@
 }
 
 .page-document-body {
-  display: block;
+  display: flex;
+  flex-direction: column;
   flex: none;
   align-self: stretch;
   width: 100%;
   height: auto;
   min-height: 500px;
   margin: 0;
-  padding: var(--space-8) var(--space-8);
+  padding: var(--space-8);
+  /* BlockNote places both controls to the left of the active block. */
+  padding-inline-start: 68px;
   box-sizing: border-box;
   background-color: var(--surface);
   overflow: visible;
@@ -83,17 +85,10 @@
 
   .page-document-body {
     min-height: 400px;
-    padding: var(--space-6) var(--space-4);
+    padding-block: var(--space-6);
+    padding-inline-end: var(--space-4);
   }
 }
-
-.page-document-body[contenteditable="true"] {
-  outline: none;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  word-break: normal;
-}
-
 
 @media (max-width: 767px) {
   .page-document-cover { height: 160px; }
