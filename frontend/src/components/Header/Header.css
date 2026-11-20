@@ -74,7 +74,8 @@ header {
     min-height: 64px;
     padding: 10px 16px;
   }
-  .header-user, .header-actions > .header-divider {
+  .header-user,
+  .header-actions > .header-divider {
     display: none;
   }
   .header-actions {
