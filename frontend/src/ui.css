@@ -45,7 +45,8 @@ button:disabled, [aria-disabled="true"] {
 
 .filter-trigger[data-active="true"] img,
 .page-actions-item[data-active="true"] img,
-.page-actions-item:not(.delete):is(:hover, [data-highlighted]) img {
+.page-actions-item:not(.delete):is(:hover, [data-highlighted]) img,
+.share-options-item:is(:hover, [data-highlighted]) img {
   filter: var(--primary-icon-filter);
 }
 
