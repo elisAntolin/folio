@@ -1,18 +1,14 @@
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(150) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     avatar_url TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_preferences (
     user_id UUID PRIMARY KEY,
     theme VARCHAR(10) NOT NULL DEFAULT 'light',
     default_view VARCHAR(10) NOT NULL DEFAULT 'list',
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_user_preferences_user
         FOREIGN KEY (user_id)
@@ -23,8 +19,7 @@ CREATE TABLE IF NOT EXISTS user_preferences (
 CREATE TABLE IF NOT EXISTS categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL UNIQUE,
-    color VARCHAR(20),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    color VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS pages (
@@ -177,6 +172,24 @@ CREATE TABLE IF NOT EXISTS page_share_links (
     CONSTRAINT chk_page_share_links_role
         CHECK (role IN ('reader', 'editor'))
 );
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    revoked_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_refresh_tokens_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+-- ricardo -> Acelera a busca das sessões de um usuário.
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id
+    ON refresh_tokens(user_id);
 
 -- ricardo -> Acelera a busca de páginas pertencentes a um usuário.
 CREATE INDEX IF NOT EXISTS idx_pages_owner_user_id
