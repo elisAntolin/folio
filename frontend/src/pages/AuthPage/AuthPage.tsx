@@ -77,7 +77,6 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
           <h2>Suas ideias.<br />Seu ritmo. Seu espaço.</h2>
           <p>Organize seus projetos, conecte suas ideias e<br className="auth-desktop-break" /> deixe espaço para o que vem a seguir.</p>
         </div>
-        <span className="auth-story-footer">Feito para organizar. Pensado para você.</span>
       </aside>
 
       <main className="auth-main">
