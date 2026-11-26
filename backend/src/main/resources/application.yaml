@@ -4,9 +4,12 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/db_folio
     username: postgres
-    password: ${DB_PASSWORD}
+    password: root
 
   sql:
     init:
       mode: always
       schema-locations: classpath:schema.sql
+
+  jwt:
+    secret: ${JWT_SECRET}
