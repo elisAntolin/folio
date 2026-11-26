@@ -17,13 +17,13 @@ public class UserService {
 
     public User authenticateUser(String email, String password){
         User user = repository.findByEmail(email);
-        if(passwordEncoder.matches(password, user.getPasswordHash())){
-            return user;
-        } else {
+        if(!passwordEncoder.matches(password, user.getPasswordHash()))
             throw new RuntimeException("Credenciais inválidas");
-        }
+            
+        return user;
+        
     }
-    
+
     public void createUser(String email, String password){
         if(repository.existsByEmail(email))
             throw new RuntimeException("E-mail de usuário já cadastrado");
