@@ -46,6 +46,22 @@ public class PageController {
 
     }
 
+    @PostMapping("/{pageId}/subpages")
+    public ResponseEntity<CreatePageResponse> createSubpage(
+            @PathVariable UUID pageId,
+            @RequestBody CreatePageRequest request,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ){
+        UUID subpageId = pageService.createSubpage(
+                request.title(),
+                pageId,
+                authenticatedUser.id()
+        );
+        return ResponseEntity.created(URI.create("/api/pages/" + subpageId))
+                .body(new CreatePageResponse(subpageId));
+
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<Void> update(
             @PathVariable UUID id,

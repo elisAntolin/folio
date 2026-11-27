@@ -17,6 +17,7 @@ public class PageService {
     private final PageRepository repository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+
     public PageService(PageRepository repo, CategoryRepository categoryRepo, UserRepository userRepo){
         repository = repo;
         categoryRepository = categoryRepo;
@@ -29,12 +30,25 @@ public class PageService {
         Page page = new Page(ownerId, categoryId, null, title, null);
         repository.save(page);
         return page.getId();
+    }
 
+     public UUID createSubpage(String title, UUID parentPageId, UUID ownerId){
+        Page parent = repository.findById(parentPageId).orElseThrow(() -> new IllegalArgumentException("Página não encontrada"));
+
+        if (parent.getParentId() != null) {
+            throw new IllegalStateException("Não é permitido criar subpáginas dentro de subpáginas");
+        }
+
+        Page subpage = new Page(ownerId, null, parentPageId, title, null);
+        repository.save(subpage);
+        return subpage.getId();
     }
 
     public void editPage(UUID pageId, String title, UUID categoryId, UUID authenticatedUserId){
+        
         if(categoryId != null && !categoryRepository.existCategory(categoryId))
-            throw new IllegalStateException("a categoria deve ser valida");
+            throw new IllegalStateException("a categoria deve ser valida");        
+
         Optional<Page> optionalPage = repository.findById(pageId);
         if(optionalPage.isEmpty())
             throw new IllegalArgumentException("Página não encontrada");
@@ -72,4 +86,6 @@ public class PageService {
                 userId
         );
     }
+
+    
 }

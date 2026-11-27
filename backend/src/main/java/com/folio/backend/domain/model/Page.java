@@ -30,10 +30,8 @@ public class Page {
         this.ownerId = Validation.notNull(ownerId, "Owner ID");
         this.categoryId = categoryId;
         this.parentId = parentId;
-        this.title = validateTitle(title);
-        this.coverImageUrl = Validation.notBlankIfPresent(
-                coverImageUrl, "Cover image URL"
-        );
+        this.title = validateTitle(title) != null ? title : "Sem título";
+        this.coverImageUrl = Validation.notBlankIfPresent(coverImageUrl, "Cover image URL");
 
         this.deletedAt = null;
         this.createdAt = now;
@@ -84,9 +82,11 @@ public class Page {
         this.categoryId = categoryId;
         this.updatedAt = LocalDateTime.now();
     }
+
     public boolean isDeleted(){
         return deletedAt != null;
     }
+
     public void delete(UUID userId){
         if(isDeleted())
             throw new IllegalStateException("Pagina ja excluida");
@@ -96,44 +96,16 @@ public class Page {
         deletedAt = now;
         updatedAt = now;
     }
-    public UUID getId() {
-        return id;
-    }
 
-    public UUID getOwnerId() {
-        return ownerId;
-    }
-
-    public UUID getCategoryId() {
-        return categoryId;
-    }
-
-    public UUID getParentId() {
-        return parentId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getCoverImageUrl() {
-        return coverImageUrl;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public LocalDateTime getLastEditedAt() {
-        return lastEditedAt;
-    }
+    public UUID getId() {return id;}
+    public UUID getOwnerId() {return ownerId;}
+    public UUID getCategoryId() {return categoryId;}
+    public UUID getParentId() {return parentId;}
+    public String getTitle() {return title;}
+    public String getCoverImageUrl() {return coverImageUrl;}
+    public LocalDateTime getDeletedAt() {return deletedAt;}
+    public LocalDateTime getCreatedAt() {return createdAt;}
+    public LocalDateTime getUpdatedAt() {return updatedAt;}
+    public LocalDateTime getLastEditedAt() { return lastEditedAt;}
 
 }

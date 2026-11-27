@@ -1,6 +1,9 @@
 package com.folio.backend.infrastructure.repository;
 
 import com.folio.backend.domain.model.Category;
+
+import java.util.UUID;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class CategoryRepository {
@@ -23,5 +26,15 @@ public class CategoryRepository {
             "DELETE FROM categories WHERE name = ?",
             name
         );
+    }
+
+    public Boolean existCategory(UUID categoryId){
+        Boolean exists = jdbc.queryForObject(
+            "SELECT EXISTS (SELECT 1 FROM categories WHERE id = ?)",
+            Boolean.class,
+            categoryId
+        );
+
+        return Boolean.TRUE.equals(exists);
     }
 }
