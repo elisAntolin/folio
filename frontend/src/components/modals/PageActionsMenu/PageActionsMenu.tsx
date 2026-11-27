@@ -1,208 +1,70 @@
 import { useState } from "react";
-import "./PageActionsMenu.css";
-
 import { DropdownMenu } from "radix-ui";
-
+import type { PageAccess } from "../../../api";
 import EditPageModal from "../EditPageModal/EditPageModal";
 import DeletePageModal from "../DeletePageModal/DeletePageModal";
-import SharePageModal from "../SharePageModal/SharePageModal";
-import InternalMemberModal from "../InternalMemberModal/InternalMemberModal";
-
-import trashIcon from "../../../assets/lixeira.svg";
+import { PageSharingDialog } from "../../ShareButton/PageSharingButton";
 import Icon from "../../Icon/Icon";
-import pinIcon from "../../../assets/fixar-diagonal-direita.svg";
-import filledPinIcon from "../../../assets/fixar-diagonal-direita-preenchido.svg";
+import trashIcon from "../../../assets/lixeira.svg";
 import editIcon from "../../../assets/editar-quadrado.svg";
 import shareIcon from "../../../assets/compartilhar-seta.svg";
-import linkIcon from "../../../assets/link.svg";
-import membersIcon from "../../../assets/membros.svg";
 import verticalDotsIcon from "../../../assets/pontos-vertical.svg";
+import "./PageActionsMenu.css";
 
 interface PageActionsMenuProps {
+  id: string;
   currentTitle: string;
   currentCategory: string;
-  publicLink: string;
+  permission: PageAccess;
   onEdit: (newTitle: string, newCategory: string) => void | Promise<void>;
-  onShare?: (email: string, permission: string) => void;
   onDelete: () => void | Promise<void>;
-  onLinkPermissionChange: (permission: string) => void;
-  isSubpage?: boolean;
-  isFavorite?: boolean;
-  onFavoriteChange?: (isFavorite: boolean) => void;
-  isPinned?: boolean;
-  onPinnedChange?: (isPinned: boolean) => void;
+  isFavorite: boolean;
+  onFavoriteChange: (favorite: boolean) => void;
 }
 
-function PageActionsMenu({
-  currentTitle,
-  currentCategory,
-  publicLink,
-  onEdit,
-  onShare,
-  onDelete,
-  onLinkPermissionChange,
-  isSubpage = false,
-  isFavorite: controlledIsFavorite,
-  onFavoriteChange,
-  isPinned: controlledIsPinned,
-  onPinnedChange,
+export default function PageActionsMenu({
+  id, currentTitle, currentCategory, permission, onEdit, onDelete, isFavorite, onFavoriteChange,
 }: PageActionsMenuProps) {
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
-  const [isMemberOpen, setIsMemberOpen] = useState(false);
+  const [active, setActive] = useState<"edit" | "delete" | "share" | null>(null);
+  const owner = permission === "OWNER";
 
-  const [internalIsFavorite, setInternalIsFavorite] = useState(false);
-  const [internalIsPinned, setInternalIsPinned] = useState(false);
-  const isPinned = controlledIsPinned ?? internalIsPinned;
-  const isFavorite = controlledIsFavorite ?? internalIsFavorite;
-
-  const handleFavorite = () => {
-    const nextIsFavorite = !isFavorite;
-    setInternalIsFavorite(nextIsFavorite);
-    onFavoriteChange?.(nextIsFavorite);
-  };
-
-  const handlePin = () => {
-    const nextIsPinned = !isPinned;
-    setInternalIsPinned(nextIsPinned);
-    onPinnedChange?.(nextIsPinned);
-  };
-
-  return (
-    <>
-      <DropdownMenu.Root modal={false}>
-        <DropdownMenu.Trigger asChild>
-          <button
-            className="page-actions-trigger"
-            aria-label="Opções da página"
-          >
-            <img src={verticalDotsIcon} alt="" />
-          </button>
-        </DropdownMenu.Trigger>
-
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            className="page-actions-content"
-            align="end"
-            sideOffset={8}
-          >
-            <DropdownMenu.Item
-              className="page-actions-item"
-              onSelect={isSubpage ? handlePin : handleFavorite}
-              data-action={isSubpage ? "pin-subpage" : "favorite-page"}
-              data-active={isSubpage ? isPinned : isFavorite}
-              title={isSubpage ? "Fixar subpágina" : "Favoritar página"}
-            >
-              {isSubpage ? (
-                <img src={isPinned ? filledPinIcon : pinIcon} alt="" />
-              ) : (
-                <Icon name="star" filled={isFavorite} />
-              )}
-              <span>
-                {isSubpage
-                  ? isPinned
-                    ? "Desafixar"
-                    : "Fixar"
-                  : isFavorite
-                    ? "Remover dos favoritos"
-                    : "Favoritar"}
-              </span>
+  return <>
+    <DropdownMenu.Root modal={false}>
+      <DropdownMenu.Trigger asChild>
+        <button className="page-actions-trigger" aria-label="Opções da página">
+          <img src={verticalDotsIcon} alt="" />
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className="page-actions-content" align="end" sideOffset={8}>
+          <DropdownMenu.Item className="page-actions-item" onSelect={() => onFavoriteChange(!isFavorite)}>
+            <Icon name="star" filled={isFavorite} />
+            {isFavorite ? "Remover dos favoritos" : "Favoritar"}
+          </DropdownMenu.Item>
+          {permission !== "VIEWER" && <DropdownMenu.Item className="page-actions-item" onSelect={() => setActive("edit")}>
+            <img src={editIcon} alt="" /> {owner ? "Editar" : "Renomear"}
+          </DropdownMenu.Item>}
+          {owner && <>
+            <DropdownMenu.Item className="page-actions-item" onSelect={() => setActive("share")}>
+              <img src={shareIcon} alt="" /> Compartilhar
             </DropdownMenu.Item>
-
-            <DropdownMenu.Item
-              className="page-actions-item"
-              onSelect={() => setIsEditOpen(true)}
-            >
-              <img src={editIcon} alt="" />
-              <span>Editar</span>
-            </DropdownMenu.Item>
-
-            {isSubpage ? (
-              <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger className="page-actions-item">
-                  <img src={shareIcon} alt="" />
-                  <span>Compartilhar</span>
-                </DropdownMenu.SubTrigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.SubContent
-                    className="page-actions-content"
-                    sideOffset={4}
-                  >
-                    <DropdownMenu.Item
-                      className="page-actions-item"
-                      onSelect={() => setIsShareOpen(true)}
-                    >
-                      <img src={linkIcon} alt="" aria-hidden="true" />
-                      Link da Página
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      className="page-actions-item"
-                      onSelect={() => setIsMemberOpen(true)}
-                    >
-                      <img src={membersIcon} alt="" aria-hidden="true" />
-                      Gerenciar Membro
-                    </DropdownMenu.Item>
-                  </DropdownMenu.SubContent>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Sub>
-            ) : (
-              <DropdownMenu.Item
-                className="page-actions-item"
-                onSelect={() => setIsShareOpen(true)}
-              >
-                <img src={linkIcon} alt="" />
-                <span>Link da Página</span>
-              </DropdownMenu.Item>
-            )}
-
             <DropdownMenu.Separator className="page-actions-separator" />
-
-            <DropdownMenu.Item
-              className="page-actions-item delete"
-              onSelect={() => setIsDeleteOpen(true)}
-            >
-              <img src={trashIcon} alt="" />
-              <span>Excluir</span>
+            <DropdownMenu.Item className="page-actions-item delete" onSelect={() => setActive("delete")}>
+              <img src={trashIcon} alt="" /> Excluir
             </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
-
-      <EditPageModal
-        key={`${currentTitle}-${currentCategory}-${isEditOpen}`}
-        open={isEditOpen}
-        onOpenChange={setIsEditOpen}
-        currentTitle={currentTitle}
-        currentCategory={currentCategory}
-        onSave={onEdit}
-      />
-
-      <DeletePageModal
-        open={isDeleteOpen}
-        onOpenChange={setIsDeleteOpen}
-        pageTitle={currentTitle}
-        onDelete={onDelete}
-      />
-
-      <SharePageModal
-        open={isShareOpen}
-        onOpenChange={setIsShareOpen}
-        pageTitle={currentTitle}
-        publicLink={publicLink}
-        onLinkPermissionChange={onLinkPermissionChange}
-      />
-
-      {isSubpage && (
-        <InternalMemberModal
-          open={isMemberOpen}
-          onOpenChange={setIsMemberOpen}
-          pageTitle={currentTitle}
-          onInvite={onShare ?? (() => undefined)}
-        />
-      )}
-    </>
-  );
+          </>}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+    {active === "edit" && <EditPageModal
+      open onOpenChange={(open) => { if (!open) setActive(null); }}
+      currentTitle={currentTitle} currentCategory={currentCategory} canChangeCategory={owner} onSave={onEdit}
+    />}
+    {owner && active === "delete" && <DeletePageModal
+      open onOpenChange={(open) => { if (!open) setActive(null); }} pageTitle={currentTitle} onDelete={onDelete}
+    />}
+    {owner && active === "share" && <PageSharingDialog
+      id={id} title={currentTitle} open onOpenChange={(open) => { if (!open) setActive(null); }}
+    />}
+  </>;
 }
-
-export default PageActionsMenu;

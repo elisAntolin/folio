@@ -10,6 +10,7 @@ interface EditPageModalProps {
   onOpenChange: (open: boolean) => void;
   currentTitle: string;
   currentCategory: string;
+  canChangeCategory?: boolean;
   onSave: (newTitle: string, newCategory: string) => void | Promise<void>;
 }
 
@@ -18,6 +19,7 @@ function EditPageModal({
   onOpenChange,
   currentTitle,
   currentCategory,
+  canChangeCategory = true,
   onSave,
 }: EditPageModalProps) {
   const [title, setTitle] = useState(currentTitle);
@@ -83,15 +85,17 @@ function EditPageModal({
               maxLength={60}
             />
 
-            <label className="edit-label">Nova Categoria</label>
+            {canChangeCategory && <>
+              <label className="edit-label">Nova Categoria</label>
 
-            <CategorySelect
-              value={category}
-              onChange={setCategory}
-              triggerClassName="edit-select"
-              contentClassName="edit-select-content"
-              itemClassName="edit-select-item"
-            />
+              <CategorySelect
+                value={category}
+                onChange={setCategory}
+                triggerClassName="edit-select"
+                contentClassName="edit-select-content"
+                itemClassName="edit-select-item"
+              />
+            </>}
 
             {error && <p role="alert">{error}</p>}
 

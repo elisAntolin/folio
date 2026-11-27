@@ -3,16 +3,12 @@ import PageCard from "../PageCard/PageCard";
 
 import type { PageSummary } from "../../api";
 
-export interface HomePageItem extends PageSummary {
-  linkPermission: string;
-}
+export type HomePageItem = PageSummary;
 
 interface PageListCardProps {
   pages: HomePageItem[];
   onEdit: (id: string, newTitle: string, newCategory: string) => void | Promise<void>;
   onDelete: (id: string) => void | Promise<void>;
-  onLinkPermissionChange: (id: string, permission: string) => void;
-  favoriteIds: string[];
   onFavoriteChange: (id: string, isFavorite: boolean) => void;
 }
 
@@ -20,8 +16,6 @@ function PageListCard({
   pages,
   onEdit,
   onDelete,
-  onLinkPermissionChange,
-  favoriteIds,
   onFavoriteChange,
 }: PageListCardProps) {
   return (
@@ -37,10 +31,8 @@ function PageListCard({
             onEdit(page.id, newTitle, newCategory)
           }
           onDelete={() => onDelete(page.id)}
-          onLinkPermissionChange={(permission) =>
-            onLinkPermissionChange(page.id, permission)
-          }
-          isFavorite={favoriteIds.includes(page.id)}
+          permission={page.permission}
+          isFavorite={page.favorite}
           onFavoriteChange={(isFavorite) =>
             onFavoriteChange(page.id, isFavorite)
           }
