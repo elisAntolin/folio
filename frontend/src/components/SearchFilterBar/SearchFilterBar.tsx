@@ -8,11 +8,13 @@ import { PageCategoriesContext } from "../../pageCategories";
 
 interface SearchFilterBarProps {
   showFilter?: boolean;
+  onSearchChange?: (query: string) => void;
   onFilterChange?: (categories: string[]) => void;
 }
 
 function SearchFilterBar({
   showFilter = true,
+  onSearchChange,
   onFilterChange,
 }: SearchFilterBarProps) {
   const [categories, setCategories] = useState(getCategories);
@@ -37,6 +39,7 @@ function SearchFilterBar({
           type="text"
           placeholder="Pesquisar páginas..."
           aria-label="Pesquisar páginas"
+          onChange={(event) => onSearchChange?.(event.target.value)}
         />
       </div>
 
