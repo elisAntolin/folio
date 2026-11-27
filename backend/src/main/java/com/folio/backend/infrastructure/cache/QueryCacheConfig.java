@@ -12,12 +12,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.Duration;
 import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "folio.query-cache.enabled", havingValue = "true", matchIfMissing = true)
+@EnableScheduling
 public class QueryCacheConfig {
     @Bean
     Cache<CachedPageQueries.Key, List<PageSummary>> ownedPageCache() {
@@ -54,6 +56,12 @@ public class QueryCacheConfig {
     CachedCategoryQueries cachedCategoryQueries(@Qualifier("categoryService") CategoryQueries delegate,
             @Qualifier("categoryCache") Cache<CachedCategoryQueries.Key, List<Category>> cache) {
         return new CachedCategoryQueries(delegate, cache);
+    }
+
+    @Bean
+    QueryCacheMetrics queryCacheMetrics(@Qualifier("ownedPageCache") Cache<?, ?> pages,
+                                       @Qualifier("categoryCache") Cache<?, ?> categories) {
+        return new QueryCacheMetrics(pages, categories);
     }
 
     private static int weight(List<PageSummary> rows) {
