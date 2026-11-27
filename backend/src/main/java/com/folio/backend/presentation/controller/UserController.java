@@ -2,6 +2,7 @@ package com.folio.backend.presentation.controller;
 
 import com.folio.backend.application.service.UserService;
 import com.folio.backend.application.service.JwtService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,7 +35,7 @@ public class UserController {
             throw new IllegalArgumentException("Senha é obrigatória");
 
         userService.createUser(user.get("email"), user.get("password"));
-        return ResponseEntity.ok("Usuário criado com sucesso");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso");
 
     }
 
@@ -50,7 +51,7 @@ public class UserController {
 
         String token = jwtService.generateToken(authenticatedUser.getEmail());
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("token", token));
     }
 
     @PatchMapping("/updatePassword")
@@ -60,7 +61,7 @@ public class UserController {
             throw new IllegalArgumentException("Senha é obrigatória");
 
         userService.updateUserPassword(authentication.getName(), user.get("password"));
-        return ResponseEntity.ok("Senha atualizada com sucesso");
+        return ResponseEntity.status(HttpStatus.OK).body("Senha atualizada com sucesso");
     }
     
 }
