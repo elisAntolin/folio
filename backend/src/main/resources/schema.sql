@@ -28,6 +28,11 @@ CREATE TABLE IF NOT EXISTS pages (
     parent_page_id UUID,
     title VARCHAR(255) NOT NULL,
     cover_image_url TEXT,
+
+    search_vector TSVECTOR GENERATED ALWAYS AS (
+       setweight(to_tsvector('portuguese', title), 'A')
+    ) STORED,
+
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,6 +61,11 @@ CREATE TABLE IF NOT EXISTS page_contents (
     page_id UUID PRIMARY KEY,
 
     content_jsonb JSONB NOT NULL DEFAULT '{}'::jsonb,
+     content_text TEXT NOT NULL DEFAULT '',
+     search_vector TSVECTOR GENERATED ALWAYS AS (
+            setweight(to_tsvector('portuguese', content_text), 'C')
+     ) STORED,
+
     version BIGINT NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -184,6 +194,17 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
         REFERENCES users(id)
         ON DELETE CASCADE
 );
+
+-- Índice para busca pelo título
+-- GIN ele cria um indice invertido para palavra Banana -> [2,3,4]
+CREATE INDEX IF NOT EXISTS idx_pages_search_vector
+    ON pages USING GIN (search_vector)
+    WHERE deleted_at IS NULL;
+
+-- Índice para busca pelo conteúdo
+-- GIN ele cria um indice invertido para palavra Banana -> [2,3,4]
+CREATE INDEX IF NOT EXISTS idx_page_contents_search_vector
+    ON page_contents USING GIN (search_vector);
 
 -- ricardo -> Acelera a busca das sessões de um usuário.
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id
