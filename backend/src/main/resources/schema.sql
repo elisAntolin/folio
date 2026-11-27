@@ -56,26 +56,26 @@ CREATE TABLE IF NOT EXISTS pages (
     );
 
 CREATE TABLE IF NOT EXISTS page_contents (
-    page_id UUID PRIMARY KEY,
-
-    content_jsonb JSONB NOT NULL DEFAULT '{}'::jsonb,
+     page_id UUID PRIMARY KEY,
+     content_jsonb JSONB NOT NULL DEFAULT '[]'::jsonb,
      content_text TEXT NOT NULL DEFAULT '',
      search_vector TSVECTOR GENERATED ALWAYS AS (
             setweight(to_tsvector('portuguese', content_text), 'C')
      ) STORED,
 
     version BIGINT NOT NULL DEFAULT 1,
+
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_page_contents_page
-        FOREIGN KEY (page_id)
-        REFERENCES pages(id)
-        ON DELETE CASCADE,
+    FOREIGN KEY (page_id)
+    REFERENCES pages(id)
+    ON DELETE CASCADE,
 
     CONSTRAINT chk_page_contents_version
-        CHECK (version >= 1)
-);
+    CHECK (version >= 1)
+    );
 
 CREATE TABLE IF NOT EXISTS page_favorites (
     user_id UUID NOT NULL,
