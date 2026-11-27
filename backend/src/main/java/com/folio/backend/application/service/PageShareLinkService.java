@@ -80,8 +80,11 @@ public class PageShareLinkService {
 
     @Transactional
     public PageContent.Revision save(String token, UUID actor, JsonNode snapshot, Long version) {
+        if (actor == null) throw new PageAccessException.Forbidden();
         // Link mutations and direct autosaves serialize on this same page row.
-        UUID page = resolve(token).pageId();
+        var target = resolve(token);
+        authorization.requireEditor(target.link().permission());
+        UUID page = target.pageId();
         authorization.lockPage(page);
         authorization.requireEditor(resolve(token).link().permission());
         return content.updateLocked(page, snapshot, version);
