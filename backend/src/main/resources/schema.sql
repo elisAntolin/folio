@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS pages (
     owner_user_id UUID NOT NULL,
     category_id UUID,
     parent_page_id UUID,
+
     title VARCHAR(255) NOT NULL,
     cover_image_url TEXT,
 
@@ -39,23 +40,20 @@ CREATE TABLE IF NOT EXISTS pages (
     last_edited_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_pages_owner
-        FOREIGN KEY (owner_user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE,
+    FOREIGN KEY (owner_user_id)
+    REFERENCES users(id),
 
     CONSTRAINT fk_pages_category
-        FOREIGN KEY (category_id)
-        REFERENCES categories(id)
-        ON DELETE SET NULL,
+    FOREIGN KEY (category_id)
+    REFERENCES categories(id),
 
     CONSTRAINT fk_pages_parent
-        FOREIGN KEY (parent_page_id)
-        REFERENCES pages(id)
-        ON DELETE SET NULL,
+    FOREIGN KEY (parent_page_id)
+    REFERENCES pages(id),
 
-    CONSTRAINT chk_pages_not_self_parent
-        CHECK (parent_page_id IS DISTINCT FROM id)
-);
+    CONSTRAINT chk_pages_parent
+    CHECK (parent_page_id <> id)
+    );
 
 CREATE TABLE IF NOT EXISTS page_contents (
     page_id UUID PRIMARY KEY,
