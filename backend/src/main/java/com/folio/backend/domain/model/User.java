@@ -8,7 +8,11 @@ public class User {
     private String passwordHash;
 
     public User(String email, String passwordHash){
-        this.id = UUID.randomUUID();
+        this(UUID.randomUUID(), email, passwordHash);
+    }
+
+    public User(UUID id, String email, String passwordHash) {
+        this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
     }

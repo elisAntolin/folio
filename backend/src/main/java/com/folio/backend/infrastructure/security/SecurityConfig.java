@@ -15,7 +15,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     @Bean 
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
-        return http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers("/api/users/register", "/api/users/login")
+        return http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers(
+                "/api/users/register",
+                "/api/users/login",
+                "/api/tokens/refresh",
+                "/api/tokens/logout")
                 .permitAll()
                 .anyRequest()
                 .authenticated())

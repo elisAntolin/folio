@@ -29,6 +29,7 @@ public class UserRepository {
         return jdbc.queryForObject(
             "SELECT * FROM users WHERE email = ?",
             (rs, rowNum) -> new User(
+                rs.getObject("id", UUID.class),
                 rs.getString("email"),
                 rs.getString("password_hash")
             ),
@@ -47,23 +48,32 @@ public class UserRepository {
 
     public UUID findIdByEmail(String email){
         return findByEmail(email,
-                (rs, _) -> rs.getObject("id", UUID.class));
+                (rs, rowNum) -> rs.getObject("id", UUID.class));
+    }
+
+    public String findEmailById(UUID id) {
+        return jdbc.queryForObject(
+            "SELECT email FROM users WHERE id = ?",
+            String.class,
+            id
+        );
     }
     
     public void save(User user){
         jdbc.update(
-            "INSERT INTO users (email, password_hash) VALUES (?, ?)",
+            "INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)",
+            user.getId(),
             user.getEmail(),
             user.getPasswordHash()
         );
     }
 
-    public void updatePassword(User user){
-        jdbc.update(
+    public boolean updatePassword(String email, String passwordHash) {
+        return jdbc.update(
             "UPDATE users SET password_hash = ? WHERE email = ?",
-            user.getPasswordHash(),
-            user.getEmail()
-        );
+            passwordHash,
+            email
+        ) == 1;
     }
 
 }
