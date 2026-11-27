@@ -29,6 +29,7 @@ export type { DocumentContent, InitialDocumentContent } from "./schema";
 export type BlockEditorProps = {
   /** Read once when mounted. Remount with a document key to load other content. */
   initialContent?: InitialDocumentContent;
+  editable?: boolean;
   onChange?: (content: DocumentContent) => void;
 };
 
@@ -117,7 +118,7 @@ function BlockCommandMenu({
   );
 }
 
-function BlockEditor({ initialContent, onChange }: BlockEditorProps) {
+function BlockEditor({ initialContent, onChange, editable = true }: BlockEditorProps) {
   const editor = useCreateBlockNote({
     schema,
     dictionary: pt,
@@ -135,6 +136,7 @@ function BlockEditor({ initialContent, onChange }: BlockEditorProps) {
     <BlockNoteView
       className="folio-block-editor"
       editor={editor}
+      editable={editable}
       onChange={() => onChange?.(editor.document)}
       portalElements={{ default: document.body }}
       formattingToolbar={false}
@@ -145,20 +147,22 @@ function BlockEditor({ initialContent, onChange }: BlockEditorProps) {
       emojiPicker={false}
       comments={false}
     >
-      <FormattingToolbarController formattingToolbar={TextFormattingToolbar} />
-      <SideMenuController sideMenu={BlockSideMenu} />
-      <SuggestionMenuController
-        triggerCharacter="/"
-        suggestionMenuComponent={BlockCommandMenu}
-        getItems={async (query) =>
-          filterSuggestionItems(
-            getDefaultReactSlashMenuItems(editor).filter(
-              (item) => item.title !== pt.slash_menu.emoji.title,
-            ),
-            query,
-          )
-        }
-      />
+      {editable && <>
+        <FormattingToolbarController formattingToolbar={TextFormattingToolbar} />
+        <SideMenuController sideMenu={BlockSideMenu} />
+        <SuggestionMenuController
+          triggerCharacter="/"
+          suggestionMenuComponent={BlockCommandMenu}
+          getItems={async (query) =>
+            filterSuggestionItems(
+              getDefaultReactSlashMenuItems(editor).filter(
+                (item) => item.title !== pt.slash_menu.emoji.title,
+              ),
+              query,
+            )
+          }
+        />
+      </>}
     </BlockNoteView>
   );
 }

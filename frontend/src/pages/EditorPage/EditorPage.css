@@ -43,3 +43,13 @@
   .editor-body { flex-direction: column; }
   .editor-main { padding: var(--space-3); }
 }
+
+.editor-sync-status {
+  color: var(--text-secondary, currentColor);
+  font-size: 0.875rem;
+  padding-block: 0.5rem;
+}
+
+.editor-sync-status button {
+  margin: 0.35rem;
+}

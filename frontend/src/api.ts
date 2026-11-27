@@ -1,3 +1,14 @@
+import type { DocumentContent } from "./components/BlockEditor/schema";
+
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
 async function request(path: string, options: RequestInit) {
   const token = sessionStorage.getItem("folio.accessToken");
   const headers = new Headers(options.headers);
@@ -6,9 +17,9 @@ async function request(path: string, options: RequestInit) {
 
   const response = await fetch(`/api${path}`, { ...options, headers });
   if (response.status === 401 || response.status === 403) {
-    throw new Error("A API exige uma sessão válida para acessar as páginas.");
+    throw new ApiError(response.status, "A API exige uma sessão válida para acessar as páginas.");
   }
-  if (!response.ok) throw new Error(`Falha na requisição (${response.status}).`);
+  if (!response.ok) throw new ApiError(response.status, `Falha na requisição (${response.status}).`);
   return response;
 }
 
@@ -56,4 +67,53 @@ export async function updatePage(id: string, input: PageInput) {
 
 export async function deletePage(id: string) {
   await request(`/pages/${id}`, { method: "DELETE" });
+}
+
+export interface ContentRevision {
+  version: number;
+  updatedAt: string;
+}
+
+export interface PageContent extends ContentRevision {
+  content: DocumentContent;
+}
+
+export function getEditorSessionKey(): string | undefined {
+  return sessionStorage.getItem("folio.accessToken")?.split(".")[2] || undefined;
+}
+
+export async function getPageContent(pageId: string, signal?: AbortSignal): Promise<PageContent> {
+  return (await loadPageContent(pageId, signal)).content;
+}
+
+export async function resolveEditorUser(pageId: string, sessionKey: string, signal: AbortSignal) {
+  const bindingKey = "folio.editor.account";
+  const cached = sessionStorage.getItem(bindingKey);
+  if (cached?.startsWith(`${sessionKey}:`)) return cached.slice(sessionKey.length + 1);
+
+  const { userId } = await loadPageContent(pageId, signal);
+  if (!userId || signal.aborted || getEditorSessionKey() !== sessionKey) {
+    throw new Error("Não foi possível identificar a conta do editor.");
+  }
+  sessionStorage.setItem(bindingKey, `${sessionKey}:${userId}`);
+  return userId;
+}
+
+async function loadPageContent(pageId: string, signal?: AbortSignal) {
+  const timeout = AbortSignal.timeout(15_000);
+  const response = await request(`/pages/${encodeURIComponent(pageId)}/content`, {
+    signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
+  });
+  return { userId: response.headers.get("X-Folio-User-Id"), content: await response.json() as PageContent };
+}
+
+export async function savePageContent(
+  pageId: string, content: DocumentContent, version: number,
+): Promise<ContentRevision> {
+  const response = await request(`/pages/${encodeURIComponent(pageId)}/content`, {
+    method: "PUT",
+    signal: AbortSignal.timeout(20_000),
+    body: JSON.stringify({ content, version }),
+  });
+  return response.json();
 }

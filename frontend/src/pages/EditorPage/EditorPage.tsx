@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 
 import Header from "../../components/Header/Header";
 import Collaborators from "../../components/Collaborators/Collaborators";
-import PageDocument from "../../components/PageDocument/PageDocument";
+import PersistentPageDocument from "../../editor/PersistentPageDocument";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import ShareButton from "../../components/ShareButton/ShareButton";
 
@@ -29,7 +29,7 @@ function EditorPage() {
                 onLinkPermissionChange={() => undefined}
               />
             </div>
-            <PageDocument />
+            <PersistentPageDocument pageId={id} />
           </main>
         </div>
       </div>

@@ -8,7 +8,12 @@ import capa from "../../assets/capa.jpg";
 import editImageIcon from "../../assets/editar-imagem.svg";
 import CoverGalleryModal from "../modals/CoverGalleryModal/CoverGalleryModal";
 
-function PageDocument({ initialContent, onChange }: BlockEditorProps) {
+type PageDocumentProps = BlockEditorProps & {
+  onBlur?: () => void;
+  editorKey?: number;
+};
+
+function PageDocument({ initialContent, onChange, onBlur, editorKey }: PageDocumentProps) {
   const { id } = useParams();
   const location = useLocation();
   const [coverImage, setCoverImage] = useState<string | null>(() =>
@@ -41,8 +46,10 @@ function PageDocument({ initialContent, onChange }: BlockEditorProps) {
           </button>
         </div>
 
-        <div className="page-document-body">
-          <BlockEditor key={id} initialContent={initialContent} onChange={onChange} />
+        <div className="page-document-body" onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) onBlur?.();
+        }}>
+          <BlockEditor key={`${id}-${editorKey ?? 0}`} initialContent={initialContent} onChange={onChange} />
         </div>
       </div>
 
