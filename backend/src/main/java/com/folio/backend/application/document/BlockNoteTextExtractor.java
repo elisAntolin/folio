@@ -24,26 +24,37 @@ public class BlockNoteTextExtractor {
     private void appendContent(JsonNode content, StringBuilder text) {
         if (content.isTextual()) {
             text.append(content.asText());
-        } else if (content.isArray()) {
-            for (JsonNode segment : content) appendContent(segment, text);
-        } else if (content.isObject()) {
-            switch (content.path("type").asText()) {
-                case "text" -> appendContent(content.path("text"), text);
-                case "tableContent" -> {
-                    JsonNode rows = content.path("rows");
-                    if (!rows.isArray()) return;
-                    for (JsonNode row : rows) {
-                        JsonNode cells = row.path("cells");
-                        if (!cells.isArray()) continue;
-                        for (JsonNode cell : cells) {
-                            appendContent(cell, text);
-                            text.append('\t');
-                        }
-                        text.append('\n');
-                    }
-                }
-                default -> appendContent(content.path("content"), text);
+            return;
+        }
+
+        if (content.isArray()) {
+            for (JsonNode segment : content) {
+                appendContent(segment, text);
             }
+            return;
+        }
+
+        if (!content.isObject()) return;
+
+        switch (content.path("type").asText()) {
+            case "text" -> appendContent(content.path("text"), text);
+            case "tableContent" -> appendTable(content.path("rows"), text);
+            default -> appendContent(content.path("content"), text);
+        }
+    }
+
+    private void appendTable(JsonNode rows, StringBuilder text) {
+        if (!rows.isArray()) return;
+
+        for (JsonNode row : rows) {
+            JsonNode cells = row.path("cells");
+            if (!cells.isArray()) continue;
+
+            for (JsonNode cell : cells) {
+                appendContent(cell, text);
+                text.append('\t');
+            }
+            text.append('\n');
         }
     }
 }
