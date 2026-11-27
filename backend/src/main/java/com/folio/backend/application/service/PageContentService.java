@@ -2,6 +2,7 @@ package com.folio.backend.application.service;
 
 import com.folio.backend.application.document.BlockNoteTextExtractor;
 import com.folio.backend.application.document.PageContent;
+import com.folio.backend.application.document.PageNotFound;
 import com.folio.backend.infrastructure.repository.PageContentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class PageContentService {
     }
 
     public PageContent find(UUID pageId, UUID ownerId) {
-        return repository.find(pageId, ownerId).orElseThrow(NotFound::new);
+        return repository.find(pageId, ownerId).orElseThrow(PageNotFound::new);
     }
 
     @Transactional
@@ -33,7 +34,7 @@ public class PageContentService {
         }
 
         String text = extractor.extract(content);
-        if (!repository.lockOwnedPage(pageId, ownerId)) throw new NotFound();
+        if (!repository.lockOwnedPage(pageId, ownerId)) throw new PageNotFound();
 
         PageContent.Revision revision = repository.update(pageId, ownerId, content, text, version)
                 .orElseThrow(() -> new Conflict(find(pageId, ownerId).version()));
@@ -41,7 +42,6 @@ public class PageContentService {
         return revision;
     }
 
-    public static class NotFound extends RuntimeException {}
     public static class InvalidSnapshot extends RuntimeException {}
 
     public static class Conflict extends RuntimeException {

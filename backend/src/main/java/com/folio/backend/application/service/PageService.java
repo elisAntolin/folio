@@ -1,5 +1,6 @@
 package com.folio.backend.application.service;
 
+import com.folio.backend.application.document.PageNotFound;
 import com.folio.backend.domain.model.Page;
 import com.folio.backend.infrastructure.repository.PageContentRepository;
 import com.folio.backend.infrastructure.repository.CategoryRepository;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,23 +42,21 @@ public class PageService {
     public void editPage(UUID pageId, String title, UUID categoryId, UUID authenticatedUserId){
         if(categoryId != null && !categoryRepository.existCategory(categoryId))
             throw new IllegalStateException("a categoria deve ser valida");
-        Optional<Page> optionalPage = repository.findById(pageId);
-        if(optionalPage.isEmpty())
-            throw new IllegalArgumentException("Página não encontrada");
-        Page page = optionalPage.get();
+        Page page = findOwnedPage(pageId, authenticatedUserId);
         page.rename(title);
         page.changeCategory(categoryId);
-        repository.update(page, authenticatedUserId);
+        if (!repository.update(page, authenticatedUserId)) throw new PageNotFound();
 
     }
 
     public void deletePage(UUID pageId, UUID authenticatedUserId){
-        Optional<Page> optionalPage = repository.findById(pageId);
-        if(optionalPage.isEmpty())
-            throw new IllegalArgumentException("Página não encontrada");
-        Page page = optionalPage.get();
+        Page page = findOwnedPage(pageId, authenticatedUserId);
         page.delete(authenticatedUserId);
-        repository.delete(page, authenticatedUserId);
+        if (!repository.delete(page, authenticatedUserId)) throw new PageNotFound();
+    }
+
+    private Page findOwnedPage(UUID pageId, UUID ownerId) {
+        return repository.findOwnedPage(pageId, ownerId).orElseThrow(PageNotFound::new);
     }
 
     public List<PageSummaryResponse> findRecents(String email){

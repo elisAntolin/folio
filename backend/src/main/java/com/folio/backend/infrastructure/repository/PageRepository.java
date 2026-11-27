@@ -72,7 +72,7 @@ public class PageRepository {
         return jdbc.query(sql, ROW_MAPPER);
     }
 
-    public void update(Page page, UUID authenticatedUserId){
+    public boolean update(Page page, UUID authenticatedUserId){
         String sql = """
                     UPDATE pages
                     SET title = ?,
@@ -82,10 +82,8 @@ public class PageRepository {
                         AND owner_user_id = ?
                         AND deleted_at IS NULL
                 """;
-        int affectedRow = jdbc.update(sql,page.getTitle(), page.getCategoryId(), page.getUpdatedAt(), page.getId(), authenticatedUserId);
-        if(affectedRow == 0){
-            throw new IllegalStateException("Pagina nao encontrada");
-        }
+        return jdbc.update(sql, page.getTitle(), page.getCategoryId(), page.getUpdatedAt(),
+                page.getId(), authenticatedUserId) > 0;
     }
 
     public boolean existPage(UUID pageId){
@@ -99,16 +97,16 @@ public class PageRepository {
         );
     }
 
-    public Optional<Page> findById(UUID id){
+    public Optional<Page> findOwnedPage(UUID id, UUID ownerId) {
         String sql = """
-                SELECT * FROM pages WHERE id = ?
+                SELECT * FROM pages WHERE id = ? AND owner_user_id = ? AND deleted_at IS NULL
                 """;
-        return jdbc.query(sql, ROW_MAPPER,id)
+        return jdbc.query(sql, ROW_MAPPER, id, ownerId)
                 .stream()
                 .findFirst();
     }
 
-    public void delete(Page page, UUID authenticatedUserId){
+    public boolean delete(Page page, UUID authenticatedUserId){
         String sql = """
             UPDATE pages
             SET deleted_at = ?,
@@ -118,19 +116,13 @@ public class PageRepository {
               AND deleted_at IS NULL
             """;
 
-        int affectedRows = jdbc.update(
+        return jdbc.update(
                 sql,
                 page.getDeletedAt(),
                 page.getUpdatedAt(),
                 page.getId(),
                 authenticatedUserId
-        );
-
-        if (affectedRows == 0) {
-            throw new IllegalStateException(
-                    "Não foi possível excluir a página"
-            );
-        }
+        ) > 0;
     }
 
     public List<Page> findRecentPagesByOwnerId(UUID ownerId){

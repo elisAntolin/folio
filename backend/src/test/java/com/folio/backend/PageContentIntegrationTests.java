@@ -113,6 +113,17 @@ class PageContentIntegrationTests {
     }
 
     @Test
+    void pageMutationsReturnNotFoundForOtherOwnersAndRemovedPages() throws Exception {
+        String update = "{\"title\":\"Renomeada\"}";
+        assertEquals(404, mutatePage("PATCH", update, otherToken).statusCode());
+        assertEquals(404, mutatePage("DELETE", null, otherToken).statusCode());
+        assertEquals(204, mutatePage("PATCH", update, ownerToken).statusCode());
+        assertEquals(204, mutatePage("DELETE", null, ownerToken).statusCode());
+        assertEquals(404, mutatePage("PATCH", update, ownerToken).statusCode());
+        assertEquals(404, mutatePage("DELETE", null, ownerToken).statusCode());
+    }
+
+    @Test
     void acceptsOnlyOneConcurrentUpdateWithSameVersion() throws Exception {
         var first = http.sendAsync(request("PUT", snapshot(DOCUMENT, 1), ownerToken),
                 HttpResponse.BodyHandlers.ofString());
@@ -152,7 +163,15 @@ class PageContentIntegrationTests {
     }
 
     private HttpRequest request(String method, String payload, String token) {
-        return HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/pages/" + pageId + "/content"))
+        return request(method, payload, token, "/content");
+    }
+
+    private HttpResponse<String> mutatePage(String method, String payload, String token) throws Exception {
+        return http.send(request(method, payload, token, ""), HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpRequest request(String method, String payload, String token, String suffix) {
+        return HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/pages/" + pageId + suffix))
                 .timeout(Duration.ofSeconds(10))
                 .header("Authorization", "Bearer " + token)
                 .header("Content-Type", "application/json")

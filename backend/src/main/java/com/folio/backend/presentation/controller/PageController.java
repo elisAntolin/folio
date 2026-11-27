@@ -2,6 +2,7 @@ package com.folio.backend.presentation.controller;
 
 import com.folio.backend.application.service.PageService;
 import com.folio.backend.application.document.PageContent;
+import com.folio.backend.application.document.PageNotFound;
 import com.folio.backend.application.service.PageContentService;
 import com.folio.backend.infrastructure.security.AuthenticatedUser;
 import com.folio.backend.presentation.dto.request.CreatePageRequest;
@@ -86,8 +87,8 @@ public class PageController {
         return ResponseEntity.ok(contentService.update(pageId, user.id(), request.content(), request.version()));
     }
 
-    @ExceptionHandler(PageContentService.NotFound.class)
-    public ResponseEntity<Void> contentNotFound() {
+    @ExceptionHandler(PageNotFound.class)
+    public ResponseEntity<Void> pageNotFound() {
         return ResponseEntity.notFound().build();
     }
 
