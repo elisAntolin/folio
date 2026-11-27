@@ -75,9 +75,11 @@ public class PageController {
     @GetMapping("/{pageId}/content")
     public ResponseEntity<PageContent> getContent(
             @PathVariable UUID pageId, @AuthenticationPrincipal AuthenticatedUser user) {
+        PageContent.Access access = contentService.find(pageId, user.id());
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
                 .header("X-Folio-User-Id", user.id().toString())
-                .body(contentService.find(pageId, user.id()));
+                .header("X-Folio-Can-Edit", Boolean.toString(access.canEdit()))
+                .body(access.snapshot());
     }
 
     @PutMapping("/{pageId}/content")
@@ -90,6 +92,11 @@ public class PageController {
     @ExceptionHandler(PageNotFound.class)
     public ResponseEntity<Void> pageNotFound() {
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(PageContentService.ReadOnly.class)
+    public ResponseEntity<Void> pageReadOnly() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @ExceptionHandler(PageContentService.InvalidSnapshot.class)

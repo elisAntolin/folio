@@ -7,6 +7,7 @@ import { readDrafts, removeDraft, writeDraft, type DocumentDraft } from "./docum
 export function useDocumentAutosave(userId: string, pageId: string, sessionKey: string, draftId?: string) {
   const engine = useRef<DocumentAutosave>(null);
   const [initialContent, setInitialContent] = useState<DocumentContent>();
+  const [readOnly, setReadOnly] = useState(false);
   const [editorKey, setEditorKey] = useState(0);
   const [error, setError] = useState<string>();
   const [attempt, setAttempt] = useState(0);
@@ -41,6 +42,12 @@ export function useDocumentAutosave(userId: string, pageId: string, sessionKey: 
       if (!saved && (!draft || accessDenied)) {
         setError(server.status === "rejected" && server.reason instanceof Error
           ? server.reason.message : "Não foi possível carregar o documento.");
+        return;
+      }
+
+      if (saved && !saved.canEdit) {
+        setReadOnly(true);
+        setInitialContent(saved.content);
         return;
       }
 
@@ -90,6 +97,7 @@ export function useDocumentAutosave(userId: string, pageId: string, sessionKey: 
     ...state,
     error,
     initialContent,
+    readOnly,
     editorKey,
     otherDrafts,
     change: (content: DocumentContent) => engine.current?.change(content),

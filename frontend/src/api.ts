@@ -76,6 +76,7 @@ export interface ContentRevision {
 
 export interface PageContent extends ContentRevision {
   content: DocumentContent;
+  canEdit: boolean;
 }
 
 export function getEditorSessionKey(): string | undefined {
@@ -104,7 +105,11 @@ async function loadPageContent(pageId: string, signal?: AbortSignal) {
   const response = await request(`/pages/${encodeURIComponent(pageId)}/content`, {
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   });
-  return { userId: response.headers.get("X-Folio-User-Id"), content: await response.json() as PageContent };
+  const snapshot: Omit<PageContent, "canEdit"> = await response.json();
+  return {
+    userId: response.headers.get("X-Folio-User-Id"),
+    content: { ...snapshot, canEdit: response.headers.get("X-Folio-Can-Edit") === "true" },
+  };
 }
 
 export async function savePageContent(

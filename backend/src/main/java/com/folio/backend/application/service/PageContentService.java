@@ -20,12 +20,12 @@ public class PageContentService {
         this.extractor = extractor;
     }
 
-    public PageContent find(UUID pageId, UUID ownerId) {
-        return repository.find(pageId, ownerId).orElseThrow(PageNotFound::new);
+    public PageContent.Access find(UUID pageId, UUID userId) {
+        return repository.find(pageId, userId).orElseThrow(PageNotFound::new);
     }
 
     @Transactional
-    public PageContent.Revision update(UUID pageId, UUID ownerId, JsonNode content, Long version) {
+    public PageContent.Revision update(UUID pageId, UUID userId, JsonNode content, Long version) {
         if (content == null || !content.isArray() || version == null || version < 1) {
             throw new InvalidSnapshot();
         }
@@ -34,14 +34,21 @@ public class PageContentService {
         }
 
         String text = extractor.extract(content);
-        if (!repository.lockOwnedPage(pageId, ownerId)) throw new PageNotFound();
+        if (!repository.lockAccessiblePage(pageId, userId).orElseThrow(PageNotFound::new)) {
+            throw new ReadOnly();
+        }
 
-        PageContent.Revision revision = repository.update(pageId, ownerId, content, text, version)
-                .orElseThrow(() -> new Conflict(find(pageId, ownerId).version()));
+        PageContent.Revision revision = repository.update(pageId, userId, content, text, version)
+                .orElseThrow(() -> {
+                    PageContent.Access access = find(pageId, userId);
+                    if (!access.canEdit()) return new ReadOnly();
+                    return new Conflict(access.snapshot().version());
+                });
         repository.markEdited(pageId, revision.updatedAt());
         return revision;
     }
 
+    public static class ReadOnly extends RuntimeException {}
     public static class InvalidSnapshot extends RuntimeException {}
 
     public static class Conflict extends RuntimeException {

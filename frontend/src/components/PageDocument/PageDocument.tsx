@@ -13,7 +13,7 @@ type PageDocumentProps = BlockEditorProps & {
   editorKey?: number;
 };
 
-function PageDocument({ initialContent, onChange, onBlur, editorKey }: PageDocumentProps) {
+function PageDocument({ initialContent, onChange, onBlur, editorKey, editable }: PageDocumentProps) {
   const { id } = useParams();
   const location = useLocation();
   const [coverImage, setCoverImage] = useState<string | null>(() =>
@@ -49,7 +49,7 @@ function PageDocument({ initialContent, onChange, onBlur, editorKey }: PageDocum
         <div className="page-document-body" onBlur={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget)) onBlur?.();
         }}>
-          <BlockEditor key={`${id}-${editorKey ?? 0}`} initialContent={initialContent} onChange={onChange} />
+          <BlockEditor key={`${id}-${editorKey ?? 0}`} initialContent={initialContent} onChange={onChange} editable={editable} />
         </div>
       </div>
 

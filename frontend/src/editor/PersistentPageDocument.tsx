@@ -52,7 +52,7 @@ function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }:
   return (
     <>
       <div className="editor-sync-status">
-        <span role="status">{messages[autosave.status]}</span>
+        <span role="status">{autosave.readOnly ? "Somente leitura" : messages[autosave.status]}</span>
         {autosave.status === "error" && (
           <button type="button" onClick={autosave.retry}>Tentar novamente</button>
         )}
@@ -93,6 +93,7 @@ function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }:
       </div>
       <PageDocument
         editorKey={autosave.editorKey}
+        editable={!autosave.readOnly}
         initialContent={autosave.initialContent}
         onChange={autosave.change}
         onBlur={autosave.flush}
