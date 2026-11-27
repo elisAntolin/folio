@@ -61,4 +61,15 @@ public class PageService {
                 .map(PageSummaryResponse::from)
                 .toList();
     }
+
+    public List<PageSummaryResponse> searchPages(String query, UUID userId){
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+
+        return repository.searchPages(
+                query.strip(),
+                userId
+        );
+    }
 }

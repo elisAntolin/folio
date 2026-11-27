@@ -2,6 +2,7 @@ package com.folio.backend.infrastructure.repository;
 
 
 import com.folio.backend.domain.model.Page;
+import com.folio.backend.presentation.dto.response.PageSummaryResponse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -142,4 +143,75 @@ public class PageRepository {
         return jdbc.query(sql,ROW_MAPPER, ownerId);
     }
 
+    public List<PageSummaryResponse> searchPages(
+            String query,
+            UUID ownerId
+    ) {
+        String sql = """
+        WITH search_query AS (
+            SELECT
+                websearch_to_tsquery('portuguese', ?) AS query,
+                CAST(? AS UUID) AS owner_id
+        ),
+        matches AS (
+            SELECT
+                p.id AS page_id,
+                TRUE AS title_match,
+                ts_rank(p.search_vector, q.query) AS relevance
+            FROM pages p
+            CROSS JOIN search_query q
+            WHERE p.owner_user_id = q.owner_id
+              AND p.deleted_at IS NULL
+              AND p.search_vector @@ q.query
+
+            UNION ALL
+
+            SELECT
+                pc.page_id,
+                FALSE AS title_match,
+                ts_rank(pc.search_vector, q.query) AS relevance
+            FROM page_contents pc
+            INNER JOIN pages p
+                ON p.id = pc.page_id
+            CROSS JOIN search_query q
+            WHERE p.owner_user_id = q.owner_id
+              AND p.deleted_at IS NULL
+              AND pc.search_vector @@ q.query
+        ),
+        ranked_pages AS (
+            SELECT
+                page_id,
+                BOOL_OR(title_match) AS title_match,
+                SUM(relevance) AS relevance
+            FROM matches
+            GROUP BY page_id
+        )
+        SELECT
+            p.id,
+            p.category_id,
+            p.title,
+            p.cover_image_url
+        FROM ranked_pages rp
+        INNER JOIN pages p
+            ON p.id = rp.page_id
+        ORDER BY
+            rp.title_match DESC,
+            rp.relevance DESC,
+            p.last_edited_at DESC,
+            p.id
+        LIMIT 50
+        """;
+
+        return jdbc.query(
+                sql,
+                (rs, rowNum) -> new PageSummaryResponse(
+                        rs.getObject("id", UUID.class),
+                        rs.getObject("category_id", UUID.class),
+                        rs.getString("title"),
+                        rs.getString("cover_image_url")
+                ),
+                query,
+                ownerId
+        );
+    }
 }
