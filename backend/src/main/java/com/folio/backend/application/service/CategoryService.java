@@ -5,6 +5,7 @@ import com.folio.backend.presentation.dto.response.CategorySummaryResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CategoryService {
@@ -14,8 +15,9 @@ public class CategoryService {
         this.repository = repository;
     }
 
-    public List<CategorySummaryResponse> findAll() {
-        return repository.findAll().stream()
+    public List<CategorySummaryResponse> findAll(UUID owner) {
+        repository.copyDefaults(owner);
+        return repository.findAll(owner).stream()
                 .map(CategorySummaryResponse::from)
                 .toList();
     }

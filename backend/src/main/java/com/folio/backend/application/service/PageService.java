@@ -5,33 +5,28 @@ import com.folio.backend.domain.model.Page;
 import com.folio.backend.infrastructure.repository.PageContentRepository;
 import com.folio.backend.infrastructure.repository.CategoryRepository;
 import com.folio.backend.infrastructure.repository.PageRepository;
-import com.folio.backend.infrastructure.repository.UserRepository;
-import com.folio.backend.presentation.dto.response.PageSummaryResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class PageService {
     private final PageRepository repository;
     private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
     private final PageContentRepository contentRepository;
 
-    public PageService(PageRepository repo, CategoryRepository categoryRepo, UserRepository userRepo,
+    public PageService(PageRepository repo, CategoryRepository categoryRepo,
                        PageContentRepository contentRepository) {
         repository = repo;
         categoryRepository = categoryRepo;
-        userRepository = userRepo;
         this.contentRepository = contentRepository;
     }
 
     @Transactional
     public UUID createPage(String title, UUID categoryId, UUID ownerId){
-        if(categoryId != null && !categoryRepository.existCategory(categoryId))
-            throw new IllegalStateException("a categoria deve ser valida");
+        if(categoryId != null && !categoryRepository.existsForOwner(categoryId, ownerId))
+            throw new PageNotFound();
         Page page = new Page(ownerId, categoryId, null, title, null);
         repository.save(page);
         contentRepository.initialize(page.getId());
@@ -40,8 +35,8 @@ public class PageService {
     }
 
     public void editPage(UUID pageId, String title, UUID categoryId, UUID authenticatedUserId){
-        if(categoryId != null && !categoryRepository.existCategory(categoryId))
-            throw new IllegalStateException("a categoria deve ser valida");
+        if(categoryId != null && !categoryRepository.existsForOwner(categoryId, authenticatedUserId))
+            throw new PageNotFound();
         Page page = findOwnedPage(pageId, authenticatedUserId);
         page.rename(title);
         page.changeCategory(categoryId);
@@ -59,22 +54,4 @@ public class PageService {
         return repository.findOwnedPage(pageId, ownerId).orElseThrow(PageNotFound::new);
     }
 
-    public List<PageSummaryResponse> findRecents(String email){
-        UUID authenticatedUserId = userRepository.findIdByEmail(email);
-        return repository.findRecentPagesByOwnerId(authenticatedUserId)
-                .stream()
-                .map(PageSummaryResponse::from)
-                .toList();
-    }
-
-    public List<PageSummaryResponse> searchPages(String query, UUID userId){
-        if (query == null || query.isBlank()) {
-            return List.of();
-        }
-
-        return repository.searchPages(
-                query.strip(),
-                userId
-        );
-    }
 }

@@ -1,6 +1,8 @@
 package com.folio.backend.presentation.controller;
 
 import com.folio.backend.application.service.CategoryService;
+import com.folio.backend.infrastructure.security.AuthenticatedUser;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.folio.backend.presentation.dto.response.CategorySummaryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +21,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategorySummaryResponse>> findAll() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ResponseEntity<List<CategorySummaryResponse>> findAll(@AuthenticationPrincipal AuthenticatedUser user) {
+        return ResponseEntity.ok(categoryService.findAll(user.id()));
     }
 }

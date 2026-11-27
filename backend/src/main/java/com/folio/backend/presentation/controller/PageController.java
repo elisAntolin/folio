@@ -7,7 +7,6 @@ import com.folio.backend.infrastructure.security.AuthenticatedUser;
 import com.folio.backend.presentation.dto.request.CreatePageRequest;
 import com.folio.backend.presentation.dto.request.UpdatePageRequest;
 import com.folio.backend.presentation.dto.response.CreatePageResponse;
-import com.folio.backend.presentation.dto.response.PageSummaryResponse;
 import com.folio.backend.presentation.dto.request.UpdatePageContentRequest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,12 +27,6 @@ public class PageController {
     public PageController(PageService pageService, PageContentService contentService) {
         this.pageService = pageService;
         this.contentService = contentService;
-    }
-
-    @GetMapping("/recent")
-    public ResponseEntity<List<PageSummaryResponse>> findRecent(@AuthenticationPrincipal AuthenticatedUser authenticatedUser){
-        String email = authenticatedUser.email();
-        return  ResponseEntity.ok(pageService.findRecents(email));
     }
 
     @PostMapping
@@ -88,13 +80,4 @@ public class PageController {
         return ResponseEntity.ok(contentService.update(pageId, user.id(), request.content(), request.version()));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<PageSummaryResponse>> search(
-            @RequestParam("q") String query,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
-    ){
-        return ResponseEntity.ok(
-                pageService.searchPages(query, authenticatedUser.id())
-        );
-    }
 }
