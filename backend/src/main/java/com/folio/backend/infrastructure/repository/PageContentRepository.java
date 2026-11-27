@@ -29,9 +29,14 @@ public class PageContentRepository {
                 SELECT pc.content_jsonb, pc.version, pc.updated_at
                 FROM page_contents pc JOIN pages p ON p.id = pc.page_id
                 WHERE p.id = ? AND p.owner_user_id = ? AND p.deleted_at IS NULL
-                """, (rs, row) -> new PageContent(json.readTree(rs.getString("content_jsonb")),
-                rs.getLong("version"), rs.getObject("updated_at", LocalDateTime.class)),
-                pageId, ownerId).stream().findFirst();
+                """,
+                (rs, row) -> new PageContent(
+                        json.readTree(rs.getString("content_jsonb")),
+                        rs.getLong("version"),
+                        rs.getObject("updated_at", LocalDateTime.class)),
+                        pageId, ownerId)
+                .stream()
+                .findFirst();
     }
 
     public boolean lockOwnedPage(UUID pageId, UUID ownerId) {
