@@ -6,8 +6,6 @@ interface PageListItemProps {
   pages: HomePageItem[];
   onEdit: (id: string, newTitle: string, newCategory: string) => void | Promise<void>;
   onDelete: (id: string) => void | Promise<void>;
-  onLinkPermissionChange: (id: string, permission: string) => void;
-  favoriteIds: string[];
   onFavoriteChange: (id: string, isFavorite: boolean) => void;
 }
 
@@ -15,8 +13,6 @@ function PageListItem({
   pages,
   onEdit,
   onDelete,
-  onLinkPermissionChange,
-  favoriteIds,
   onFavoriteChange,
 }: PageListItemProps) {
   return (
@@ -32,10 +28,8 @@ function PageListItem({
             onEdit(page.id, newTitle, newCategory)
           }
           onDelete={() => onDelete(page.id)}
-          onLinkPermissionChange={(permission) =>
-            onLinkPermissionChange(page.id, permission)
-          }
-          isFavorite={favoriteIds.includes(page.id)}
+          permission={page.permission}
+          isFavorite={page.favorite}
           onFavoriteChange={(isFavorite) =>
             onFavoriteChange(page.id, isFavorite)
           }

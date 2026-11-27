@@ -4,5 +4,6 @@ import java.util.UUID;
 
 public record CreatePageRequest(
         String title,
-        UUID categoryId
+        UUID categoryId,
+        UUID parentId
 ) {}

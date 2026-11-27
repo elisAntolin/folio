@@ -236,3 +236,8 @@ CREATE INDEX IF NOT EXISTS idx_page_permissions_user_id
 -- ricardo -> Acelera a busca de convites enviados para um determinado email.
 CREATE INDEX IF NOT EXISTS idx_page_invitations_email
     ON page_invitations(invited_email);
+
+-- Preenche o conteúdo das páginas criadas antes da persistência do editor.
+INSERT INTO page_contents (page_id)
+SELECT id FROM pages
+ON CONFLICT (page_id) DO NOTHING;

@@ -1,3 +1,4 @@
+import type { PageAccess } from "../../api";
 import { useContext } from "react";
 import { PageCategoriesContext } from "../../pageCategories";
 import { Link } from "react-router";
@@ -17,7 +18,7 @@ interface PageItemProps {
   coverImageUrl: string | null;
   onEdit: (newTitle: string, newCategory: string) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
-  onLinkPermissionChange: (permission: string) => void;
+  permission: PageAccess;
   isFavorite: boolean;
   onFavoriteChange: (isFavorite: boolean) => void;
 }
@@ -29,7 +30,7 @@ function PageItem({
   coverImageUrl,
   onEdit,
   onDelete,
-  onLinkPermissionChange,
+  permission,
   isFavorite,
   onFavoriteChange,
 }: PageItemProps) {
@@ -40,7 +41,9 @@ function PageItem({
     <div className="page-item">
       <div className="page-item-cover">
         <Link to={`/pages/${id}`} className="page-item-cover-link">
-          <img src={coverImageUrl ?? capa} alt="Capa da página" />
+          {coverImageUrl?.startsWith("#")
+            ? <div style={{ backgroundColor: coverImageUrl, height: "100%" }} aria-hidden="true" />
+            : <img src={coverImageUrl ?? capa} alt="Capa da página" />}
         </Link>
       </div>
 
@@ -50,7 +53,7 @@ function PageItem({
 
           <span className="page-item-badge page-item-category">
             <img src={studyIcon} alt="" />
-            {categoryName}
+            {permission === "OWNER" ? categoryName : permission === "EDITOR" ? "Editor" : "Leitor"}
           </span>
 
           <span className="page-item-badge page-item-recent">
@@ -61,10 +64,10 @@ function PageItem({
           <PageActionsMenu
             currentTitle={title}
             currentCategory={category}
-            publicLink={`/pages/${id}`}
+            id={id}
+            permission={permission}
             onEdit={onEdit}
             onDelete={onDelete}
-            onLinkPermissionChange={onLinkPermissionChange}
             isFavorite={isFavorite}
             onFavoriteChange={onFavoriteChange}
           />

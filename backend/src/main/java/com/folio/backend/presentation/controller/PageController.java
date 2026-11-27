@@ -1,19 +1,20 @@
 package com.folio.backend.presentation.controller;
 
 import com.folio.backend.application.service.PageService;
-import com.folio.backend.domain.model.Page;
+import com.folio.backend.application.document.PageContent;
+import com.folio.backend.application.service.PageContentService;
 import com.folio.backend.infrastructure.security.AuthenticatedUser;
 import com.folio.backend.presentation.dto.request.CreatePageRequest;
 import com.folio.backend.presentation.dto.request.UpdatePageRequest;
 import com.folio.backend.presentation.dto.response.CreatePageResponse;
-import com.folio.backend.presentation.dto.response.PageSummaryResponse;
-import org.springframework.security.core.Authentication;
+import com.folio.backend.presentation.dto.request.UpdatePageContentRequest;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,14 +22,11 @@ import java.util.UUID;
 public class PageController {
     private final PageService pageService;
 
-    public PageController(PageService pageService) {
-        this.pageService = pageService;
-    }
+    private final PageContentService contentService;
 
-    @GetMapping("/recent")
-    public ResponseEntity<List<PageSummaryResponse>> findRecent(@AuthenticationPrincipal AuthenticatedUser authenticatedUser){
-        String email = authenticatedUser.email();
-        return  ResponseEntity.ok(pageService.findRecents(email));
+    public PageController(PageService pageService, PageContentService contentService) {
+        this.pageService = pageService;
+        this.contentService = contentService;
     }
 
     @PostMapping
@@ -39,6 +37,7 @@ public class PageController {
         UUID pageId = pageService.createPage(
                 request.title(),
                 request.categoryId(),
+                request.parentId(),
                 authenticatedUser.id()
         );
         return ResponseEntity.created(URI.create("/api/pages/" + pageId))
@@ -65,13 +64,46 @@ public class PageController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<PageSummaryResponse>> search(
-            @RequestParam("q") String query,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
-    ){
-        return ResponseEntity.ok(
-                pageService.searchPages(query, authenticatedUser.id())
-        );
+    public record Rename(String title) {}
+    public record Cover(String coverImageUrl) {}
+    public record Parent(UUID parentId) {}
+
+    @PatchMapping("/{id}/title")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void rename(@PathVariable UUID id, @RequestBody Rename input,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        pageService.rename(id, user.id(), input.title());
     }
+
+    @PatchMapping("/{id}/cover")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cover(@PathVariable UUID id, @RequestBody Cover input,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        pageService.changeCover(id, user.id(), input.coverImageUrl());
+    }
+
+    @PatchMapping("/{id}/parent")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void move(@PathVariable UUID id, @RequestBody Parent input,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        pageService.move(id, user.id(), input.parentId());
+    }
+
+    @GetMapping("/{pageId}/content")
+    public ResponseEntity<PageContent> getContent(
+            @PathVariable UUID pageId, @AuthenticationPrincipal AuthenticatedUser user) {
+        PageContent.Access access = contentService.find(pageId, user.id());
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+                .header("X-Folio-User-Id", user.id().toString())
+                .header("X-Folio-Can-Edit", Boolean.toString(access.canEdit()))
+                .body(access.snapshot());
+    }
+
+    @PutMapping("/{pageId}/content")
+    public ResponseEntity<PageContent.Revision> updateContent(
+            @PathVariable UUID pageId, @RequestBody UpdatePageContentRequest request,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        return ResponseEntity.ok(contentService.update(pageId, user.id(), request.content(), request.version()));
+    }
+
 }

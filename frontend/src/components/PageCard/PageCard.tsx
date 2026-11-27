@@ -1,3 +1,4 @@
+import type { PageAccess } from "../../api";
 import { useContext } from "react";
 import { PageCategoriesContext } from "../../pageCategories";
 import { Link } from "react-router";
@@ -17,7 +18,7 @@ interface PageCardProps {
   coverImageUrl: string | null;
   onEdit: (newTitle: string, newCategory: string) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
-  onLinkPermissionChange: (permission: string) => void;
+  permission: PageAccess;
   isFavorite: boolean;
   onFavoriteChange: (isFavorite: boolean) => void;
 }
@@ -29,7 +30,7 @@ function PageCard({
   coverImageUrl,
   onEdit,
   onDelete,
-  onLinkPermissionChange,
+  permission,
   isFavorite,
   onFavoriteChange,
 }: PageCardProps) {
@@ -40,7 +41,9 @@ function PageCard({
     <div className="page-card">
       <div className="page-card-cover">
         <Link to={`/pages/${id}`} className="page-card-cover-link">
-          <img src={coverImageUrl ?? capa} alt="Capa da página" />
+          {coverImageUrl?.startsWith("#")
+            ? <div style={{ backgroundColor: coverImageUrl, height: "100%" }} aria-hidden="true" />
+            : <img src={coverImageUrl ?? capa} alt="Capa da página" />}
         </Link>
         <span className="page-card-badge page-card-recent">
           <img src={clockIcon} alt="Recente" />
@@ -50,10 +53,10 @@ function PageCard({
           <PageActionsMenu
             currentTitle={title}
             currentCategory={category}
-            publicLink={`/pages/${id}`}
+            id={id}
+            permission={permission}
             onEdit={onEdit}
             onDelete={onDelete}
-            onLinkPermissionChange={onLinkPermissionChange}
             isFavorite={isFavorite}
             onFavoriteChange={onFavoriteChange}
           />
@@ -65,7 +68,7 @@ function PageCard({
           <h2>{title}</h2>
           <span className="page-card-badge page-card-category">
             <img src={studyIcon} alt="Categoria" />
-            {categoryName}
+            {permission === "OWNER" ? categoryName : permission === "EDITOR" ? "Editor" : "Leitor"}
           </span>
         </div>
       </div>
