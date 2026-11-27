@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import SearchFilterBar from "../../components/SearchFilterBar/SearchFilterBar";
 import PagesToolbar from "../../components/PagesToolbar/PagesToolbar";
@@ -7,65 +7,59 @@ import PageListCard, {
 } from "../../components/PageListCard/PageListCard";
 import PageListItem from "../../components/PageListItem/PageListItem";
 
+import { createPage, deletePage, listCategories, listRecentPages, updatePage, type CategoryOption } from "../../api";
+import { PageCategoriesContext } from "../../pageCategories";
+
 function HomePage() {
   const [mode, setMode] = useState<"grid" | "list">("grid");
   const [showFavorites, setShowFavorites] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([
-    "Desenvolvimento",
-    "Trabalho",
-    "Estudos",
-    "Pessoal",
-    "Projetos",
-    "Favoritos",
-  ]);
-  const [pages, setPages] = useState<HomePageItem[]>(() =>
-    Array.from({ length: 6 }, (_, index) => ({
-      id: String(index + 1),
-      title: "🤖 Back-end",
-      category: "Estudos",
-      categories: ["Estudos"],
-      linkPermission: "restricted",
-    })),
-  );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [pages, setPages] = useState<HomePageItem[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
-  function handleCreatePage(title: string, category: string) {
-    const newPage = {
-      id: String(Date.now()),
-      title,
-      category,
-      categories: [category],
-      linkPermission: "restricted",
-    };
+  useEffect(() => {
+    const controller = new AbortController();
 
-    setPages((currentPages) => [...currentPages, newPage]);
+    Promise.all([listRecentPages(controller.signal), listCategories(controller.signal)])
+      .then(([recentPages, categoryOptions]) => {
+        if (controller.signal.aborted) return;
+        setPages(recentPages.map((page) => ({ ...page, linkPermission: "restricted" })));
+        setCategories(categoryOptions);
+        setLoading(false);
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        setLoadError(error instanceof Error ? error.message : "Não foi possível carregar as páginas.");
+        setLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [loadAttempt]);
+
+  async function handleCreatePage(title: string, category: string) {
+    const categoryId = category || null;
+    const { id } = await createPage({ title, categoryId });
+    setPages((currentPages) => [
+      { id, title, categoryId, coverImageUrl: null, linkPermission: "restricted" },
+      ...currentPages,
+    ]);
   }
 
-  function handleEditPage(
-    id: string,
-    newTitle: string,
-    newCategory: string,
-  ) {
+  async function handleEditPage(id: string, title: string, category: string) {
+    const categoryId = category || null;
+    await updatePage(id, { title, categoryId });
     setPages((currentPages) =>
-      currentPages.map((page) =>
-        page.id === id
-          ? {
-              ...page,
-              title: newTitle,
-              category: newCategory,
-              categories: Array.from(
-                new Set([...(page.categories ?? [page.category]), newCategory]),
-              ),
-            }
-          : page,
-      ),
+      currentPages.map((page) => page.id === id ? { ...page, title, categoryId } : page),
     );
   }
 
-  function handleDeletePage(id: string) {
-    setPages((currentPages) =>
-      currentPages.filter((page) => page.id !== id),
-    );
+  async function handleDeletePage(id: string) {
+    await deletePage(id);
+    setPages((currentPages) => currentPages.filter((page) => page.id !== id));
     setFavoriteIds((currentIds) => currentIds.filter((favoriteId) => favoriteId !== id));
   }
 
@@ -86,55 +80,71 @@ function HomePage() {
   }
 
   const categoryFilteredPages =
-    selectedCategories.length === 0
+    selectedCategories.length === 0 || selectedCategories.length === categories.length
       ? pages
-      : pages.filter((page) =>
-          (page.categories ?? [page.category]).some((category) =>
-            selectedCategories.includes(category),
-          ),
-        );
+      : pages.filter((page) => categories.some(
+          ({ id, name }) => id === page.categoryId && selectedCategories.includes(name),
+        ));
   const filteredPages = showFavorites
     ? categoryFilteredPages.filter((page) => favoriteIds.includes(page.id))
     : categoryFilteredPages;
 
   return (
-    <div>
-      <Header></Header>
-      <main>
-        <section className="search-section">
-          <SearchFilterBar onFilterChange={setSelectedCategories} />
-        </section>
+    <PageCategoriesContext.Provider value={categories}>
+      <div>
+        <Header />
+        <main>
+          <section className="search-section">
+            <SearchFilterBar onFilterChange={setSelectedCategories} />
+          </section>
 
-        <section className="pages-section">
-          <PagesToolbar
-            mode={mode}
-            changeMode={setMode}
-            onCreate={handleCreatePage}
-            showFavorites={showFavorites}
-            onFavoritesChange={setShowFavorites}
-          />
-          {mode === "grid" ? (
-            <PageListCard
-              pages={filteredPages}
-              onEdit={handleEditPage}
-              onDelete={handleDeletePage}
-              onLinkPermissionChange={handleLinkPermissionChange}
-              favoriteIds={favoriteIds}
-              onFavoriteChange={handleFavoriteChange}
-            />
-          ) : (
-            <PageListItem
-              pages={filteredPages}
-              onEdit={handleEditPage}
-              onDelete={handleDeletePage}
-              onLinkPermissionChange={handleLinkPermissionChange}
-              favoriteIds={favoriteIds}
-              onFavoriteChange={handleFavoriteChange}
-            />
-          )}
-        </section>
-      </main>
-    </div>
+          <section className="pages-section">
+            {loading && <p role="status">Carregando páginas…</p>}
+            {loadError && (
+              <div>
+                <p role="alert">{loadError}</p>
+                <button type="button" onClick={() => {
+                  setLoadError(null);
+                  setLoading(true);
+                  setLoadAttempt((attempt) => attempt + 1);
+                }}>Tentar novamente</button>
+              </div>
+            )}
+            {!loading && !loadError && (
+              <>
+                <PagesToolbar
+                  mode={mode}
+                  changeMode={setMode}
+                  onCreate={handleCreatePage}
+                  showFavorites={showFavorites}
+                  onFavoritesChange={setShowFavorites}
+                />
+                {mode === "grid" ? (
+                  <PageListCard
+                    pages={filteredPages}
+                    onEdit={handleEditPage}
+                    onDelete={handleDeletePage}
+                    onLinkPermissionChange={handleLinkPermissionChange}
+                    favoriteIds={favoriteIds}
+                    onFavoriteChange={handleFavoriteChange}
+                  />
+                ) : (
+                  <PageListItem
+                    pages={filteredPages}
+                    onEdit={handleEditPage}
+                    onDelete={handleDeletePage}
+                    onLinkPermissionChange={handleLinkPermissionChange}
+                    favoriteIds={favoriteIds}
+                    onFavoriteChange={handleFavoriteChange}
+                  />
+                )}
+                {!filteredPages.length && <p>Nenhuma página encontrada.</p>}
+              </>
+            )}
+          </section>
+        </main>
+      </div>
+    </PageCategoriesContext.Provider>
   );
 }
 

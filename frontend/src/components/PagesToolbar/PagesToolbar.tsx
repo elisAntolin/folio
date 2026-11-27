@@ -9,7 +9,7 @@ import listIcon from "../../assets/lista.svg";
 interface PagesToolbarProps {
   mode: "grid" | "list";
   changeMode: (mode: "grid" | "list") => void;
-  onCreate: (title: string, category: string) => void;
+  onCreate: (title: string, category: string) => void | Promise<void>;
   showFavorites: boolean;
   onFavoritesChange: (showFavorites: boolean) => void;
 }

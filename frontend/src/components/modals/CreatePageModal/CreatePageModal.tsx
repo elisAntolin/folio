@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { PageCategoriesContext } from "../../../pageCategories";
 import { Dialog } from "radix-ui";
 import "./CreatePageModal.css";
 import closeIcon from "../../../assets/fechar.svg";
@@ -8,7 +9,7 @@ import CategorySelect from "../CategorySelect/CategorySelect";
 interface CreatePageModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreate: (title: string, category: string) => void;
+  onCreate: (title: string, category: string) => void | Promise<void>;
 }
 
 function CreatePageModal({
@@ -17,28 +18,41 @@ function CreatePageModal({
   onCreate,
 }: CreatePageModalProps) {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Desenvolvimento");
+  const initialCategory = useContext(PageCategoriesContext) ? "" : "Desenvolvimento";
+  const [category, setCategory] = useState(initialCategory);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const newTitle = title.trim();
 
-    if (!newTitle) return;
+    if (!newTitle || submitting) return;
 
-    onCreate(newTitle, category);
-
-    setTitle("");
-    setCategory("Desenvolvimento");
-    onOpenChange(false);
+    setSubmitting(true);
+    setError("");
+    try {
+      await onCreate(newTitle, category);
+      setTitle("");
+      setCategory(initialCategory);
+      onOpenChange(false);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Não foi possível salvar a página.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function handleOpenChange(value: boolean) {
+    if (submitting) return;
     onOpenChange(value);
 
     if (!value) {
+      setError("");
       setTitle("");
-      setCategory("Desenvolvimento");
+      setCategory(initialCategory);
     }
   }
 
@@ -96,6 +110,8 @@ function CreatePageModal({
               />
             </div>
 
+            {error && <p role="alert">{error}</p>}
+
             <div className="create-footer">
               <Dialog.Close asChild>
                 <button type="button" className="create-cancel">
@@ -106,7 +122,7 @@ function CreatePageModal({
               <button
                 type="submit"
                 className="create-submit"
-                disabled={!title.trim()}
+                disabled={submitting || !title.trim()}
               >
                 Criar Página
               </button>
