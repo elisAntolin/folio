@@ -37,6 +37,7 @@ public class PageController {
         UUID pageId = pageService.createPage(
                 request.title(),
                 request.categoryId(),
+                request.parentId(),
                 authenticatedUser.id()
         );
         return ResponseEntity.created(URI.create("/api/pages/" + pageId))
@@ -65,6 +66,7 @@ public class PageController {
 
     public record Rename(String title) {}
     public record Cover(String coverImageUrl) {}
+    public record Parent(UUID parentId) {}
 
     @PatchMapping("/{id}/title")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -78,6 +80,13 @@ public class PageController {
     public void cover(@PathVariable UUID id, @RequestBody Cover input,
             @AuthenticationPrincipal AuthenticatedUser user) {
         pageService.changeCover(id, user.id(), input.coverImageUrl());
+    }
+
+    @PatchMapping("/{id}/parent")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void move(@PathVariable UUID id, @RequestBody Parent input,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        pageService.move(id, user.id(), input.parentId());
     }
 
     @GetMapping("/{pageId}/content")

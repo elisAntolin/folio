@@ -131,4 +131,23 @@ public class PageRepository {
     public void changeCover(UUID pageId, String cover) {
         jdbc.update("UPDATE pages SET cover_image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", cover, pageId);
     }
+    public void lockHierarchy(UUID owner) {
+        jdbc.query("SELECT pg_advisory_xact_lock(hashtextextended(CAST(? AS TEXT), 0))",
+                rs -> { }, owner);
+    }
+
+    public boolean isAncestor(UUID page, UUID parent) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("""
+                WITH RECURSIVE ancestry AS (
+                    SELECT id, parent_page_id FROM pages WHERE id = ?
+                    UNION
+                    SELECT p.id, p.parent_page_id FROM pages p JOIN ancestry a ON p.id = a.parent_page_id
+                )
+                SELECT EXISTS (SELECT 1 FROM ancestry WHERE id = ?)
+                """, Boolean.class, parent, page));
+    }
+
+    public void move(UUID page, UUID parent) {
+        jdbc.update("UPDATE pages SET parent_page_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", parent, page);
+    }
 }

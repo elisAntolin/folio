@@ -27,10 +27,14 @@ public class PageService {
     }
 
     @Transactional
-    public UUID createPage(String title, UUID categoryId, UUID ownerId){
+    public UUID createPage(String title, UUID categoryId, UUID parentId, UUID ownerId){
         if(categoryId != null && !categoryRepository.existsForOwner(categoryId, ownerId))
             throw new PageNotFound();
-        Page page = new Page(ownerId, categoryId, null, title, null);
+        if (parentId != null) {
+            authorization.requireOwner(parentId, ownerId);
+            authorization.lockPage(parentId);
+        }
+        Page page = new Page(ownerId, categoryId, parentId, title, null);
         repository.save(page);
         contentRepository.initialize(page.getId());
         return page.getId();
@@ -73,6 +77,21 @@ public class PageService {
         }
         lockEditor(pageId, actor);
         repository.changeCover(pageId, cover);
+    }
+
+    @Transactional
+    public void move(UUID pageId, UUID actor, UUID parentId) {
+        authorization.requireOwner(pageId, actor);
+        repository.lockHierarchy(actor);
+        authorization.lockPage(pageId);
+        if (parentId != null) {
+            authorization.requireOwner(parentId, actor);
+            authorization.lockPage(parentId);
+            if (repository.isAncestor(pageId, parentId)) {
+                throw new PageAccessException.Invalid("A página não pode ser movida para si mesma ou para uma descendente.");
+            }
+        }
+        repository.move(pageId, parentId);
     }
 
     private void lockEditor(UUID pageId, UUID actor) {
