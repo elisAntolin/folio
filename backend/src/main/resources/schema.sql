@@ -27,9 +27,7 @@ CREATE TABLE IF NOT EXISTS pages (
     category_id UUID,
     parent_page_id UUID,
     title VARCHAR(255) NOT NULL,
-    icon TEXT,
     cover_image_url TEXT,
-    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,6 +54,7 @@ CREATE TABLE IF NOT EXISTS pages (
 
 CREATE TABLE IF NOT EXISTS page_contents (
     page_id UUID PRIMARY KEY,
+
     content_jsonb JSONB NOT NULL DEFAULT '{}'::jsonb,
     version BIGINT NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
