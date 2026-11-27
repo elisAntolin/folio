@@ -88,20 +88,6 @@ public class PageController {
         return ResponseEntity.ok(contentService.update(pageId, user.id(), request.content(), request.version()));
     }
 
-    @ExceptionHandler(PageContentService.InvalidSnapshot.class)
-    public ResponseEntity<Void> invalidSnapshot() {
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(PageContentService.Conflict.class)
-    public ResponseEntity<ContentConflict> contentConflict(PageContentService.Conflict conflict) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ContentConflict(
-                "CONTENT_VERSION_CONFLICT", "O documento foi modificado por outra sessão.",
-                conflict.currentVersion()));
-    }
-
-    public record ContentConflict(String code, String message, long currentVersion) {}
-
     @GetMapping("/search")
     public ResponseEntity<List<PageSummaryResponse>> search(
             @RequestParam("q") String query,
