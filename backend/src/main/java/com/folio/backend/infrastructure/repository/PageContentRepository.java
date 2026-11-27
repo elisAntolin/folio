@@ -45,7 +45,9 @@ public class PageContentRepository {
                 text, pageId, version).stream().findFirst();
     }
 
-    public void markEdited(UUID pageId, LocalDateTime editedAt) {
-        jdbc.update("UPDATE pages SET last_edited_at = ? WHERE id = ?", editedAt, pageId);
+    public UUID markEdited(UUID pageId, LocalDateTime editedAt) {
+        return jdbc.queryForObject("""
+                UPDATE pages SET last_edited_at = ? WHERE id = ? RETURNING owner_user_id
+                """, UUID.class, editedAt, pageId);
     }
 }

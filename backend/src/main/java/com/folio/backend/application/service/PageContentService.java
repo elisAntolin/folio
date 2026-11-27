@@ -3,7 +3,9 @@ package com.folio.backend.application.service;
 import com.folio.backend.application.document.BlockNoteTextExtractor;
 import com.folio.backend.application.document.PageContent;
 import com.folio.backend.application.document.PageNotFound;
+import com.folio.backend.application.event.OwnedPagesChanged;
 import com.folio.backend.infrastructure.repository.PageContentRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.JsonNode;
@@ -15,12 +17,14 @@ public class PageContentService {
     private final PageContentRepository repository;
     private final BlockNoteTextExtractor extractor;
     private final PageAuthorizationService authorization;
+    private final ApplicationEventPublisher events;
 
     public PageContentService(PageContentRepository repository, BlockNoteTextExtractor extractor,
-                              PageAuthorizationService authorization) {
+                              PageAuthorizationService authorization, ApplicationEventPublisher events) {
         this.repository = repository;
         this.extractor = extractor;
         this.authorization = authorization;
+        this.events = events;
     }
 
     public PageContent.Access find(UUID pageId, UUID userId) {
@@ -51,7 +55,8 @@ public class PageContentService {
         String text = extractor.extract(content);
         PageContent.Revision revision = repository.update(pageId, content, text, version)
                 .orElseThrow(() -> new Conflict(snapshot(pageId).version()));
-        repository.markEdited(pageId, revision.updatedAt());
+        UUID owner = repository.markEdited(pageId, revision.updatedAt());
+        events.publishEvent(new OwnedPagesChanged(owner));
         return revision;
     }
 

@@ -1,11 +1,13 @@
 package com.folio.backend.application.service;
 
 import com.folio.backend.application.document.PageNotFound;
+import com.folio.backend.application.event.OwnedPagesChanged;
 import com.folio.backend.application.sharing.PageAccessException;
 import com.folio.backend.domain.model.Page;
 import com.folio.backend.infrastructure.repository.PageContentRepository;
 import com.folio.backend.infrastructure.repository.CategoryRepository;
 import com.folio.backend.infrastructure.repository.PageRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +19,15 @@ public class PageService {
     private final CategoryRepository categoryRepository;
     private final PageContentRepository contentRepository;
     private final PageAuthorizationService authorization;
+    private final ApplicationEventPublisher events;
 
     public PageService(PageRepository repo, CategoryRepository categoryRepo,
-                       PageContentRepository contentRepository, PageAuthorizationService authorization) {
+                       PageContentRepository contentRepository, PageAuthorizationService authorization, ApplicationEventPublisher events) {
         repository = repo;
         categoryRepository = categoryRepo;
         this.contentRepository = contentRepository;
         this.authorization = authorization;
+        this.events = events;
     }
 
     @Transactional
@@ -37,10 +41,12 @@ public class PageService {
         Page page = new Page(ownerId, categoryId, parentId, title, null);
         repository.save(page);
         contentRepository.initialize(page.getId());
+        events.publishEvent(new OwnedPagesChanged(ownerId));
         return page.getId();
 
     }
 
+    @Transactional
     public void editPage(UUID pageId, String title, UUID categoryId, UUID authenticatedUserId){
         authorization.requireOwner(pageId, authenticatedUserId);
         if(categoryId != null && !categoryRepository.existsForOwner(categoryId, authenticatedUserId))
@@ -49,14 +55,17 @@ public class PageService {
         page.rename(title);
         page.changeCategory(categoryId);
         if (!repository.update(page, authenticatedUserId)) throw new PageNotFound();
+        events.publishEvent(new OwnedPagesChanged(authenticatedUserId));
 
     }
 
+    @Transactional
     public void deletePage(UUID pageId, UUID authenticatedUserId){
         authorization.requireOwner(pageId, authenticatedUserId);
         Page page = findOwnedPage(pageId, authenticatedUserId);
         page.delete(authenticatedUserId);
         if (!repository.delete(page, authenticatedUserId)) throw new PageNotFound();
+        events.publishEvent(new OwnedPagesChanged(authenticatedUserId));
     }
 
     @Transactional
@@ -65,7 +74,7 @@ public class PageService {
             throw new PageAccessException.Invalid("Informe um título válido.");
         }
         lockEditor(pageId, actor);
-        repository.rename(pageId, title.strip());
+        events.publishEvent(new OwnedPagesChanged(repository.rename(pageId, title.strip())));
     }
 
     @Transactional
@@ -76,7 +85,7 @@ public class PageService {
             throw new PageAccessException.Invalid("Use uma imagem PNG, JPEG, GIF ou WebP de até 2 MB.");
         }
         lockEditor(pageId, actor);
-        repository.changeCover(pageId, cover);
+        events.publishEvent(new OwnedPagesChanged(repository.changeCover(pageId, cover)));
     }
 
     @Transactional
@@ -92,6 +101,7 @@ public class PageService {
             }
         }
         repository.move(pageId, parentId);
+        events.publishEvent(new OwnedPagesChanged(actor));
     }
 
     private void lockEditor(UUID pageId, UUID actor) {

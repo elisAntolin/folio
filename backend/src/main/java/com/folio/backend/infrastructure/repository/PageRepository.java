@@ -124,12 +124,16 @@ public class PageRepository {
         ) > 0;
     }
 
-    public void rename(UUID pageId, String title) {
-        jdbc.update("UPDATE pages SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", title, pageId);
+    public UUID rename(UUID pageId, String title) {
+        return jdbc.queryForObject("""
+                UPDATE pages SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? RETURNING owner_user_id
+                """, UUID.class, title, pageId);
     }
 
-    public void changeCover(UUID pageId, String cover) {
-        jdbc.update("UPDATE pages SET cover_image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", cover, pageId);
+    public UUID changeCover(UUID pageId, String cover) {
+        return jdbc.queryForObject("""
+                UPDATE pages SET cover_image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? RETURNING owner_user_id
+                """, UUID.class, cover, pageId);
     }
     public void lockHierarchy(UUID owner) {
         jdbc.query("SELECT pg_advisory_xact_lock(hashtextextended(CAST(? AS TEXT), 0))",

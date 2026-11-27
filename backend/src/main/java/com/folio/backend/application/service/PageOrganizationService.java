@@ -1,10 +1,12 @@
 package com.folio.backend.application.service;
 
 import com.folio.backend.application.document.PageNotFound;
+import com.folio.backend.application.event.OwnedPagesChanged;
 import com.folio.backend.application.sharing.PageAccessException;
 import com.folio.backend.application.sharing.PageSummary;
 import com.folio.backend.infrastructure.repository.CategoryRepository;
 import com.folio.backend.infrastructure.repository.PageOrganizationRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +18,14 @@ public class PageOrganizationService implements PageQueries {
     private final PageOrganizationRepository repository;
     private final CategoryRepository categories;
     private final PageAuthorizationService authorization;
+    private final ApplicationEventPublisher events;
 
     public PageOrganizationService(PageOrganizationRepository repository, CategoryRepository categories,
-                                   PageAuthorizationService authorization) {
+                                   PageAuthorizationService authorization, ApplicationEventPublisher events) {
         this.repository = repository;
         this.categories = categories;
         this.authorization = authorization;
+        this.events = events;
     }
 
     @Override
@@ -55,9 +59,12 @@ public class PageOrganizationService implements PageQueries {
         authorization.lockPage(page);
         authorization.requireAccess(page, user);
         repository.addFavorite(page, user);
+        events.publishEvent(new OwnedPagesChanged(user));
     }
 
+    @Transactional
     public void unfavorite(UUID page, UUID user) {
         repository.removeFavorite(page, user);
+        events.publishEvent(new OwnedPagesChanged(user));
     }
 }
