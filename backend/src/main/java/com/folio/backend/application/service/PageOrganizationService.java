@@ -5,7 +5,6 @@ import com.folio.backend.application.sharing.PageAccessException;
 import com.folio.backend.application.sharing.PageSummary;
 import com.folio.backend.infrastructure.repository.CategoryRepository;
 import com.folio.backend.infrastructure.repository.PageOrganizationRepository;
-import com.folio.backend.infrastructure.repository.PageOrganizationRepository.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class PageOrganizationService {
+public class PageOrganizationService implements PageQueries {
     private final PageOrganizationRepository repository;
     private final CategoryRepository categories;
     private final PageAuthorizationService authorization;
@@ -25,16 +24,19 @@ public class PageOrganizationService {
         this.authorization = authorization;
     }
 
+    @Override
     public PageSummary find(UUID page, UUID user) {
         return repository.find(page, user).orElseThrow(PageNotFound::new);
     }
 
+    @Override
     public List<PageSummary> list(UUID user, Scope scope, UUID category, boolean uncategorized, int page, int size) {
         if (page < 0 || size < 1 || size > 100) throw new PageAccessException.Invalid("Paginação inválida.");
         validateCategory(user, category, uncategorized);
         return repository.list(user, scope, category, uncategorized, size, (long) page * size);
     }
 
+    @Override
     public List<PageSummary> search(String query, UUID user, UUID category, boolean uncategorized, boolean favorites) {
         validateCategory(user, category, uncategorized);
         if (query.isBlank()) return List.of();

@@ -1,5 +1,6 @@
 package com.folio.backend.infrastructure.repository;
 
+import com.folio.backend.application.service.PageQueries.Scope;
 import com.folio.backend.application.sharing.PageAccessLevel;
 import com.folio.backend.application.sharing.PageSummary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,8 +13,6 @@ import java.util.UUID;
 
 @Repository
 public class PageOrganizationRepository {
-    public enum Scope { OWNED, SHARED, FAVORITES }
-
     private static final RowMapper<PageSummary> SUMMARY = (rs, row) -> new PageSummary(
             rs.getObject("id", UUID.class), rs.getObject("category_id", UUID.class),
             rs.getString("title"), rs.getString("cover_image_url"),
