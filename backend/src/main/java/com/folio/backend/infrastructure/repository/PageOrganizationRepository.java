@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -33,6 +34,15 @@ public class PageOrganizationRepository {
 
     private final JdbcTemplate jdbc;
     public PageOrganizationRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+
+    public Optional<PageSummary> find(UUID page, UUID user) {
+        return jdbc.query("""
+                WITH args AS (SELECT CAST(? AS UUID) AS user_id)
+                SELECT %s FROM pages p CROSS JOIN args a %s
+                WHERE p.id = ? AND p.deleted_at IS NULL
+                  AND (p.owner_user_id = a.user_id OR pp.user_id IS NOT NULL)
+                """.formatted(COLUMNS, JOINS), SUMMARY, user, page).stream().findFirst();
+    }
 
     public List<PageSummary> list(UUID user, Scope scope, UUID category, boolean uncategorized, int limit, long offset) {
         String scopeCondition = switch (scope) {
@@ -64,9 +74,18 @@ public class PageOrganizationRepository {
                     SELECT p.id AS page_id, TRUE AS title_match, ts_rank(p.search_vector, a.query) AS relevance
                     FROM pages p CROSS JOIN args a
                     WHERE p.deleted_at IS NULL AND p.search_vector @@ a.query
+                      AND (p.owner_user_id = a.user_id OR EXISTS (
+                          SELECT 1 FROM page_permissions grant_row
+                          WHERE grant_row.page_id = p.id AND grant_row.user_id = a.user_id
+                      ))
                     UNION ALL
                     SELECT pc.page_id, FALSE, ts_rank(pc.search_vector, a.query)
-                    FROM page_contents pc CROSS JOIN args a WHERE pc.search_vector @@ a.query
+                    FROM page_contents pc JOIN pages p ON p.id = pc.page_id CROSS JOIN args a
+                    WHERE p.deleted_at IS NULL AND pc.search_vector @@ a.query
+                      AND (p.owner_user_id = a.user_id OR EXISTS (
+                          SELECT 1 FROM page_permissions grant_row
+                          WHERE grant_row.page_id = p.id AND grant_row.user_id = a.user_id
+                      ))
                 ),
                 ranked AS (
                     SELECT page_id, BOOL_OR(title_match) AS title_match, SUM(relevance) AS relevance

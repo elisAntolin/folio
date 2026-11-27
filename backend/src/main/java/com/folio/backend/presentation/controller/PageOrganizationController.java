@@ -25,6 +25,11 @@ public class PageOrganizationController {
         return service.list(user.id(), Scope.OWNED, categoryId, uncategorized, page, size);
     }
 
+    @GetMapping("/{id}")
+    public PageSummary find(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+        return service.find(id, user.id());
+    }
+
     @GetMapping("/shared-with-me")
     public List<PageSummary> shared(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "40") int size, @AuthenticationPrincipal AuthenticatedUser user) {

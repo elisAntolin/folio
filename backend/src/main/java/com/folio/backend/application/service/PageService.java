@@ -1,6 +1,7 @@
 package com.folio.backend.application.service;
 
 import com.folio.backend.application.document.PageNotFound;
+import com.folio.backend.application.sharing.PageAccessException;
 import com.folio.backend.domain.model.Page;
 import com.folio.backend.infrastructure.repository.PageContentRepository;
 import com.folio.backend.infrastructure.repository.CategoryRepository;
@@ -15,12 +16,14 @@ public class PageService {
     private final PageRepository repository;
     private final CategoryRepository categoryRepository;
     private final PageContentRepository contentRepository;
+    private final PageAuthorizationService authorization;
 
     public PageService(PageRepository repo, CategoryRepository categoryRepo,
-                       PageContentRepository contentRepository) {
+                       PageContentRepository contentRepository, PageAuthorizationService authorization) {
         repository = repo;
         categoryRepository = categoryRepo;
         this.contentRepository = contentRepository;
+        this.authorization = authorization;
     }
 
     @Transactional
@@ -35,6 +38,7 @@ public class PageService {
     }
 
     public void editPage(UUID pageId, String title, UUID categoryId, UUID authenticatedUserId){
+        authorization.requireOwner(pageId, authenticatedUserId);
         if(categoryId != null && !categoryRepository.existsForOwner(categoryId, authenticatedUserId))
             throw new PageNotFound();
         Page page = findOwnedPage(pageId, authenticatedUserId);
@@ -45,9 +49,36 @@ public class PageService {
     }
 
     public void deletePage(UUID pageId, UUID authenticatedUserId){
+        authorization.requireOwner(pageId, authenticatedUserId);
         Page page = findOwnedPage(pageId, authenticatedUserId);
         page.delete(authenticatedUserId);
         if (!repository.delete(page, authenticatedUserId)) throw new PageNotFound();
+    }
+
+    @Transactional
+    public void rename(UUID pageId, UUID actor, String title) {
+        if (title == null || title.isBlank() || title.length() > 255) {
+            throw new PageAccessException.Invalid("Informe um título válido.");
+        }
+        lockEditor(pageId, actor);
+        repository.rename(pageId, title.strip());
+    }
+
+    @Transactional
+    public void changeCover(UUID pageId, UUID actor, String cover) {
+        if (cover != null && (cover.length() > 2_800_000 ||
+                !(cover.matches("#[0-9A-Fa-f]{6}") || cover.equals("/folio-cover.jpg")
+                  || cover.matches("data:image/(png|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+")))) {
+            throw new PageAccessException.Invalid("Use uma imagem PNG, JPEG, GIF ou WebP de até 2 MB.");
+        }
+        lockEditor(pageId, actor);
+        repository.changeCover(pageId, cover);
+    }
+
+    private void lockEditor(UUID pageId, UUID actor) {
+        authorization.requireEditor(authorization.requireAccess(pageId, actor));
+        authorization.lockPage(pageId);
+        authorization.requireEditor(authorization.requireAccess(pageId, actor));
     }
 
     private Page findOwnedPage(UUID pageId, UUID ownerId) {

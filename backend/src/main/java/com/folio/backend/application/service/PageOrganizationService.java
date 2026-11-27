@@ -25,6 +25,10 @@ public class PageOrganizationService {
         this.authorization = authorization;
     }
 
+    public PageSummary find(UUID page, UUID user) {
+        return repository.find(page, user).orElseThrow(PageNotFound::new);
+    }
+
     public List<PageSummary> list(UUID user, Scope scope, UUID category, boolean uncategorized, int page, int size) {
         if (page < 0 || size < 1 || size > 100) throw new PageAccessException.Invalid("Paginação inválida.");
         validateCategory(user, category, uncategorized);

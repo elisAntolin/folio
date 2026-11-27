@@ -63,6 +63,23 @@ public class PageController {
         return ResponseEntity.noContent().build();
     }
 
+    public record Rename(String title) {}
+    public record Cover(String coverImageUrl) {}
+
+    @PatchMapping("/{id}/title")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void rename(@PathVariable UUID id, @RequestBody Rename input,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        pageService.rename(id, user.id(), input.title());
+    }
+
+    @PatchMapping("/{id}/cover")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cover(@PathVariable UUID id, @RequestBody Cover input,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        pageService.changeCover(id, user.id(), input.coverImageUrl());
+    }
+
     @GetMapping("/{pageId}/content")
     public ResponseEntity<PageContent> getContent(
             @PathVariable UUID pageId, @AuthenticationPrincipal AuthenticatedUser user) {
