@@ -26,48 +26,56 @@ CREATE TABLE IF NOT EXISTS pages (
     owner_user_id UUID NOT NULL,
     category_id UUID,
     parent_page_id UUID,
+
     title VARCHAR(255) NOT NULL,
     cover_image_url TEXT,
+
+    search_vector TSVECTOR GENERATED ALWAYS AS (
+       setweight(to_tsvector('portuguese', title), 'A')
+    ) STORED,
+
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_edited_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_pages_owner
-        FOREIGN KEY (owner_user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE,
+    FOREIGN KEY (owner_user_id)
+    REFERENCES users(id),
 
     CONSTRAINT fk_pages_category
-        FOREIGN KEY (category_id)
-        REFERENCES categories(id)
-        ON DELETE SET NULL,
+    FOREIGN KEY (category_id)
+    REFERENCES categories(id),
 
     CONSTRAINT fk_pages_parent
-        FOREIGN KEY (parent_page_id)
-        REFERENCES pages(id)
-        ON DELETE SET NULL,
+    FOREIGN KEY (parent_page_id)
+    REFERENCES pages(id),
 
-    CONSTRAINT chk_pages_not_self_parent
-        CHECK (parent_page_id IS DISTINCT FROM id)
-);
+    CONSTRAINT chk_pages_parent
+    CHECK (parent_page_id <> id)
+    );
 
 CREATE TABLE IF NOT EXISTS page_contents (
-    page_id UUID PRIMARY KEY,
+     page_id UUID PRIMARY KEY,
+     content_jsonb JSONB NOT NULL DEFAULT '[]'::jsonb,
+     content_text TEXT NOT NULL DEFAULT '',
+     search_vector TSVECTOR GENERATED ALWAYS AS (
+            setweight(to_tsvector('portuguese', content_text), 'C')
+     ) STORED,
 
-    content_jsonb JSONB NOT NULL DEFAULT '{}'::jsonb,
     version BIGINT NOT NULL DEFAULT 1,
+
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_page_contents_page
-        FOREIGN KEY (page_id)
-        REFERENCES pages(id)
-        ON DELETE CASCADE,
+    FOREIGN KEY (page_id)
+    REFERENCES pages(id)
+    ON DELETE CASCADE,
 
     CONSTRAINT chk_page_contents_version
-        CHECK (version >= 1)
-);
+    CHECK (version >= 1)
+    );
 
 CREATE TABLE IF NOT EXISTS page_favorites (
     user_id UUID NOT NULL,
@@ -184,6 +192,17 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
         REFERENCES users(id)
         ON DELETE CASCADE
 );
+
+-- Índice para busca pelo título
+-- GIN ele cria um indice invertido para palavra Banana -> [2,3,4]
+CREATE INDEX IF NOT EXISTS idx_pages_search_vector
+    ON pages USING GIN (search_vector)
+    WHERE deleted_at IS NULL;
+
+-- Índice para busca pelo conteúdo
+-- GIN ele cria um indice invertido para palavra Banana -> [2,3,4]
+CREATE INDEX IF NOT EXISTS idx_page_contents_search_vector
+    ON page_contents USING GIN (search_vector);
 
 -- ricardo -> Acelera a busca das sessões de um usuário.
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id

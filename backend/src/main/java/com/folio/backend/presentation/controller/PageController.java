@@ -64,4 +64,14 @@ public class PageController {
         pageService.deletePage(id, authenticatedUser.id());
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PageSummaryResponse>> search(
+            @RequestParam("q") String query,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ){
+        return ResponseEntity.ok(
+                pageService.searchPages(query, authenticatedUser.id())
+        );
+    }
 }

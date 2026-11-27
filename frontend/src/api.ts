@@ -34,6 +34,12 @@ export async function listRecentPages(signal: AbortSignal): Promise<PageSummary[
   return response.json();
 }
 
+export async function searchPages(query: string, signal: AbortSignal): Promise<PageSummary[]> {
+  const params = new URLSearchParams({ q: query });
+  const response = await request(`/pages/search?${params}`, { signal });
+  return response.json();
+}
+
 export async function listCategories(signal: AbortSignal): Promise<CategoryOption[]> {
   const response = await request("/categories", { signal });
   return response.json();
