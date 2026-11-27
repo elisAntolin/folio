@@ -4,7 +4,7 @@ import type { DocumentContent } from "../components/BlockEditor/schema";
 import { DocumentAutosave, waitForDocumentSave, type AutosaveState } from "./documentAutosave";
 import { readDrafts, removeDraft, writeDraft, type DocumentDraft } from "./documentDrafts";
 
-export function useDocumentAutosave(userId: string, pageId: string, sessionKey: string, draftId?: string) {
+export function useDocumentAutosave(userId: string, pageId: string, sessionKey: string, draftId?: string, shareToken?: string) {
   const engine = useRef<DocumentAutosave>(null);
   const [initialContent, setInitialContent] = useState<DocumentContent>();
   const [readOnly, setReadOnly] = useState(false);
@@ -26,7 +26,7 @@ export function useDocumentAutosave(userId: string, pageId: string, sessionKey: 
 
     async function load() {
       checkSession();
-      return getPageContent(pageId, signal);
+      return getPageContent(pageId, signal, shareToken);
     }
 
     async function initialize() {
@@ -38,7 +38,7 @@ export function useDocumentAutosave(userId: string, pageId: string, sessionKey: 
       const drafts = local.status === "fulfilled" ? local.value : [];
       const draft = drafts.find(({ id }) => id === draftId) ?? drafts[0];
       const accessDenied = server.status === "rejected" && server.reason instanceof ApiError
-        && [401, 403, 404].includes(server.reason.status);
+        && [401, 403, 404, 410].includes(server.reason.status);
       if (!saved && (!draft || accessDenied)) {
         setError(server.status === "rejected" && server.reason instanceof Error
           ? server.reason.message : "Não foi possível carregar o documento.");
@@ -55,7 +55,7 @@ export function useDocumentAutosave(userId: string, pageId: string, sessionKey: 
         load,
         save: async (content, version) => {
           checkSession();
-          return savePageContent(pageId, content, version);
+          return savePageContent(pageId, content, version, shareToken);
         },
         writeDraft,
         removeDraft,
@@ -91,7 +91,7 @@ export function useDocumentAutosave(userId: string, pageId: string, sessionKey: 
       window.removeEventListener("blur", flush);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [userId, pageId, sessionKey, draftId, attempt]);
+  }, [userId, pageId, sessionKey, draftId, shareToken, attempt]);
 
   return {
     ...state,

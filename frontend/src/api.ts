@@ -9,25 +9,36 @@ export class ApiError extends Error {
   }
 }
 
-async function request(path: string, options: RequestInit) {
+export async function request(path: string, options: RequestInit = {}, authenticate = true) {
   const token = sessionStorage.getItem("folio.accessToken");
   const headers = new Headers(options.headers);
   if (options.body) headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (authenticate && token) headers.set("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`/api${path}`, { ...options, headers });
-  if (response.status === 401 || response.status === 403) {
-    throw new ApiError(response.status, "A API exige uma sessão válida para acessar as páginas.");
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null);
+    const message = typeof payload?.message === "string" ? payload.message : {
+      401: "Entre na sua conta para continuar.",
+      403: "Você não tem permissão para esta operação.",
+      404: "Página não encontrada.",
+      410: "Este link expirou ou foi revogado.",
+      429: "Limite de solicitações atingido. Tente novamente em instantes.",
+    }[response.status] ?? `Falha na requisição (${response.status}).`;
+    throw new ApiError(response.status, message);
   }
-  if (!response.ok) throw new ApiError(response.status, `Falha na requisição (${response.status}).`);
   return response;
 }
+
+export type PageAccess = "OWNER" | "EDITOR" | "VIEWER";
 
 export interface PageSummary {
   id: string;
   title: string;
   categoryId: string | null;
   coverImageUrl: string | null;
+  permission: PageAccess;
+  favorite: boolean;
 }
 
 export interface CategoryOption {
@@ -38,6 +49,7 @@ export interface CategoryOption {
 interface PageInput {
   title: string;
   categoryId: string | null;
+  parentId?: string;
 }
 
 export async function listRecentPages(signal: AbortSignal): Promise<PageSummary[]> {
@@ -45,8 +57,9 @@ export async function listRecentPages(signal: AbortSignal): Promise<PageSummary[
   return response.json();
 }
 
-export async function searchPages(query: string, signal: AbortSignal): Promise<PageSummary[]> {
-  const params = new URLSearchParams({ q: query });
+export async function searchPages(query: string, signal: AbortSignal, filters: PageFilters = {}): Promise<PageSummary[]> {
+  const params = filterParams(filters);
+  params.set("q", query);
   const response = await request(`/pages/search?${params}`, { signal });
   return response.json();
 }
@@ -83,16 +96,16 @@ export function getEditorSessionKey(): string | undefined {
   return sessionStorage.getItem("folio.accessToken")?.split(".")[2] || undefined;
 }
 
-export async function getPageContent(pageId: string, signal?: AbortSignal): Promise<PageContent> {
-  return (await loadPageContent(pageId, signal)).content;
+export async function getPageContent(pageId: string, signal?: AbortSignal, shareToken?: string): Promise<PageContent> {
+  return (await loadPageContent(pageId, signal, shareToken)).content;
 }
 
-export async function resolveEditorUser(pageId: string, sessionKey: string, signal: AbortSignal) {
+export async function resolveEditorUser(pageId: string, sessionKey: string, signal: AbortSignal, shareToken?: string) {
   const bindingKey = "folio.editor.account";
   const cached = sessionStorage.getItem(bindingKey);
   if (cached?.startsWith(`${sessionKey}:`)) return cached.slice(sessionKey.length + 1);
 
-  const { userId } = await loadPageContent(pageId, signal);
+  const { userId } = await loadPageContent(pageId, signal, shareToken);
   if (!userId || signal.aborted || getEditorSessionKey() !== sessionKey) {
     throw new Error("Não foi possível identificar a conta do editor.");
   }
@@ -100,9 +113,9 @@ export async function resolveEditorUser(pageId: string, sessionKey: string, sign
   return userId;
 }
 
-async function loadPageContent(pageId: string, signal?: AbortSignal) {
+async function loadPageContent(pageId: string, signal?: AbortSignal, shareToken?: string) {
   const timeout = AbortSignal.timeout(15_000);
-  const response = await request(`/pages/${encodeURIComponent(pageId)}/content`, {
+  const response = await request(contentPath(pageId, shareToken), {
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   });
   const snapshot: Omit<PageContent, "canEdit"> = await response.json();
@@ -113,12 +126,55 @@ async function loadPageContent(pageId: string, signal?: AbortSignal) {
 }
 
 export async function savePageContent(
-  pageId: string, content: DocumentContent, version: number,
+  pageId: string, content: DocumentContent, version: number, shareToken?: string,
 ): Promise<ContentRevision> {
-  const response = await request(`/pages/${encodeURIComponent(pageId)}/content`, {
+  const response = await request(contentPath(pageId, shareToken), {
     method: "PUT",
     signal: AbortSignal.timeout(20_000),
     body: JSON.stringify({ content, version }),
   });
   return response.json();
+}
+
+function contentPath(pageId: string, shareToken?: string) {
+  return shareToken ? `/shared/${encodeURIComponent(shareToken)}/content` : `/pages/${encodeURIComponent(pageId)}/content`;
+}
+
+export interface PageFilters {
+  categoryId?: string;
+  uncategorized?: boolean;
+  favoritesOnly?: boolean;
+  page?: number;
+}
+
+function filterParams(filters: PageFilters) {
+  const params = new URLSearchParams();
+  if (filters.categoryId) params.set("categoryId", filters.categoryId);
+  if (filters.uncategorized) params.set("uncategorized", "true");
+  if (filters.favoritesOnly) params.set("favoritesOnly", "true");
+  if (filters.page !== undefined) params.set("page", String(filters.page));
+  return params;
+}
+
+export async function listPages(
+  scope: "owned" | "shared" | "favorites", filters: PageFilters, signal: AbortSignal,
+): Promise<PageSummary[]> {
+  const path = { owned: "/pages", shared: "/pages/shared-with-me", favorites: "/pages/favorites" }[scope];
+  return (await request(`${path}?${filterParams(filters)}`, { signal })).json();
+}
+
+export async function getPage(id: string, signal: AbortSignal): Promise<PageSummary> {
+  return (await request(`/pages/${encodeURIComponent(id)}`, { signal })).json();
+}
+
+export async function changeFavorite(id: string, favorite: boolean) {
+  await request(`/pages/${encodeURIComponent(id)}/favorite`, { method: favorite ? "PUT" : "DELETE" });
+}
+
+export async function renamePage(id: string, title: string) {
+  await request(`/pages/${encodeURIComponent(id)}/title`, { method: "PATCH", body: JSON.stringify({ title }) });
+}
+
+export async function changePageCover(id: string, coverImageUrl: string | null) {
+  await request(`/pages/${encodeURIComponent(id)}/cover`, { method: "PATCH", body: JSON.stringify({ coverImageUrl }) });
 }

@@ -14,6 +14,7 @@ export interface AutosaveState {
   status: SaveStatus;
   draftError: boolean;
   server?: PageContent;
+  failureMessage?: string;
 }
 
 const activeSaves = new Map<string, Promise<void>>();
@@ -263,7 +264,7 @@ export class DocumentAutosave {
   private async save() {
     try {
       if (this.stopped || !this.draft) return;
-      this.setStatus("saving");
+      this.publish({ status: "saving", failureMessage: undefined });
       if (this.pendingWrite || !this.confirmed) {
         this.reconcile(await this.io.load());
         if (this.blocked || !this.draft || this.stopped) return;
@@ -292,7 +293,7 @@ export class DocumentAutosave {
       } else if (!this.io.online()) {
         this.setStatus("offline");
       } else {
-        this.setStatus("error");
+        this.publish({ status: "error", failureMessage: error instanceof ApiError ? error.message : undefined });
         if (isTemporary(error) && this.failures < 5) {
           this.retryAt = Date.now() + 1_000 * 2 ** this.failures++;
         } else {

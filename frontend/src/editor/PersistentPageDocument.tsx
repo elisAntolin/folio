@@ -20,11 +20,14 @@ interface DocumentSessionProps {
   pageId: string;
   draftId?: string;
   sessionKey: string;
+  shareToken?: string;
+  coverImage?: string | null;
+  onCoverChange?: (cover: string | null) => Promise<void>;
   onSelectDraft: (id: string) => void;
 }
 
-function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }: DocumentSessionProps) {
-  const autosave = useDocumentAutosave(userId, pageId, sessionKey, draftId);
+function DocumentSession({ userId, pageId, sessionKey, draftId, shareToken, coverImage, onCoverChange, onSelectDraft }: DocumentSessionProps) {
+  const autosave = useDocumentAutosave(userId, pageId, sessionKey, draftId, shareToken);
   const [showRemote, setShowRemote] = useState(false);
   const [reviewError, setReviewError] = useState(false);
 
@@ -54,7 +57,10 @@ function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }:
       <div className="editor-sync-status">
         <span role="status">{autosave.readOnly ? "Somente leitura" : messages[autosave.status]}</span>
         {autosave.status === "error" && (
-          <button type="button" onClick={autosave.retry}>Tentar novamente</button>
+          <>
+            {autosave.failureMessage && <p role="alert">{autosave.failureMessage}</p>}
+            <button type="button" onClick={autosave.retry}>Tentar novamente</button>
+          </>
         )}
         {autosave.draftError && (
           <p role="alert">O navegador não conseguiu gravar o rascunho local.</p>
@@ -68,7 +74,7 @@ function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }:
               <div>
                 <h2>Versão do servidor</h2>
                 <BlockEditor key={remote.version} initialContent={remote.content} editable={false} />
-                <button type="button" onClick={() => {
+                <button type="button" disabled={!remote.canEdit} onClick={() => {
                   autosave.keepDraft(remote);
                   setShowRemote(false);
                 }}>Salvar meu rascunho sobre esta versão</button>
@@ -94,6 +100,8 @@ function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }:
       <PageDocument
         editorKey={autosave.editorKey}
         editable={!autosave.readOnly}
+        coverImage={coverImage}
+        onCoverChange={onCoverChange}
         initialContent={autosave.initialContent}
         onChange={autosave.change}
         onBlur={autosave.flush}
@@ -102,37 +110,39 @@ function DocumentSession({ userId, pageId, sessionKey, draftId, onSelectDraft }:
   );
 }
 
-function DocumentWorkspace({ userId, pageId, sessionKey }: { userId: string; pageId: string; sessionKey: string }) {
+type WorkspaceProps = Pick<DocumentSessionProps, "pageId" | "sessionKey" | "shareToken" | "coverImage" | "onCoverChange">;
+
+function DocumentWorkspace({ userId, ...props }: WorkspaceProps & { userId: string }) {
   const [draftId, setDraftId] = useState<string>();
   return (
     <DocumentSession
       key={draftId ?? "latest"}
       userId={userId}
-      pageId={pageId}
-      sessionKey={sessionKey}
+      {...props}
       draftId={draftId}
       onSelectDraft={setDraftId}
     />
   );
 }
 
-function AuthorizedDocument({ pageId, sessionKey }: { pageId: string; sessionKey: string }) {
+function AuthorizedDocument(props: WorkspaceProps) {
+  const { pageId, sessionKey, shareToken } = props;
   const [userId, setUserId] = useState<string>();
   const [error, setError] = useState<string>();
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
-    resolveEditorUser(pageId, sessionKey, controller.signal)
+    resolveEditorUser(pageId, sessionKey, controller.signal, shareToken)
       .then((id) => { if (!controller.signal.aborted) setUserId(id); })
       .catch((reason: unknown) => {
         if (controller.signal.aborted) return;
         setError(reason instanceof Error ? reason.message : "Não foi possível abrir o documento.");
       });
     return () => controller.abort();
-  }, [pageId, sessionKey, attempt]);
+  }, [pageId, sessionKey, shareToken, attempt]);
 
-  if (userId) return <DocumentWorkspace userId={userId} pageId={pageId} sessionKey={sessionKey} />;
+  if (userId) return <DocumentWorkspace userId={userId} {...props} />;
   if (error) return (
     <div className="editor-sync-status">
       <p role="alert">{error}</p>
@@ -145,10 +155,10 @@ function AuthorizedDocument({ pageId, sessionKey }: { pageId: string; sessionKey
   return <p role="status">Carregando documento…</p>;
 }
 
-export default function PersistentPageDocument({ pageId }: { pageId: string }) {
+export default function PersistentPageDocument(props: Omit<WorkspaceProps, "sessionKey">) {
   const sessionKey = getEditorSessionKey();
   if (!sessionKey) {
     return <p role="alert"><Link to="/login">Entre na sua conta</Link> para abrir o documento.</p>;
   }
-  return <AuthorizedDocument key={JSON.stringify([sessionKey, pageId])} pageId={pageId} sessionKey={sessionKey} />;
+  return <AuthorizedDocument key={JSON.stringify([sessionKey, props.pageId, props.shareToken])} {...props} sessionKey={sessionKey} />;
 }
