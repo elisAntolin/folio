@@ -5,7 +5,7 @@ import plusIcon from "../../assets/mais.svg";
 import CreatePageModal from "../modals/CreatePageModal/CreatePageModal";
 
 interface AddPageButtonProps {
-  onCreate: (title: string, category: string) => void;
+  onCreate: (title: string, category: string) => void | Promise<void>;
   label?: string;
 }
 

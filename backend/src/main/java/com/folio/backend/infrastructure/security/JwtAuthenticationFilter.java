@@ -1,5 +1,6 @@
 package com.folio.backend.infrastructure.security;
 
+import com.folio.backend.infrastructure.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import com.folio.backend.application.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -13,18 +14,22 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepo) {
         this.jwtService = jwtService;
+        userRepository = userRepo;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
 
@@ -37,7 +42,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String email = jwtService.extractEmail(token);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+            UUID userId = userRepository.findIdByEmail(email);
+
+            AuthenticatedUser user = new AuthenticatedUser(userId, email);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            user,
+                            null,
+                            Collections.emptyList()
+                    );
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } 
         catch (JwtException | IllegalArgumentException e) {

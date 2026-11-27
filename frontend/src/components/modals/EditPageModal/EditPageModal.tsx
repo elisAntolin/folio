@@ -10,7 +10,7 @@ interface EditPageModalProps {
   onOpenChange: (open: boolean) => void;
   currentTitle: string;
   currentCategory: string;
-  onSave: (newTitle: string, newCategory: string) => void;
+  onSave: (newTitle: string, newCategory: string) => void | Promise<void>;
 }
 
 function EditPageModal({
@@ -23,19 +23,30 @@ function EditPageModal({
   const [title, setTitle] = useState(currentTitle);
   const [category, setCategory] = useState(currentCategory);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const newTitle = title.trim();
 
-    if (!newTitle) return;
+    if (!newTitle || submitting) return;
 
-    onSave(newTitle, category);
-    onOpenChange(false);
+    setSubmitting(true);
+    setError("");
+    try {
+      await onSave(newTitle, category);
+      onOpenChange(false);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Não foi possível salvar a página.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={(value) => { if (!submitting) onOpenChange(value); }}>
       <Dialog.Portal>
         <Dialog.Overlay className="edit-overlay" />
 
@@ -82,6 +93,8 @@ function EditPageModal({
               itemClassName="edit-select-item"
             />
 
+            {error && <p role="alert">{error}</p>}
+
             <div className="edit-footer">
               <Dialog.Close asChild>
                 <button type="button" className="edit-cancel">
@@ -89,7 +102,7 @@ function EditPageModal({
                 </button>
               </Dialog.Close>
 
-              <button type="submit" className="edit-save">
+              <button type="submit" className="edit-save" disabled={submitting || !title.trim()}>
                 Salvar
               </button>
             </div>

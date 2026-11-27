@@ -1,18 +1,16 @@
 import "./PageListCard.css";
 import PageCard from "../PageCard/PageCard";
 
-export interface HomePageItem {
-  id: string;
-  title: string;
-  category: string;
-  categories?: string[];
+import type { PageSummary } from "../../api";
+
+export interface HomePageItem extends PageSummary {
   linkPermission: string;
 }
 
 interface PageListCardProps {
   pages: HomePageItem[];
-  onEdit: (id: string, newTitle: string, newCategory: string) => void;
-  onDelete: (id: string) => void;
+  onEdit: (id: string, newTitle: string, newCategory: string) => void | Promise<void>;
+  onDelete: (id: string) => void | Promise<void>;
   onLinkPermissionChange: (id: string, permission: string) => void;
   favoriteIds: string[];
   onFavoriteChange: (id: string, isFavorite: boolean) => void;
@@ -33,7 +31,8 @@ function PageListCard({
           key={page.id}
           id={page.id}
           title={page.title}
-          category={page.category}
+          category={page.categoryId ?? ""}
+          coverImageUrl={page.coverImageUrl}
           onEdit={(newTitle, newCategory) =>
             onEdit(page.id, newTitle, newCategory)
           }

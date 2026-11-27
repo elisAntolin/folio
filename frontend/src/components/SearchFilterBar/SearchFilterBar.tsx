@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import searchIcon from "../../assets/lupa.svg";
 import FilterCategories from "../modals/FilterCategories/FilterCategories";
 import { getCategories, subscribeToCategories } from "../../categories";
 
 import "./SearchFilterBar.css";
+import { PageCategoriesContext } from "../../pageCategories";
 
 interface SearchFilterBarProps {
   showFilter?: boolean;
@@ -16,7 +17,8 @@ function SearchFilterBar({
 }: SearchFilterBarProps) {
   const [categories, setCategories] = useState(getCategories);
   const filterOnlyCategories = ["Projetos", "Favoritos"];
-  const availableCategories = [
+  const apiCategories = useContext(PageCategoriesContext);
+  const availableCategories = apiCategories?.map(({ name }) => name) ?? [
     ...categories,
     ...filterOnlyCategories.filter((category) => !categories.includes(category)),
   ];
@@ -40,6 +42,7 @@ function SearchFilterBar({
 
       {showFilter && (
         <FilterCategories
+          key={JSON.stringify(availableCategories)}
           categories={availableCategories}
           onFilterChange={onFilterChange}
         />

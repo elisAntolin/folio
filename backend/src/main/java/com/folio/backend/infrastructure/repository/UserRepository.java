@@ -2,7 +2,10 @@ package com.folio.backend.infrastructure.repository;
 
 import com.folio.backend.domain.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
 
 @Repository
 public class UserRepository {
@@ -31,6 +34,20 @@ public class UserRepository {
             ),
             email
         );
+    }
+    public <T> T findByEmail(String email, RowMapper<T> mapper) {
+        String sql = """
+            SELECT *
+            FROM users
+            WHERE email = ?
+            """;
+
+        return jdbc.queryForObject(sql, mapper, email);
+    }
+
+    public UUID findIdByEmail(String email){
+        return findByEmail(email,
+                (rs, _) -> rs.getObject("id", UUID.class));
     }
     
     public void save(User user){

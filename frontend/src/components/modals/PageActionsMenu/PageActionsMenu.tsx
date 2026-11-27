@@ -22,9 +22,9 @@ interface PageActionsMenuProps {
   currentTitle: string;
   currentCategory: string;
   publicLink: string;
-  onEdit: (newTitle: string, newCategory: string) => void;
+  onEdit: (newTitle: string, newCategory: string) => void | Promise<void>;
   onShare?: (email: string, permission: string) => void;
-  onDelete: () => void;
+  onDelete: () => void | Promise<void>;
   onLinkPermissionChange: (permission: string) => void;
   isSubpage?: boolean;
   isFavorite?: boolean;
