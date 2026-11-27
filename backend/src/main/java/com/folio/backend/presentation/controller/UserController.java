@@ -2,7 +2,9 @@ package com.folio.backend.presentation.controller;
 
 import com.folio.backend.application.service.UserService;
 import com.folio.backend.application.service.JwtService;
+import com.folio.backend.infrastructure.security.AuthenticatedUser;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,12 +56,14 @@ public class UserController {
     }
 
     @PatchMapping("/updatePassword")
-    public ResponseEntity<String> updatePassword(@RequestBody Map<String, String> user, Authentication authentication){
+    public ResponseEntity<String> updatePassword(
+            @RequestBody Map<String, String> user,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser){
               
         if (user.get("password") == null || user.get("password").isBlank()) 
             throw new IllegalArgumentException("Senha é obrigatória");
 
-        userService.updateUserPassword(authentication.getName(), user.get("password"));
+        userService.updateUserPassword(authenticatedUser.email(), user.get("password"));
         return ResponseEntity.ok("Senha atualizada com sucesso");
     }
     
