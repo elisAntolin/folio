@@ -13,8 +13,8 @@ public class CategoryRepository {
     public void createCategory(Category category){
         jdbc.update(
             "INSERT INTO categories (name, icon_url) VALUES (?, ?)",
-            category.getName(),
-            category.getIconUrl()
+            category.name(),
+            category.iconUrl()
         );
     }
 

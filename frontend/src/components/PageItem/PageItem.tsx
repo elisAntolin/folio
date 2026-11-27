@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { PageCategoriesContext } from "../../pageCategories";
 import { Link } from "react-router";
 
 import "./PageItem.css";
@@ -12,8 +14,9 @@ interface PageItemProps {
   id: string;
   title: string;
   category: string;
-  onEdit: (newTitle: string, newCategory: string) => void;
-  onDelete: () => void;
+  coverImageUrl: string | null;
+  onEdit: (newTitle: string, newCategory: string) => void | Promise<void>;
+  onDelete: () => void | Promise<void>;
   onLinkPermissionChange: (permission: string) => void;
   isFavorite: boolean;
   onFavoriteChange: (isFavorite: boolean) => void;
@@ -23,18 +26,21 @@ function PageItem({
   id,
   title,
   category,
+  coverImageUrl,
   onEdit,
   onDelete,
   onLinkPermissionChange,
   isFavorite,
   onFavoriteChange,
 }: PageItemProps) {
+  const categories = useContext(PageCategoriesContext);
+  const categoryName = categories?.find(({ id }) => id === category)?.name ?? "Sem categoria";
 
   return (
     <div className="page-item">
       <div className="page-item-cover">
         <Link to={`/pages/${id}`} className="page-item-cover-link">
-          <img src={capa} alt="Capa da página" />
+          <img src={coverImageUrl ?? capa} alt="Capa da página" />
         </Link>
       </div>
 
@@ -44,7 +50,7 @@ function PageItem({
 
           <span className="page-item-badge page-item-category">
             <img src={studyIcon} alt="" />
-            {category}
+            {categoryName}
           </span>
 
           <span className="page-item-badge page-item-recent">
@@ -62,10 +68,6 @@ function PageItem({
             isFavorite={isFavorite}
             onFavoriteChange={onFavoriteChange}
           />
-        </div>
-
-        <div className="page-item-details">
-          <p>57m atrás</p>
         </div>
       </div>
     </div>

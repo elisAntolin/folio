@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Select } from "radix-ui";
 import chevronDownIcon from "../../../assets/chevron-baixo.svg";
 import {
@@ -7,6 +7,9 @@ import {
   subscribeToCategories,
 } from "../../../categories";
 import "./CategorySelect.css";
+import { PageCategoriesContext } from "../../../pageCategories";
+
+const noCategory = "no-category";
 
 interface CategorySelectProps {
   value: string;
@@ -23,6 +26,7 @@ function CategorySelect({
   contentClassName,
   itemClassName,
 }: CategorySelectProps) {
+  const apiCategories = useContext(PageCategoriesContext);
   const [availableCategories, setAvailableCategories] = useState(getCategories);
   const [newCategory, setNewCategory] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -34,7 +38,7 @@ function CategorySelect({
 
   function handleValueChange(nextValue: string) {
     setIsCreating(false);
-    onChange(nextValue);
+    onChange(nextValue === noCategory && apiCategories ? "" : nextValue);
   }
 
   function handleCreateCategory() {
@@ -61,7 +65,7 @@ function CategorySelect({
   return (
     <>
       <Select.Root
-        value={value}
+        value={apiCategories && !value ? noCategory : value}
         onValueChange={handleValueChange}
         onOpenChange={(open) => {
           if (!open) {
@@ -87,62 +91,77 @@ function CategorySelect({
             sideOffset={5}
           >
             <Select.Viewport>
-              {availableCategories.map((category) => (
-                <Select.Item
-                  key={category}
-                  className={itemClassName}
-                  value={category}
-                >
-                  <Select.ItemText>{category}</Select.ItemText>
-                </Select.Item>
-              ))}
-
-              {isCreating ? (
-                <div
-                  className="category-create-field"
-                  onPointerDown={(event) => event.stopPropagation()}
-                >
-                  <input
-                    className="category-new-input"
-                    type="text"
-                    placeholder="Nome da categoria"
-                    value={newCategory}
-                    onChange={(event) => setNewCategory(event.target.value)}
-                    onKeyDown={(event) => {
-                      // Keep typing and caret navigation out of Select's typeahead.
-                      if (event.key !== "Escape" && event.key !== "Tab") {
-                        event.stopPropagation();
-                      }
-                      if (event.key === "Enter") {
-                        event.preventDefault();
-                        handleCreateCategory();
-                      } else if (event.key === "Escape") {
-                        setIsCreating(false);
-                        setNewCategory("");
-                      }
-                    }}
-                    maxLength={40}
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    className="category-add-button"
-                    onClick={handleCreateCategory}
-                    onPointerDown={(event) => event.preventDefault()}
-                    disabled={!newCategory.trim()}
-                  >
-                    Adicionar
-                  </button>
-                </div>
+              {apiCategories ? (
+                <>
+                  <Select.Item className={itemClassName} value={noCategory}>
+                    <Select.ItemText>Sem categoria</Select.ItemText>
+                  </Select.Item>
+                  {apiCategories.map(({ id, name }) => (
+                    <Select.Item key={id} className={itemClassName} value={id}>
+                      <Select.ItemText>{name}</Select.ItemText>
+                    </Select.Item>
+                  ))}
+                </>
               ) : (
-                <button
-                  type="button"
-                  className={`${itemClassName} category-create-option`}
-                  onClick={() => setIsCreating(true)}
-                  onPointerDown={(event) => event.preventDefault()}
-                >
-                  + Criar nova categoria
-                </button>
+                <>
+                  {availableCategories.map((category) => (
+                    <Select.Item
+                      key={category}
+                      className={itemClassName}
+                      value={category}
+                    >
+                      <Select.ItemText>{category}</Select.ItemText>
+                    </Select.Item>
+                  ))}
+
+                  {isCreating ? (
+                    <div
+                      className="category-create-field"
+                      onPointerDown={(event) => event.stopPropagation()}
+                    >
+                      <input
+                        className="category-new-input"
+                        type="text"
+                        placeholder="Nome da categoria"
+                        value={newCategory}
+                        onChange={(event) => setNewCategory(event.target.value)}
+                        onKeyDown={(event) => {
+                          // Keep typing and caret navigation out of Select's typeahead.
+                          if (event.key !== "Escape" && event.key !== "Tab") {
+                            event.stopPropagation();
+                          }
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            handleCreateCategory();
+                          } else if (event.key === "Escape") {
+                            setIsCreating(false);
+                            setNewCategory("");
+                          }
+                        }}
+                        maxLength={40}
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        className="category-add-button"
+                        onClick={handleCreateCategory}
+                        onPointerDown={(event) => event.preventDefault()}
+                        disabled={!newCategory.trim()}
+                      >
+                        Adicionar
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`${itemClassName} category-create-option`}
+                      onClick={() => setIsCreating(true)}
+                      onPointerDown={(event) => event.preventDefault()}
+                    >
+                      + Criar nova categoria
+                    </button>
+                  )}
+                </>
               )}
             </Select.Viewport>
           </Select.Content>
