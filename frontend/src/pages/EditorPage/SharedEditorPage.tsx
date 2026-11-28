@@ -2,12 +2,13 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import { ApiError } from "../../api";
 import PageDocument from "../../components/PageDocument/PageDocument";
+import PageAccessRequest from "../../components/PageAccessRequest/PageAccessRequest";
 import type { DocumentContent } from "../../components/BlockEditor/schema";
 import PersistentPageDocument from "../../editor/PersistentPageDocument";
 import { getPublicContent, getSharedPage, type SharedPage } from "../../sharingApi";
 import { getSession, subscribeSession } from "../../session";
 
-function SharedDocument({ token }: { token: string }) {
+function SharedDocument({ token, signedIn }: { token: string; signedIn: boolean }) {
   const { pathname, search, hash } = useLocation();
   const [page, setPage] = useState<SharedPage>();
   const [snapshot, setSnapshot] = useState<DocumentContent>();
@@ -42,7 +43,10 @@ function SharedDocument({ token }: { token: string }) {
   return <main className="editor-main">
     <h1>{page.title}</h1>
     {page.permission === "VIEWER"
-      ? <PageDocument initialContent={snapshot} coverImage={page.coverImageUrl} editable={false} />
+      ? <>
+        {signedIn && <PageAccessRequest pageId={page.id} permission="EDITOR" />}
+        <PageDocument initialContent={snapshot} coverImage={page.coverImageUrl} editable={false} />
+      </>
       : <PersistentPageDocument pageId={page.id} shareToken={token} coverImage={page.coverImageUrl} />}
   </main>;
 }
@@ -50,5 +54,5 @@ function SharedDocument({ token }: { token: string }) {
 export default function SharedEditorPage() {
   const { token = "" } = useParams();
   const session = useSyncExternalStore(subscribeSession, getSession);
-  return <SharedDocument key={JSON.stringify([token, session?.id])} token={token} />;
+  return <SharedDocument key={JSON.stringify([token, session?.id])} token={token} signedIn={Boolean(session)} />;
 }

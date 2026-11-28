@@ -14,8 +14,12 @@ public class PageAccessRepository {
     public PageAccessRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
     public boolean lockPage(UUID pageId) {
-        return !jdbc.query("SELECT id FROM pages WHERE id = ? AND deleted_at IS NULL FOR UPDATE",
-                (rs, row) -> rs.getObject(1, UUID.class), pageId).isEmpty();
+        return lockPageOwner(pageId).isPresent();
+    }
+
+    public Optional<UUID> lockPageOwner(UUID pageId) {
+        return jdbc.query("SELECT owner_user_id FROM pages WHERE id = ? AND deleted_at IS NULL FOR UPDATE",
+                (rs, row) -> rs.getObject(1, UUID.class), pageId).stream().findFirst();
     }
 
     public Optional<PageAccessLevel> find(UUID pageId, UUID userId) {

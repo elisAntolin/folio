@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS user_preferences (
     user_id UUID PRIMARY KEY,
-    theme VARCHAR(10) NOT NULL DEFAULT 'light',
+    theme VARCHAR(10) NOT NULL DEFAULT 'system',
     default_view VARCHAR(10) NOT NULL DEFAULT 'list',
 
     CONSTRAINT fk_user_preferences_user
@@ -160,6 +160,26 @@ CREATE TABLE IF NOT EXISTS page_invitations (
     CONSTRAINT chk_page_invitations_role
         CHECK (role IN ('reader', 'editor'))
 );
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    recipient_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    actor_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    page_id UUID NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+    kind VARCHAR(20) NOT NULL CHECK (kind IN ('PAGE_SHARED', 'ACCESS_REQUESTED', 'ACCESS_GRANTED', 'ACCESS_DENIED')),
+    role VARCHAR(10) NOT NULL CHECK (role IN ('reader', 'editor')),
+    message VARCHAR(500),
+    decision VARCHAR(10) CHECK (decision IS NULL OR (kind = 'ACCESS_REQUESTED' AND decision IN ('GRANTED', 'DENIED'))),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_inbox
+    ON notifications (recipient_user_id, created_at DESC, id DESC);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_notifications_pending_access
+    ON notifications (page_id, actor_user_id)
+    WHERE kind = 'ACCESS_REQUESTED' AND decision IS NULL;
 
 CREATE TABLE IF NOT EXISTS page_share_links (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

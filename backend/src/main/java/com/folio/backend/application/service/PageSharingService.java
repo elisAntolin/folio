@@ -3,6 +3,8 @@ package com.folio.backend.application.service;
 import com.folio.backend.application.document.PageNotFound;
 import com.folio.backend.application.sharing.PageAccessException;
 import com.folio.backend.application.sharing.PageAccessLevel;
+import com.folio.backend.infrastructure.repository.NotificationRepository;
+import com.folio.backend.infrastructure.repository.NotificationRepository.Kind;
 import com.folio.backend.infrastructure.repository.PagePermissionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +16,13 @@ import java.util.UUID;
 public class PageSharingService {
     private final PageAuthorizationService authorization;
     private final PagePermissionRepository permissions;
+    private final NotificationRepository notifications;
 
-    public PageSharingService(PageAuthorizationService authorization, PagePermissionRepository permissions) {
+    public PageSharingService(PageAuthorizationService authorization, PagePermissionRepository permissions,
+                              NotificationRepository notifications) {
         this.authorization = authorization;
         this.permissions = permissions;
+        this.notifications = notifications;
     }
 
     public List<PagePermissionRepository.Member> members(UUID page, UUID actor) {
@@ -35,12 +40,17 @@ public class PageSharingService {
         if (!permissions.grant(page, recipient, role(permission), actor)) {
             throw new PageAccessException.Conflict("Essa conta já tem acesso à página.");
         }
+        notifications.resolveSatisfiedRequest(page, recipient, permission);
+        notifications.add(recipient, actor, page, Kind.PAGE_SHARED, permission, null);
     }
 
     @Transactional
     public void update(UUID page, UUID actor, UUID recipient, PageAccessLevel permission) {
         lockOwner(page, actor);
         if (!permissions.change(page, recipient, role(permission))) throw new PageNotFound();
+        if (notifications.resolveSatisfiedRequest(page, recipient, permission)) {
+            notifications.add(recipient, actor, page, Kind.ACCESS_GRANTED, permission, null);
+        }
     }
 
     @Transactional

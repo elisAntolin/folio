@@ -1,18 +1,20 @@
 import "./EditorPage.css";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { changeFavorite, changePageCover, getEditorSessionKey, getPage, renamePage, type PageSummary } from "../../api";
+import { useLocation, useParams } from "react-router";
+import { ApiError, changeFavorite, changePageCover, getEditorSessionKey, getPage, renamePage, type PageSummary } from "../../api";
 import Header from "../../components/Header/Header";
+import PageAccessRequest from "../../components/PageAccessRequest/PageAccessRequest";
 import PersistentPageDocument from "../../editor/PersistentPageDocument";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import PageSharingButton from "../../components/ShareButton/PageSharingButton";
 import Icon from "../../components/Icon/Icon";
 
 function EditorWorkspace({ id }: { id: string }) {
+  const { key: navigationKey } = useLocation();
   const [page, setPage] = useState<PageSummary>();
   const [title, setTitle] = useState("");
   const [error, setError] = useState("");
-  const [loadError, setLoadError] = useState("");
+  const [loadError, setLoadError] = useState<Error>();
   const [savingTitle, setSavingTitle] = useState(false);
   const [savingFavorite, setSavingFavorite] = useState(false);
 
@@ -22,11 +24,15 @@ function EditorWorkspace({ id }: { id: string }) {
       if (controller.signal.aborted) return;
       setPage(loaded);
       setTitle(loaded.title);
+      setLoadError(undefined);
     }, (reason: unknown) => {
-      if (!controller.signal.aborted) setLoadError(reason instanceof Error ? reason.message : "Não foi possível abrir a página.");
+      if (!controller.signal.aborted) {
+        setPage(undefined);
+        setLoadError(reason instanceof Error ? reason : new Error("Não foi possível abrir a página."));
+      }
     });
     return () => controller.abort();
-  }, [id]);
+  }, [id, navigationKey]);
 
   async function saveTitle(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,12 +85,14 @@ function EditorWorkspace({ id }: { id: string }) {
             {page.permission === "OWNER" && <PageSharingButton id={id} title={page.title} />}
           </div>}
           {error && <p role="alert">{error}</p>}
-          {loadError && <p role="alert">{loadError}</p>}
-          <PersistentPageDocument pageId={id} coverImage={page?.coverImageUrl ?? null}
+          {loadError && <p role="alert">{loadError.message}</p>}
+          {loadError instanceof ApiError && loadError.status === 404 && <PageAccessRequest pageId={id} />}
+          {page?.permission === "VIEWER" && <PageAccessRequest pageId={id} permission="EDITOR" />}
+          {page && <PersistentPageDocument pageId={id} coverImage={page.coverImageUrl}
             onCoverChange={page && page.permission !== "VIEWER" ? async (cover) => {
               await changePageCover(id, cover);
               setPage((current) => current && { ...current, coverImageUrl: cover });
-            } : undefined} />
+            } : undefined} />}
         </main>
       </div>
     </div>

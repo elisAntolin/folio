@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Dialog } from "radix-ui";
 import "./SettingsModal.css";
 
@@ -8,8 +7,7 @@ import systemThemeIcon from "../../../assets/tema-sistema.svg";
 import lightThemeIcon from "../../../assets/tema-claro.svg";
 import darkThemeIcon from "../../../assets/tema-escuro.svg";
 import {
-  getThemePreference,
-  saveThemePreference,
+  useThemeSettings,
   type ThemePreference,
 } from "../../../settings";
 
@@ -29,12 +27,7 @@ const themes: Array<{
 ];
 
 function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
-  const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
-
-  function handleThemeChange(nextTheme: ThemePreference) {
-    setTheme(nextTheme);
-    saveThemePreference(nextTheme);
-  }
+  const { theme, canSave, isSaving, error, retry, save } = useThemeSettings();
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -67,13 +60,18 @@ function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                   }`}
                   role="radio"
                   aria-checked={theme === option.value}
-                  onClick={() => handleThemeChange(option.value)}
+                  disabled={!canSave}
+                  onClick={() => void save(option.value)}
                 >
                   <img src={option.icon} alt="" aria-hidden="true" />
                   <span>{option.label}</span>
                 </button>
               ))}
             </div>
+            {isSaving && <p role="status">Salvando tema…</p>}
+            {!canSave && !isSaving && !error && <p role="status">Carregando tema…</p>}
+            {error && <p role="alert">{error}</p>}
+            {retry && <button type="button" onClick={retry}>Tentar novamente</button>}
           </section>
         </Dialog.Content>
       </Dialog.Portal>
