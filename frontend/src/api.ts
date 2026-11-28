@@ -1,6 +1,8 @@
 import type { DocumentContent } from "./components/BlockEditor/schema";
 import { getSession, renewSession } from "./session";
 
+let editorAccount: { sessionId: string; userId: string } | undefined;
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -16,13 +18,14 @@ export async function request(path: string, options: RequestInit = {}, authentic
   if (options.body) headers.set("Content-Type", "application/json");
   if (session) headers.set("Authorization", `Bearer ${session.accessToken}`);
 
-  let response = await fetch(`/api${path}`, { ...options, headers });
+  const fetchOptions: RequestInit = { ...options, headers, credentials: "omit" };
+  let response = await fetch(`/api${path}`, fetchOptions);
   if (response.status === 401 && session && !options.signal?.aborted) {
     const token = await renewSession(session);
     if (token && getSession()?.id === session.id) {
       options.signal?.throwIfAborted();
       headers.set("Authorization", `Bearer ${token}`);
-      response = await fetch(`/api${path}`, { ...options, headers });
+      response = await fetch(`/api${path}`, fetchOptions);
     }
   }
 
@@ -111,15 +114,13 @@ export async function getPageContent(pageId: string, signal?: AbortSignal, share
 }
 
 export async function resolveEditorUser(pageId: string, sessionKey: string, signal: AbortSignal, shareToken?: string) {
-  const bindingKey = "folio.editor.account";
-  const cached = sessionStorage.getItem(bindingKey);
-  if (cached?.startsWith(`${sessionKey}:`)) return cached.slice(sessionKey.length + 1);
+  if (editorAccount?.sessionId === sessionKey) return editorAccount.userId;
 
   const { userId } = await loadPageContent(pageId, signal, shareToken);
   if (!userId || signal.aborted || getEditorSessionKey() !== sessionKey) {
     throw new Error("Não foi possível identificar a conta do editor.");
   }
-  sessionStorage.setItem(bindingKey, `${sessionKey}:${userId}`);
+  editorAccount = { sessionId: sessionKey, userId };
   return userId;
 }
 

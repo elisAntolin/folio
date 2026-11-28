@@ -1,7 +1,6 @@
 import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router";
-import { ApiError, request } from "../../api";
-import { getSession, startSession, subscribeSession, type SessionTokens } from "../../session";
+import { getSession, signIn, subscribeSession } from "../../session";
 import "../../settings";
 import "./AuthPage.css";
 
@@ -66,26 +65,22 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
     setError("");
     setIsSubmitting(true);
     try {
-      const response = await request(signup ? "/users/register" : "/users/login", {
-        method: "POST",
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(15_000),
-      }, false);
-      const tokens: SessionTokens = await response.json();
-      if (!tokens.accessToken || !tokens.refreshToken) throw new Error("Resposta de autenticação inválida.");
+      const status = await signIn(signup, body);
+      if (status !== 200 && status !== 201) {
+        setError({
+          400: "Confira os dados informados.",
+          401: "E-mail ou senha inválidos.",
+          409: "Este e-mail já está cadastrado.",
+        }[status] ?? "Não foi possível acessar sua conta. Tente novamente.");
+        return;
+      }
       if (!signup) {
         if (fields.has("remember")) localStorage.setItem(rememberedEmailKey, email);
         else localStorage.removeItem(rememberedEmailKey);
       }
-      startSession(email, tokens);
       navigate(returnTo, { replace: true });
-    } catch (reason) {
-      const message = reason instanceof ApiError ? {
-        400: "Confira os dados informados.",
-        401: "E-mail ou senha inválidos.",
-        409: "Este e-mail já está cadastrado.",
-      }[reason.status] : undefined;
-      setError(message ?? "Não foi possível acessar sua conta. Tente novamente.");
+    } catch {
+      setError("Não foi possível acessar sua conta. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
@@ -152,7 +147,7 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
               <div className="auth-input-wrap"><FieldIcon name="lock" /><input id="auth-confirm-password" name="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="Repita sua senha" required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} ref={(input) => { input?.setCustomValidity(confirmPassword && confirmPassword !== password ? "As senhas precisam ser iguais." : ""); }} /></div>
             </div>}
             {mode === "login" && <div className="auth-form-options"><label className="auth-remember"><input type="checkbox" name="remember" defaultChecked={Boolean(rememberedEmail)} /> Lembrar meu e-mail</label><Link to="/recuperar-senha" state={returnState}>Esqueceu a senha?</Link></div>}
-            {(error || state?.logoutFailed === true) && <p className="auth-error" role="alert">{error || "Você saiu neste navegador. O servidor não confirmou o encerramento da sessão."}</p>}
+            {error && <p className="auth-error" role="alert">{error}</p>}
             <button type="submit" className="auth-submit" disabled={isSubmitting}><span>{isSubmitting ? "Aguarde…" : copy.submit}</span><FieldIcon name="arrow" /></button>
           </form>}
 

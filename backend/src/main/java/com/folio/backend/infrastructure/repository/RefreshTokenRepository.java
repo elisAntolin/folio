@@ -1,5 +1,6 @@
 package com.folio.backend.infrastructure.repository;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -19,11 +20,11 @@ public class RefreshTokenRepository {
         this.jdbc = jdbc;
     }
 
-    public void save(UUID id, UUID userId, String tokenHash, java.time.Instant expiresAt) {
+    public void save(UUID userId, UUID sessionId, String tokenHash, Instant expiresAt) {
         jdbc.update(
-            "INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at) VALUES (?, ?, ?, ?)",
-            id,
+            "INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at) VALUES (?, ?, ?, ?)",
             userId,
+            sessionId,
             tokenHash,
             OffsetDateTime.ofInstant(expiresAt, ZoneOffset.UTC)
         );
@@ -31,17 +32,12 @@ public class RefreshTokenRepository {
 
     public Optional<RefreshToken> findByTokenHash(String tokenHash) {
         List<RefreshToken> tokens = jdbc.query(
-            "SELECT id, user_id, token_hash, expires_at, revoked_at FROM refresh_tokens WHERE token_hash = ?",
-            (rs, rowNum) -> {
-                OffsetDateTime revokedAt = rs.getObject("revoked_at", OffsetDateTime.class);
-                return new RefreshToken(
-                    rs.getObject("id", UUID.class),
+            "SELECT user_id, family_id, expires_at FROM refresh_tokens WHERE token_hash = ?",
+            (rs, rowNum) -> new RefreshToken(
                     rs.getObject("user_id", UUID.class),
-                    rs.getString("token_hash"),
-                    rs.getObject("expires_at", OffsetDateTime.class).toInstant(),
-                    revokedAt == null ? null : revokedAt.toInstant()
-                );
-            },
+                    rs.getObject("family_id", UUID.class),
+                    rs.getObject("expires_at", OffsetDateTime.class).toInstant()
+                ),
             tokenHash
         );
         return tokens.stream().findFirst();
@@ -50,16 +46,16 @@ public class RefreshTokenRepository {
     public boolean revokeIfActive(String tokenHash) {
         return jdbc.update(
             "UPDATE refresh_tokens SET revoked_at = CURRENT_TIMESTAMP " +
-                "WHERE token_hash = ? AND revoked_at IS NULL AND expires_at > CURRENT_TIMESTAMP",
+                "WHERE token_hash = ? AND revoked_at IS NULL AND expires_at > clock_timestamp()",
             tokenHash
         ) == 1;
     }
 
-    public void revokeByTokenHash(String tokenHash) {
+    public void revokeBySessionId(UUID sessionId) {
         jdbc.update(
             "UPDATE refresh_tokens SET revoked_at = CURRENT_TIMESTAMP " +
-                "WHERE token_hash = ? AND revoked_at IS NULL",
-            tokenHash
+                "WHERE family_id = ? AND revoked_at IS NULL",
+            sessionId
         );
     }
 

@@ -17,10 +17,7 @@ public class SecurityConfig {
     @Bean 
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         return http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers(
-                "/api/users/register",
-                "/api/users/login",
-                "/api/tokens/refresh",
-                "/api/tokens/logout")
+                HttpMethod.POST, BrowserAuthRequestFilter.PATHS)
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/shared/**").permitAll()
                 .anyRequest()
@@ -28,6 +25,7 @@ public class SecurityConfig {
                 .exceptionHandling(errors -> errors.authenticationEntryPoint((request, response, error) -> response.setStatus(401)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new BrowserAuthRequestFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(new SharedPageRateLimit(), JwtAuthenticationFilter.class)
                 .build();
     }

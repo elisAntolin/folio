@@ -1,5 +1,7 @@
 package com.folio.backend.application.service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -13,6 +15,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Service 
 public class JwtService {
+    private static final Duration ACCESS_TOKEN_LIFETIME = Duration.ofMinutes(10);
     @Value("${spring.jwt.secret}")
     private String secret;
 
@@ -22,10 +25,11 @@ public class JwtService {
     }
 
     public String generateToken(String email) {
+        Instant now = Instant.now();
         return Jwts.builder()
                 .subject(email)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plus(ACCESS_TOKEN_LIFETIME)))
                 .signWith(getSigningKey())
                 .compact();
     }

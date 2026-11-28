@@ -1,10 +1,10 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Navigate, Outlet, Routes, Route, useLocation } from "react-router";
 import HomePage from "./pages/HomePage/HomePage";
 import EditorPage from "./pages/EditorPage/EditorPage";
 import SharedEditorPage from "./pages/EditorPage/SharedEditorPage";
 import AuthPage from "./pages/AuthPage/AuthPage";
-import { getSession, subscribeSession } from "./session";
+import { getSession, restoreSession, subscribeSession } from "./session";
 
 function RequireSession() {
   const location = useLocation();
@@ -15,10 +15,18 @@ function RequireSession() {
 
 function App() {
   const { pathname } = useLocation();
+  const [isRestoring, setIsRestoring] = useState(true);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [pathname]);
+
+  useEffect(() => {
+    const finish = () => setIsRestoring(false);
+    void restoreSession().then(finish, finish);
+  }, []);
+
+  if (isRestoring) return <p role="status">Verificando sessão…</p>;
 
   return (
     <Routes>

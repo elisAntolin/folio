@@ -1,23 +1,23 @@
 package com.folio.backend.presentation.controller;
 
-import java.util.Map;
-
+import com.folio.backend.application.service.JwtService;
+import com.folio.backend.application.service.RefreshTokenService;
+import com.folio.backend.infrastructure.repository.UserRepository;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.folio.backend.application.service.RefreshTokenService;
-import com.folio.backend.application.service.JwtService;
-import com.folio.backend.infrastructure.repository.UserRepository;
-import org.springframework.web.server.ResponseStatusException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tokens")
 public class TokenController {
-
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -32,27 +32,30 @@ public class TokenController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Map<String, String>> refresh(@RequestBody Map<String, String> request) {
-        String token = requiredRefreshToken(request);
-        RefreshTokenService.RotatedRefreshToken rotated = refreshTokenService.rotateRefreshToken(token);
-        String email = userRepository.findEmailById(rotated.userId());
-        String accessToken = jwtService.generateToken(email);
-        return ResponseEntity.ok(Map.of(
-            "accessToken", accessToken,
-            "refreshToken", rotated.refreshToken()
-        ));
+    public ResponseEntity<SessionResponse> refresh(
+            @CookieValue(name = SessionResponse.COOKIE_NAME, required = false) String token,
+            @RequestHeader(name = "X-Folio-Session", required = false) UUID expectedSessionId) {
+        if (token == null || token.isBlank()) {
+            return SessionResponse.clear(HttpStatus.UNAUTHORIZED).build();
+        }
+        return refreshTokenService.rotateRefreshToken(token, expectedSessionId).map(rotated -> {
+            String email = userRepository.findEmailById(rotated.userId());
+            return SessionResponse.issue(HttpStatus.OK, jwtService.generateToken(email), email, rotated);
+        }).orElseGet(() -> SessionResponse.clear(HttpStatus.UNAUTHORIZED).build());
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestBody Map<String, String> request) {
-        refreshTokenService.revokeRefreshToken(requiredRefreshToken(request));
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> logout(
+            @CookieValue(name = SessionResponse.COOKIE_NAME, required = false) String token,
+            @RequestHeader("X-Folio-Session") UUID expectedSessionId) {
+        if (token != null && !token.isBlank()) {
+            refreshTokenService.revokeRefreshToken(token, expectedSessionId);
+        }
+        return SessionResponse.clear(HttpStatus.NO_CONTENT).build();
     }
 
-    private String requiredRefreshToken(Map<String, String> request) {
-        if (request == null || request.get("refreshToken") == null || request.get("refreshToken").isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token é obrigatório");
-        }
-        return request.get("refreshToken");
+    @ExceptionHandler(RefreshTokenService.SessionMismatch.class)
+    ResponseEntity<Void> sessionMismatch() {
+        return ResponseEntity.status(HttpStatus.CONFLICT).cacheControl(CacheControl.noStore()).build();
     }
 }

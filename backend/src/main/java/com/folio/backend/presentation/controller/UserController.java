@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping("/register")
     @Transactional
-    public ResponseEntity<Map<String, String>> createUser(@RequestBody Map<String, String> user) {
+    public ResponseEntity<SessionResponse> createUser(@RequestBody Map<String, String> user) {
         String email = required(user, "email", "E-mail é obrigatório");
         String password = required(user, "password", "Senha é obrigatória");
         String confirmPassword = required(user, "confirmPassword", "Confirmação de senha é obrigatória");
@@ -46,15 +46,15 @@ public class UserController {
         }
 
         User createdUser = userService.createUser(email, password);
-        return ResponseEntity.status(HttpStatus.CREATED).body(issueTokens(createdUser));
+        return issueTokens(HttpStatus.CREATED, createdUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody Map<String, String> user) {
+    public ResponseEntity<SessionResponse> loginUser(@RequestBody Map<String, String> user) {
         String email = required(user, "email", "E-mail é obrigatório");
         String password = required(user, "password", "Senha é obrigatória");
         User authenticatedUser = userService.authenticateUser(email, password);
-        return ResponseEntity.ok(issueTokens(authenticatedUser));
+        return issueTokens(HttpStatus.OK, authenticatedUser);
     }
 
     @PatchMapping("/updatePassword")
@@ -72,10 +72,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Senha atualizada com sucesso");
     }
 
-    private Map<String, String> issueTokens(User user) {
+    private ResponseEntity<SessionResponse> issueTokens(HttpStatus status, User user) {
         String accessToken = jwtService.generateToken(user.getEmail());
-        String refreshToken = refreshTokenService.createRefreshToken(user.getId());
-        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+        return SessionResponse.issue(status, accessToken, user.getEmail(), refreshTokenService.createRefreshToken(user.getId()));
     }
 
     private String required(Map<String, String> request, String field, String message) {

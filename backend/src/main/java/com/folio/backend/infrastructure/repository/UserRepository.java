@@ -58,6 +58,10 @@ public class UserRepository {
             id
         );
     }
+
+    public boolean lockById(UUID id) {
+        return !jdbc.queryForList("SELECT id FROM users WHERE id = ? FOR UPDATE", UUID.class, id).isEmpty();
+    }
     
     public void save(User user){
         jdbc.update(

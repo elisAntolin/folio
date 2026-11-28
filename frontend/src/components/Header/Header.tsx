@@ -12,13 +12,21 @@ function Header() {
   const navigate = useNavigate();
   const session = useSyncExternalStore(subscribeSession, getSession);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  function handleLogout() {
-    const logout = endSession();
-    navigate("/login", { replace: true });
-    void logout.catch(() => {
-      if (!getSession()) navigate("/login", { replace: true, state: { logoutFailed: true } });
-    });
+  async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    setLogoutError("");
+    try {
+      await endSession();
+      navigate("/login", { replace: true });
+    } catch {
+      setLogoutError("Não foi possível encerrar a sessão. Tente novamente.");
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (
@@ -29,6 +37,7 @@ function Header() {
       </Link>
 
       <div className="header-actions">
+        {logoutError && <span role="alert">{logoutError}</span>}
         <NotificationPageModal></NotificationPageModal>
         <span className="header-divider">|</span>
 
