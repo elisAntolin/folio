@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import "./Header.css";
 import logo from "/folio.svg";
 import { Link, useNavigate } from "react-router";
+import { endSession, getSession, subscribeSession } from "../../session";
 
 import NotificationPageModal from "../modals/NotificationPageModal/NotificationPageModal";
 import UserMenu from "../modals/UserMenu/UserMenu";
@@ -9,9 +10,16 @@ import SettingsModal from "../modals/SettingsModal/SettingsModal";
 
 function Header() {
   const navigate = useNavigate();
-  const name = "Elis Cardoso";
-  const photoUrl = undefined;
+  const session = useSyncExternalStore(subscribeSession, getSession);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  function handleLogout() {
+    const logout = endSession();
+    navigate("/login", { replace: true });
+    void logout.catch(() => {
+      if (!getSession()) navigate("/login", { replace: true, state: { logoutFailed: true } });
+    });
+  }
 
   return (
     <header>
@@ -24,13 +32,12 @@ function Header() {
         <NotificationPageModal></NotificationPageModal>
         <span className="header-divider">|</span>
 
-        <span className="header-user">eliscardoso@gmail.com</span>
+        <span className="header-user">{session?.email}</span>
 
         <UserMenu
-          name={name}
-          photoUrl={photoUrl}
+          name={session?.email ?? ""}
           onSettingsClick={() => setIsSettingsOpen(true)}
-          onLogout={() => navigate("/login")}
+          onLogout={handleLogout}
         />
       </div>
       <SettingsModal open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />

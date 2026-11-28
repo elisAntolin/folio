@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { Link, useLocation, useParams } from "react-router";
 import { ApiError } from "../../api";
 import PageDocument from "../../components/PageDocument/PageDocument";
 import type { DocumentContent } from "../../components/BlockEditor/schema";
 import PersistentPageDocument from "../../editor/PersistentPageDocument";
 import { getPublicContent, getSharedPage, type SharedPage } from "../../sharingApi";
+import { getSession, subscribeSession } from "../../session";
 
 function SharedDocument({ token }: { token: string }) {
+  const { pathname, search, hash } = useLocation();
   const [page, setPage] = useState<SharedPage>();
   const [snapshot, setSnapshot] = useState<DocumentContent>();
   const [error, setError] = useState<Error>();
@@ -32,7 +34,8 @@ function SharedDocument({ token }: { token: string }) {
 
   if (error) return <main className="editor-main">
     <p role="alert">{error.message}</p>
-    {error instanceof ApiError && error.status === 401 && <Link to="/login">Entrar no Folio</Link>}
+    {error instanceof ApiError && error.status === 401 &&
+      <Link to="/login" state={{ returnTo: pathname + search + hash }}>Entrar no Folio</Link>}
   </main>;
   if (!page) return <main className="editor-main"><p role="status">Carregando página compartilhada…</p></main>;
 
@@ -46,5 +49,6 @@ function SharedDocument({ token }: { token: string }) {
 
 export default function SharedEditorPage() {
   const { token = "" } = useParams();
-  return <SharedDocument key={token} token={token} />;
+  const session = useSyncExternalStore(subscribeSession, getSession);
+  return <SharedDocument key={JSON.stringify([token, session?.id])} token={token} />;
 }

@@ -1,11 +1,11 @@
 # Telas de acesso
 
-- `/login`: e-mail e senha, Google, GitHub, mostrar/ocultar senha e lembrar de mim.
-- `/cadastro`: nome, e-mail, senha com mínimo de 8 caracteres e confirmação.
-- `/recuperar-senha`: formulário de recuperação e retorno ao login.
+- `/login` autentica com e-mail e senha. A opção “Lembrar meu e-mail” preenche o campo no próximo acesso.
+- `/cadastro` cria uma conta com e-mail e senha de pelo menos oito caracteres e já inicia a sessão.
+- `/recuperar-senha` informa o estado da recuperação por e-mail e oferece um link de volta ao login.
 
-Implementação apenas de front-end para apresentação escolar. Os formulários usam validação nativa; não autenticam, criam contas nem enviam e-mails. Os botões de provedores são visuais e não iniciam autenticação. A interface não exibe avisos de prévia ou de disponibilidade futura. Nenhuma senha ou informação do formulário é armazenada. O checkbox de lembrar de mim está preparado visualmente para a integração futura.
+O front guarda os tokens da API na sessão da aba. Se o token de acesso expirar, o cliente tenta renová-lo e repete a requisição uma vez. O menu “Sair” encerra a sessão local e solicita a revogação do token de renovação.
 
-A página inicial e o editor continuam públicos. O menu “Sair” abre `/login`, sem simular uma sessão. “Explorar o Folio” volta à página inicial.
+A página inicial e o editor pessoal pedem login. Links compartilhados seguem as permissões configuradas para cada link. Google, GitHub e recuperação por e-mail dependem de serviços ainda indisponíveis no backend.
 
 Os estilos reutilizam as variáveis de cores e os temas claro/escuro do projeto. A composição de duas colunas foi inspirada no login do Square, com ilustração feita em HTML/CSS para o Folio.

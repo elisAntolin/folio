@@ -1,4 +1,5 @@
 import { ApiError, request, type PageAccess, type PageContent, type PageSummary } from "./api";
+import { getSession } from "./session";
 
 export type SharePermission = Exclude<PageAccess, "OWNER">;
 export interface PageMember { userId: string; email: string; permission: PageAccess }
@@ -52,7 +53,7 @@ export async function getSharedPage(token: string, signal: AbortSignal): Promise
   try {
     return await (await request(publicPath(token), { signal }, false)).json();
   } catch (error) {
-    if (!(error instanceof ApiError) || error.status !== 401 || !sessionStorage.getItem("folio.accessToken")) throw error;
+    if (!(error instanceof ApiError) || error.status !== 401 || !getSession()) throw error;
     return (await request(publicPath(token), { signal })).json();
   }
 }

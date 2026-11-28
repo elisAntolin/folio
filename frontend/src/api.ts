@@ -1,4 +1,5 @@
 import type { DocumentContent } from "./components/BlockEditor/schema";
+import { getSession, renewSession } from "./session";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -10,12 +11,21 @@ export class ApiError extends Error {
 }
 
 export async function request(path: string, options: RequestInit = {}, authenticate = true) {
-  const token = sessionStorage.getItem("folio.accessToken");
+  const session = authenticate ? getSession() : undefined;
   const headers = new Headers(options.headers);
   if (options.body) headers.set("Content-Type", "application/json");
-  if (authenticate && token) headers.set("Authorization", `Bearer ${token}`);
+  if (session) headers.set("Authorization", `Bearer ${session.accessToken}`);
 
-  const response = await fetch(`/api${path}`, { ...options, headers });
+  let response = await fetch(`/api${path}`, { ...options, headers });
+  if (response.status === 401 && session && !options.signal?.aborted) {
+    const token = await renewSession(session);
+    if (token && getSession()?.id === session.id) {
+      options.signal?.throwIfAborted();
+      headers.set("Authorization", `Bearer ${token}`);
+      response = await fetch(`/api${path}`, { ...options, headers });
+    }
+  }
+
   if (!response.ok) {
     const payload = await response.json().catch(() => null);
     const message = typeof payload?.message === "string" ? payload.message : {
@@ -93,7 +103,7 @@ export interface PageContent extends ContentRevision {
 }
 
 export function getEditorSessionKey(): string | undefined {
-  return sessionStorage.getItem("folio.accessToken")?.split(".")[2] || undefined;
+  return getSession()?.id;
 }
 
 export async function getPageContent(pageId: string, signal?: AbortSignal, shareToken?: string): Promise<PageContent> {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { getEditorSessionKey, resolveEditorUser } from "../api";
 import BlockEditor from "../components/BlockEditor/BlockEditor";
 import PageDocument from "../components/PageDocument/PageDocument";
@@ -156,9 +156,12 @@ function AuthorizedDocument(props: WorkspaceProps) {
 }
 
 export default function PersistentPageDocument(props: Omit<WorkspaceProps, "sessionKey">) {
+  const { pathname, search, hash } = useLocation();
   const sessionKey = getEditorSessionKey();
   if (!sessionKey) {
-    return <p role="alert"><Link to="/login">Entre na sua conta</Link> para abrir o documento.</p>;
+    return <p role="alert">
+      <Link to="/login" state={{ returnTo: pathname + search + hash }}>Entre na sua conta</Link> para abrir o documento.
+    </p>;
   }
   return <AuthorizedDocument key={JSON.stringify([sessionKey, props.pageId, props.shareToken])} {...props} sessionKey={sessionKey} />;
 }
