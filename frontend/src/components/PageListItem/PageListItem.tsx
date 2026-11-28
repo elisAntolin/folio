@@ -4,8 +4,10 @@ import type { HomePageItem } from "../PageListCard/PageListCard";
 
 interface PageListItemProps {
   pages: HomePageItem[];
-  onEdit: (id: string, newTitle: string, newCategory: string) => void | Promise<void>;
-  onDelete: (id: string) => void | Promise<void>;
+  onEdit: (id: string, newTitle: string, newCategory: string) => void;
+  onDelete: (id: string) => void;
+  onLinkPermissionChange: (id: string, permission: string) => void;
+  favoriteIds: string[];
   onFavoriteChange: (id: string, isFavorite: boolean) => void;
 }
 
@@ -13,6 +15,8 @@ function PageListItem({
   pages,
   onEdit,
   onDelete,
+  onLinkPermissionChange,
+  favoriteIds,
   onFavoriteChange,
 }: PageListItemProps) {
   return (
@@ -22,14 +26,15 @@ function PageListItem({
           key={page.id}
           id={page.id}
           title={page.title}
-          category={page.categoryId ?? ""}
-          coverImageUrl={page.coverImageUrl}
+          category={page.category}
           onEdit={(newTitle, newCategory) =>
             onEdit(page.id, newTitle, newCategory)
           }
           onDelete={() => onDelete(page.id)}
-          permission={page.permission}
-          isFavorite={page.favorite}
+          onLinkPermissionChange={(permission) =>
+            onLinkPermissionChange(page.id, permission)
+          }
+          isFavorite={favoriteIds.includes(page.id)}
           onFavoriteChange={(isFavorite) =>
             onFavoriteChange(page.id, isFavorite)
           }

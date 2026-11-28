@@ -42,10 +42,10 @@
   align-items: center;
   justify-content: center;
 
-  width: auto;
+  width: 14px;
   min-width: 14px;
   height: 14px;
-  padding: 0 2px;
+  padding: 0;
 
   background: var(--primary);
   border: 1.5px solid var(--surface);
@@ -167,27 +167,6 @@
 .notification-item:hover {
   background: var(--surface-muted);
   border-color: var(--border);
-}
-
-.notification-item.notification-unread {
-  background: var(--accent-bg);
-}
-
-.notification-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-}
-
-.notification-meta time {
-  color: var(--text-muted);
-  font-size: 11px;
-  flex-shrink: 0;
-}
-
-.notification-more {
-  display: block;
-  margin: 8px auto;
 }
 
 .notification-item .avatar {

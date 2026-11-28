@@ -13,7 +13,7 @@ interface PermissionAnalysisModalProps {
   userPhotoUrl?: string;
   action: string;
   message: string;
-  onDecision: (decision: "GRANTED" | "DENIED") => Promise<void>;
+  onDecision?: (decision: "granted" | "denied") => void;
 }
 
 function PermissionInboxIcon() {
@@ -35,22 +35,11 @@ function PermissionAnalysisModal({
   message,
   onDecision,
 }: PermissionAnalysisModalProps) {
-  const [decision, setDecision] = useState<"GRANTED" | "DENIED" | null>(null);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [decision, setDecision] = useState<"granted" | "denied" | null>(null);
 
-  async function handleDecision(nextDecision: "GRANTED" | "DENIED") {
-    if (pending) return;
-    setPending(true);
-    setError("");
-    try {
-      await onDecision(nextDecision);
-      setDecision(nextDecision);
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Não foi possível registrar a decisão.");
-    } finally {
-      setPending(false);
-    }
+  function handleDecision(nextDecision: "granted" | "denied") {
+    setDecision(nextDecision);
+    onDecision?.(nextDecision);
   }
 
   return (
@@ -84,12 +73,13 @@ function PermissionAnalysisModal({
           </div>
 
           <Dialog.Description className="permission-analysis-message">
+            <strong>Mensagem: </strong>
             {message}
           </Dialog.Description>
 
           {decision ? (
             <p className="permission-analysis-result" role="status">
-              {decision === "GRANTED"
+              {decision === "granted"
                 ? "Permissão concedida."
                 : "Solicitação negada."}
             </p>
@@ -98,23 +88,19 @@ function PermissionAnalysisModal({
               <button
                 type="button"
                 className="permission-analysis-deny"
-                disabled={pending}
-                onClick={() => void handleDecision("DENIED")}
+                onClick={() => handleDecision("denied")}
               >
                 Negar
               </button>
               <button
                 type="button"
                 className="permission-analysis-grant"
-                disabled={pending}
-                onClick={() => void handleDecision("GRANTED")}
+                onClick={() => handleDecision("granted")}
               >
                 Permitir
               </button>
             </div>
           )}
-          {pending && <p role="status">Registrando decisão…</p>}
-          {error && <p role="alert">{error}</p>}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

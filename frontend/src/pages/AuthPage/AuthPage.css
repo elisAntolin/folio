@@ -96,8 +96,6 @@
 .auth-password-toggle:hover { background: var(--surface-muted); color: var(--accent); }
 .auth-password-toggle svg { width: 17px; height: 17px; }
 .auth-field small { color: var(--text-muted); font-size: 10px; }
-.auth-error { margin: 0; color: var(--danger); font-size: 12px; }
-.auth-provider:disabled, .auth-submit:disabled { opacity: .6; cursor: default; }
 .auth-form-options { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 11px; margin: 0 0 3px; }
 .auth-remember { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
 .auth-remember input { width: 14px; height: 14px; margin: 0; accent-color: var(--primary); cursor: pointer; }

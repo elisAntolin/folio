@@ -55,38 +55,3 @@
 .share-options-item:focus {
   background: var(--surface-muted);
 }
-
-.sharing-settings-modal {
-  max-height: 85vh;
-  overflow: auto;
-}
-
-.share-settings {
-  display: grid;
-  gap: 0.65rem;
-  min-width: 0;
-  border: 0;
-  padding: 0;
-}
-
-.share-settings form,
-.share-settings li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.share-settings h3 {
-  margin: 0.5rem 0 0;
-}
-
-.share-settings button,
-.share-settings input,
-.share-settings select {
-  color: var(--text, inherit);
-  background: var(--surface, Canvas);
-  border: 1px solid var(--border, currentColor);
-  border-radius: 0.35rem;
-  padding: 0.35rem 0.5rem;
-}

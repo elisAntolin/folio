@@ -1,8 +1,7 @@
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import "./Header.css";
 import logo from "/folio.svg";
 import { Link, useNavigate } from "react-router";
-import { endSession, getSession, subscribeSession } from "../../session";
 
 import NotificationPageModal from "../modals/NotificationPageModal/NotificationPageModal";
 import UserMenu from "../modals/UserMenu/UserMenu";
@@ -10,24 +9,9 @@ import SettingsModal from "../modals/SettingsModal/SettingsModal";
 
 function Header() {
   const navigate = useNavigate();
-  const session = useSyncExternalStore(subscribeSession, getSession);
+  const name = "Elis Cardoso";
+  const photoUrl = undefined;
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [logoutError, setLogoutError] = useState("");
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  async function handleLogout() {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    setLogoutError("");
-    try {
-      await endSession();
-      navigate("/login", { replace: true });
-    } catch {
-      setLogoutError("Não foi possível encerrar a sessão. Tente novamente.");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  }
 
   return (
     <header>
@@ -37,16 +21,16 @@ function Header() {
       </Link>
 
       <div className="header-actions">
-        {logoutError && <span role="alert">{logoutError}</span>}
         <NotificationPageModal></NotificationPageModal>
         <span className="header-divider">|</span>
 
-        <span className="header-user">{session?.email}</span>
+        <span className="header-user">eliscardoso@gmail.com</span>
 
         <UserMenu
-          name={session?.email ?? ""}
+          name={name}
+          photoUrl={photoUrl}
           onSettingsClick={() => setIsSettingsOpen(true)}
-          onLogout={handleLogout}
+          onLogout={() => navigate("/login")}
         />
       </div>
       <SettingsModal open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />

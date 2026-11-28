@@ -10,8 +10,7 @@ interface EditPageModalProps {
   onOpenChange: (open: boolean) => void;
   currentTitle: string;
   currentCategory: string;
-  canChangeCategory?: boolean;
-  onSave: (newTitle: string, newCategory: string) => void | Promise<void>;
+  onSave: (newTitle: string, newCategory: string) => void;
 }
 
 function EditPageModal({
@@ -19,36 +18,24 @@ function EditPageModal({
   onOpenChange,
   currentTitle,
   currentCategory,
-  canChangeCategory = true,
   onSave,
 }: EditPageModalProps) {
   const [title, setTitle] = useState(currentTitle);
   const [category, setCategory] = useState(currentCategory);
 
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const newTitle = title.trim();
 
-    if (!newTitle || submitting) return;
+    if (!newTitle) return;
 
-    setSubmitting(true);
-    setError("");
-    try {
-      await onSave(newTitle, category);
-      onOpenChange(false);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Não foi possível salvar a página.");
-    } finally {
-      setSubmitting(false);
-    }
+    onSave(newTitle, category);
+    onOpenChange(false);
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={(value) => { if (!submitting) onOpenChange(value); }}>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="edit-overlay" />
 
@@ -85,19 +72,15 @@ function EditPageModal({
               maxLength={60}
             />
 
-            {canChangeCategory && <>
-              <label className="edit-label">Nova Categoria</label>
+            <label className="edit-label">Nova Categoria</label>
 
-              <CategorySelect
-                value={category}
-                onChange={setCategory}
-                triggerClassName="edit-select"
-                contentClassName="edit-select-content"
-                itemClassName="edit-select-item"
-              />
-            </>}
-
-            {error && <p role="alert">{error}</p>}
+            <CategorySelect
+              value={category}
+              onChange={setCategory}
+              triggerClassName="edit-select"
+              contentClassName="edit-select-content"
+              itemClassName="edit-select-item"
+            />
 
             <div className="edit-footer">
               <Dialog.Close asChild>
@@ -106,7 +89,7 @@ function EditPageModal({
                 </button>
               </Dialog.Close>
 
-              <button type="submit" className="edit-save" disabled={submitting || !title.trim()}>
+              <button type="submit" className="edit-save">
                 Salvar
               </button>
             </div>

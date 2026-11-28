@@ -1,15 +1,11 @@
 # Telas de acesso
 
-- `/login` autentica com e-mail e senha. A opção “Lembrar meu e-mail” preenche o campo no próximo acesso.
-- `/cadastro` cria uma conta com e-mail e senha de pelo menos oito caracteres e já inicia a sessão.
-- `/recuperar-senha` informa o estado da recuperação por e-mail e oferece um link de volta ao login.
+- `/login`: e-mail e senha, Google, GitHub, mostrar/ocultar senha e lembrar de mim.
+- `/cadastro`: nome, e-mail, senha com mínimo de 8 caracteres e confirmação.
+- `/recuperar-senha`: formulário de recuperação e retorno ao login.
 
-O JWT de acesso dura 10 minutos e fica em memória. O token de renovação fica em um cookie de sessão `HttpOnly`, `Secure` e `SameSite=Strict`. Sirva o front e `/api` na mesma origem, por HTTPS em produção ou em `localhost` durante o desenvolvimento.
+Implementação apenas de front-end para apresentação escolar. Os formulários usam validação nativa; não autenticam, criam contas nem enviam e-mails. Os botões de provedores são visuais e não iniciam autenticação. A interface não exibe avisos de prévia ou de disponibilidade futura. Nenhuma senha ou informação do formulário é armazenada. O checkbox de lembrar de mim está preparado visualmente para a integração futura.
 
-Ao recarregar a página ou quando a API retorna `401`, o front usa o cookie para obter um novo JWT. A API troca o token de renovação a cada uso e mantém um prazo máximo de sete dias para a sessão. Se um token já usado reaparecer, a API revoga a sessão. “Sair” revoga a sessão de renovação e apaga o cookie.
-
-A migração invalida os tokens de renovação emitidos antes da adoção do cookie. Essas sessões pedem um novo login.
-
-A página inicial e o editor pessoal pedem login. Links compartilhados seguem as permissões configuradas para cada link. Google, GitHub e recuperação por e-mail dependem de serviços ainda indisponíveis no backend.
+A página inicial e o editor continuam públicos. O menu “Sair” abre `/login`, sem simular uma sessão. “Explorar o Folio” volta à página inicial.
 
 Os estilos reutilizam as variáveis de cores e os temas claro/escuro do projeto. A composição de duas colunas foi inspirada no login do Square, com ilustração feita em HTML/CSS para o Folio.

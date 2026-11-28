@@ -1,6 +1,3 @@
-import type { PageAccess } from "../../api";
-import { useContext } from "react";
-import { PageCategoriesContext } from "../../pageCategories";
 import { Link } from "react-router";
 
 import "./PageItem.css";
@@ -15,10 +12,9 @@ interface PageItemProps {
   id: string;
   title: string;
   category: string;
-  coverImageUrl: string | null;
-  onEdit: (newTitle: string, newCategory: string) => void | Promise<void>;
-  onDelete: () => void | Promise<void>;
-  permission: PageAccess;
+  onEdit: (newTitle: string, newCategory: string) => void;
+  onDelete: () => void;
+  onLinkPermissionChange: (permission: string) => void;
   isFavorite: boolean;
   onFavoriteChange: (isFavorite: boolean) => void;
 }
@@ -27,23 +23,18 @@ function PageItem({
   id,
   title,
   category,
-  coverImageUrl,
   onEdit,
   onDelete,
-  permission,
+  onLinkPermissionChange,
   isFavorite,
   onFavoriteChange,
 }: PageItemProps) {
-  const categories = useContext(PageCategoriesContext);
-  const categoryName = categories?.find(({ id }) => id === category)?.name ?? "Sem categoria";
 
   return (
     <div className="page-item">
       <div className="page-item-cover">
         <Link to={`/pages/${id}`} className="page-item-cover-link">
-          {coverImageUrl?.startsWith("#")
-            ? <div style={{ backgroundColor: coverImageUrl, height: "100%" }} aria-hidden="true" />
-            : <img src={coverImageUrl ?? capa} alt="Capa da página" />}
+          <img src={capa} alt="Capa da página" />
         </Link>
       </div>
 
@@ -53,7 +44,7 @@ function PageItem({
 
           <span className="page-item-badge page-item-category">
             <img src={studyIcon} alt="" />
-            {permission === "OWNER" ? categoryName : permission === "EDITOR" ? "Editor" : "Leitor"}
+            {category}
           </span>
 
           <span className="page-item-badge page-item-recent">
@@ -64,13 +55,17 @@ function PageItem({
           <PageActionsMenu
             currentTitle={title}
             currentCategory={category}
-            id={id}
-            permission={permission}
+            publicLink={`/pages/${id}`}
             onEdit={onEdit}
             onDelete={onDelete}
+            onLinkPermissionChange={onLinkPermissionChange}
             isFavorite={isFavorite}
             onFavoriteChange={onFavoriteChange}
           />
+        </div>
+
+        <div className="page-item-details">
+          <p>57m atrás</p>
         </div>
       </div>
     </div>

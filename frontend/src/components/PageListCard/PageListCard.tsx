@@ -1,14 +1,20 @@
 import "./PageListCard.css";
 import PageCard from "../PageCard/PageCard";
 
-import type { PageSummary } from "../../api";
-
-export type HomePageItem = PageSummary;
+export interface HomePageItem {
+  id: string;
+  title: string;
+  category: string;
+  categories?: string[];
+  linkPermission: string;
+}
 
 interface PageListCardProps {
   pages: HomePageItem[];
-  onEdit: (id: string, newTitle: string, newCategory: string) => void | Promise<void>;
-  onDelete: (id: string) => void | Promise<void>;
+  onEdit: (id: string, newTitle: string, newCategory: string) => void;
+  onDelete: (id: string) => void;
+  onLinkPermissionChange: (id: string, permission: string) => void;
+  favoriteIds: string[];
   onFavoriteChange: (id: string, isFavorite: boolean) => void;
 }
 
@@ -16,6 +22,8 @@ function PageListCard({
   pages,
   onEdit,
   onDelete,
+  onLinkPermissionChange,
+  favoriteIds,
   onFavoriteChange,
 }: PageListCardProps) {
   return (
@@ -25,14 +33,15 @@ function PageListCard({
           key={page.id}
           id={page.id}
           title={page.title}
-          category={page.categoryId ?? ""}
-          coverImageUrl={page.coverImageUrl}
+          category={page.category}
           onEdit={(newTitle, newCategory) =>
             onEdit(page.id, newTitle, newCategory)
           }
           onDelete={() => onDelete(page.id)}
-          permission={page.permission}
-          isFavorite={page.favorite}
+          onLinkPermissionChange={(permission) =>
+            onLinkPermissionChange(page.id, permission)
+          }
+          isFavorite={favoriteIds.includes(page.id)}
           onFavoriteChange={(isFavorite) =>
             onFavoriteChange(page.id, isFavorite)
           }

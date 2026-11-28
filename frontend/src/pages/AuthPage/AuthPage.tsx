@@ -1,17 +1,17 @@
-import { useState, useSyncExternalStore, type FormEvent } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router";
-import { getSession, signIn, subscribeSession } from "../../session";
+import { useState, type FormEvent } from "react";
+import { Link } from "react-router";
 import "../../settings";
 import "./AuthPage.css";
 
 type AuthMode = "login" | "signup" | "recovery";
-type FieldIconName = "mail" | "lock" | "eye" | "eye-off" | "arrow";
+type FieldIconName = "mail" | "lock" | "user" | "eye" | "eye-off" | "arrow";
 
 function FieldIcon({ name }: { name: FieldIconName }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {name === "mail" && <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" /></>}
       {name === "lock" && <><rect x="5" y="10" width="14" height="11" rx="3" /><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" /></>}
+      {name === "user" && <><circle cx="12" cy="8" r="4" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></>}
       {(name === "eye" || name === "eye-off") && <><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" />{name === "eye-off" && <path d="m3 3 18 18" />}</>}
       {name === "arrow" && <path d="M4 12h16m-6-6 6 6-6 6" />}
     </svg>
@@ -34,59 +34,18 @@ function ProviderIcon({ provider }: { provider: "google" | "github" }) {
 const content = {
   login: { title: "Bem-vindo de volta!", description: "Suas ideias estão esperando por você.", submit: "Entrar no meu espaço" },
   signup: { title: "Um espaço para chamar de seu.", description: "Crie sua conta e dê lugar às suas ideias.", submit: "Criar minha conta" },
-  recovery: { title: "Esqueceu sua senha?", description: "A recuperação por e-mail ainda está indisponível.", submit: "" },
+  recovery: { title: "Esqueceu sua senha?", description: "Acontece! Informe seu e-mail para recuperar o acesso.", submit: "Enviar link de recuperação" },
 };
 
-const rememberedEmailKey = "folio.rememberedEmail";
-
 export default function AuthPage({ mode }: { mode: AuthMode }) {
-  const { state } = useLocation();
-  const navigate = useNavigate();
-  const session = useSyncExternalStore(subscribeSession, getSession);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [rememberedEmail] = useState(() => localStorage.getItem(rememberedEmailKey) ?? "");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
   const copy = content[mode];
-  const destination: unknown = state?.returnTo;
-  const returnTo = typeof destination === "string" && /^\/(?![/\\])/.test(destination) ? destination : "/";
-  const returnState = { returnTo };
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isSubmitting || mode === "recovery") return;
-
-    const fields = new FormData(event.currentTarget);
-    const email = String(fields.get("email") ?? "").trim().toLowerCase();
-    const signup = mode === "signup";
-    const body = signup ? { email, password, confirmPassword } : { email, password };
-    setError("");
-    setIsSubmitting(true);
-    try {
-      const status = await signIn(signup, body);
-      if (status !== 200 && status !== 201) {
-        setError({
-          400: "Confira os dados informados.",
-          401: "E-mail ou senha inválidos.",
-          409: "Este e-mail já está cadastrado.",
-        }[status] ?? "Não foi possível acessar sua conta. Tente novamente.");
-        return;
-      }
-      if (!signup) {
-        if (fields.has("remember")) localStorage.setItem(rememberedEmailKey, email);
-        else localStorage.removeItem(rememberedEmailKey);
-      }
-      navigate(returnTo, { replace: true });
-    } catch {
-      setError("Não foi possível acessar sua conta. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
   }
-
-  if (session) return <Navigate to={returnTo} replace />;
 
   return (
     <div className="auth-page" data-mode={mode}>
@@ -128,12 +87,16 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
             <p>{copy.description}</p>
           </div>
 
-          {mode !== "recovery" && <form className="auth-form" onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            {mode === "signup" && <div className="auth-field">
+              <label htmlFor="auth-name">Nome</label>
+              <div className="auth-input-wrap"><FieldIcon name="user" /><input id="auth-name" name="name" type="text" autoComplete="name" placeholder="Seu nome" required maxLength={100} /></div>
+            </div>}
             <div className="auth-field">
               <label htmlFor="auth-email">E-mail</label>
-              <div className="auth-input-wrap"><FieldIcon name="mail" /><input id="auth-email" name="email" type="email" autoComplete="email" placeholder="voce@exemplo.com" required maxLength={254} defaultValue={mode === "login" ? rememberedEmail : undefined} /></div>
+              <div className="auth-input-wrap"><FieldIcon name="mail" /><input id="auth-email" name="email" type="email" autoComplete="email" placeholder="voce@exemplo.com" required maxLength={254} /></div>
             </div>
-            <div className="auth-field">
+            {mode !== "recovery" && <div className="auth-field">
               <label htmlFor="auth-password">Senha</label>
               <div className="auth-input-wrap">
                 <FieldIcon name="lock" />
@@ -141,21 +104,20 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
                 <button className="auth-password-toggle" type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"} aria-pressed={showPassword}><FieldIcon name={showPassword ? "eye" : "eye-off"} /></button>
               </div>
               {mode === "signup" && <small id="auth-password-hint">Use pelo menos 8 caracteres.</small>}
-            </div>
+            </div>}
             {mode === "signup" && <div className="auth-field">
               <label htmlFor="auth-confirm-password">Confirmar senha</label>
               <div className="auth-input-wrap"><FieldIcon name="lock" /><input id="auth-confirm-password" name="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="Repita sua senha" required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} ref={(input) => { input?.setCustomValidity(confirmPassword && confirmPassword !== password ? "As senhas precisam ser iguais." : ""); }} /></div>
             </div>}
-            {mode === "login" && <div className="auth-form-options"><label className="auth-remember"><input type="checkbox" name="remember" defaultChecked={Boolean(rememberedEmail)} /> Lembrar meu e-mail</label><Link to="/recuperar-senha" state={returnState}>Esqueceu a senha?</Link></div>}
-            {error && <p className="auth-error" role="alert">{error}</p>}
-            <button type="submit" className="auth-submit" disabled={isSubmitting}><span>{isSubmitting ? "Aguarde…" : copy.submit}</span><FieldIcon name="arrow" /></button>
-          </form>}
+            {mode === "login" && <div className="auth-form-options"><label className="auth-remember"><input type="checkbox" name="remember" /> Lembrar de mim</label><Link to="/recuperar-senha">Esqueceu a senha?</Link></div>}
+            <button type="submit" className="auth-submit"><span>{copy.submit}</span><FieldIcon name="arrow" /></button>
+          </form>
 
           {mode !== "recovery" && <>
             <div className="auth-divider"><span>ou continue com</span></div>
             <div className="auth-providers">
               {(["google", "github"] as const).map((provider) => (
-                <button key={provider} type="button" className="auth-provider" disabled title="Login social indisponível">
+                <button key={provider} type="button" className="auth-provider">
                   <ProviderIcon provider={provider} />
                   <span>{provider === "google" ? "Google" : "GitHub"}</span>
                 </button>
@@ -163,7 +125,7 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
             </div>
           </>}
 
-          <p className="auth-switch">{mode === "login" ? <>Ainda não tem uma conta? <Link to="/cadastro" state={returnState}>Criar conta</Link></> : mode === "signup" ? <>Já tem uma conta? <Link to="/login" state={returnState}>Entrar</Link></> : <Link to="/login" state={returnState}>Voltar para o login</Link>}</p>
+          <p className="auth-switch">{mode === "login" ? <>Ainda não tem uma conta? <Link to="/cadastro">Criar conta</Link></> : mode === "signup" ? <>Já tem uma conta? <Link to="/login">Entrar</Link></> : <Link to="/login">Voltar para o login</Link>}</p>
         </div>
         <div className="auth-main-footer" aria-hidden="true" />
       </main>
